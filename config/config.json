@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "scandrews",
+    "password": "RutBud17",
+    "database": "sequelized_burgers_db",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "q8755cde3l1gijyw",
+    "password": "joijwvy2d0z01nso",
+    "database": "ta9un96plv1ezgu",
+    "host": "erxv1bzckceve5lh.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
