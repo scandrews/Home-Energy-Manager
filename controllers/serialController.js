@@ -24,7 +24,7 @@ const Readline = SerialPort.parsers.Readline;
 // setup ethernet server
 var PORT = 6000;
 var HOST = '192.168.1.13';
-var clientAddress = '192.168.1.14'
+var clientAddress = '192.168.1.7'
 var dgram = require("dgram");
 var server = dgram.createSocket('udp4');
 

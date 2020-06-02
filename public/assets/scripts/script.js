@@ -4,7 +4,16 @@ $(document).ready(function() {
 
 // wait for clicks on the buttons
 
-// handling the scrape new click
+// get the current recirc times and write to screen
+
+//get current temps form database
+
+
+
+$("#yourtextboxid").attr("placeholder", "variable");
+
+
+// handling the show temperature click
 $(".showTemp").on("click", function(event){
 	event.preventDefault();
 	console.log("got the show click");

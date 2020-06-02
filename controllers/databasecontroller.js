@@ -43,8 +43,8 @@ connection.connect((err) => {
     console.log("in save temp data");
     console.log(temp2, temp3);
 
-//	tempSum1 = tempSum1 + req.body.tempF1;
-//	tempSum2 = tempSum2 + req.body.tempF2;
+	tempSum2 = tempSum2 + temp2;
+	tempSum3 = tempSum3 + temp3;
 	tempcount++;
 
 	if (tempcount == 10) {
@@ -59,8 +59,8 @@ connection.connect((err) => {
 
 	    connection.query("INSERT INTO temperatures SET ?",
 	    {
-    		tempFamilyRoom: avgTemp2[0],
-    		tempBedRoom: avgTemp3[1]
+    		tempFamilyRoom: avgTemp2,
+    		tempBedRoom: avgTemp3
 	    }, (err, result) => {
     		if (err) throw err;
     		return;
