@@ -1,5 +1,5 @@
 {
-  "name": "Temp_sense_project",
+  "name": "home_energy_controller",
   "version": "0.0.1",
   "description": "Get the temperature from the arduino board",
   "main": "server.js",

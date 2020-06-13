@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "scandrews",
+    "username": "root",
     "password": "RutBud17",
-    "database": "sequelized_burgers_db",
-    "host": "127.0.0.1",
+    "database": "home_control_db",
+    "host": "localhost",
     "dialect": "mysql"
   },
   "test": {
@@ -16,8 +16,8 @@
   "production": {
     "username": "root",
     "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
+    "database": "home_control_db",
+    "host": "localhost",
     "dialect": "mysql"
   }
 }

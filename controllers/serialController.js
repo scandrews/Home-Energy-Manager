@@ -61,17 +61,17 @@ server.on("message", function (StuffIn, remote) {
 
 	var tempC1 = StuffIn.toString("utf-8", 0, 5);
     var tempF1 = CtoF (tempC1);
-    console.log(tempC1 + " " + tempF1);
+    console.log("recirculator Temperature - " + tempF1);
     recircContrl.checkRecirc(tempF1);
 
 
     tempC2 = StuffIn.toString("utf8", 5, 10);
 	tempF2 = CtoF(tempC2);
-    console.log(tempC2 + " " + tempF2);
+//    console.log(tempC2 + " " + tempF2);
 
     tempC3 = StuffIn.toString("utf8", 10, 15);
 	tempF3 = CtoF(tempC3);
-    console.log(tempC3 + " " + tempF3);
+//    console.log(tempC3 + " " + tempF3);
 
     data_access.saveTempData(tempF2, tempF3);
 });
@@ -83,22 +83,37 @@ server.on("message", function (StuffIn, remote) {
 
 server.bind(PORT);
 
-exports.sendMessageToArdunio = function (req, res){
-	console.log("in comm controller sent message, req.body.message -");
-	console.log(req.body.message);
-	switch (req.body.message){ 
+exports.sendMessageToArdunio = function (whatToDo){
+	console.log("in comm controller sent message, req.body -" + whatToDo);
+//	console.log(whatToDo);
+	switch (whatToDo){ 
 		case "greenChange":
-			console.log("in CASE green");
+			console.log("in send message CASE green");
 			server.send(greenChange, 0, 2, arduinoPort, clientAddress)
 			break;
 		case "redChange":
-			server.send(redChange, 0, 2, arduinoPort, clientAddress)
 			console.log("in CASE red");
+			server.send(redChange, 0, 2, arduinoPort, clientAddress)
 			break;
-		case runRecirc:
-			server.send()
+		case "runRecirc":
+			console.log("in send message run recirculator - from recirc controller");
+			server.send(runRecirculator, 0, 2, arduinoPort, clientAddress);
+			break;
+		case "stopRecirc":
+			console.log("in CASE send message stop recirculator - from recirc controller");
+			server.send(stopRecirculator, 0, 2, arduinoPort, clientAddress);
+			break;
+		case "turnPumpOn":
+			console.log("in CASE send message turn pump on - from front end");
+			server.send(runRecirculator, 0, 2, arduinoPort, clientAddress);
+			break;
+		case "turnPumpOff":
+			console.log("in CASE send message stop recirculator - from front end");
+			server.send(stopRecirculator, 0, 2, arduinoPort, clientAddress);
+			break;
 		default:
 			server.send('WTF', 0, 3, arduinoPort, clientAddress)
+			console.log("in case WTF");
 	}
 };
 
@@ -106,20 +121,20 @@ exports.sendMessageToArdunio = function (req, res){
 // this section reads the serial port and console logs it
 exports.serialComStuff = function (){
 
-// open the serial port
-var port = new SerialPort(comPort, {
-	baudRate: BaudRate,
-});
-const parser = new Readline('\n');
+	// open the serial port
+	var port = new SerialPort(comPort, {
+		baudRate: BaudRate,
+	});
+	const parser = new Readline('\n');
 
-port.pipe(parser);
-parser.on('data', function(inputString){
-//	var newstr = inputString.split(" ");
-	console.log (inputString);
-//	console.log (newstr);
-	
-// end serial i/o section
-});
+	port.pipe(parser);
+	parser.on('data', function(inputString){
+		//	var newstr = inputString.split(" ");
+		console.log (inputString);
+		//	console.log (newstr);
+		
+	// end serial i/o section
+	});
 }
 
 // end export

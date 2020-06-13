@@ -1,34 +1,41 @@
 
 
 module.exports = function(sequelize, Datatypes){
-	var recirculator = sequelize.define("recirculator", {
-		pipeTemp: {
+	var recirculatorSettings = sequelize.define("recirculatorSettings", {
+		pipeTempOn: {
 			type: Datatypes.FLOAT,
-			allowNull: false,
-			validate: { len: [1] }
+			allowNull: false
 		},
-		recircOnHist: {
-			type: Datatypes.DATE,
-			default: false			
+		pipeTempOff: {
+			type: Datatypes.FLOAT,
+			allowNull: false
 		},
-		recircOffHist: {
-			type: Datatypes.DATE,
-			default: false			
+		weekDayOn1: {
+			type: Datatypes.TIME
 		},
-		activeOn1:{
-			type: Datatypes.STRING
+		weekDayOff1: {
+			type: Datatypes.TIME
 		},
-		activeOff1:{
-			type: Datatypes.STRING
+		weekDayOn2: {
+			type: Datatypes.TIME
 		},
-		activeOn2:{
-			type: Datatypes.STRING
+		weekDayOff2: {
+			type: Datatypes.TIME
 		},
-		activeOff2:{
-			type: Datatypes.STRING
+		weekEndOn1: {
+			type: Datatypes.TIME
+		},
+		weekEndOff1: {
+			type: Datatypes.TIME
+		},
+		weekEndOn2: {
+			type: Datatypes.TIME
+		},
+		weekEndOff2: {
+			type: Datatypes.TIME
 		}
 	});
-	return recirculator;
+	return recirculatorSettings;
 
 	var temperatures = sequelize.define("temperatures",{
 		tempFamilyRoom: {
