@@ -2,22 +2,20 @@
 
 $(document).ready(function() {
 
-// wait for clicks on the buttons
 
 // get the current recirc times and write to screen
 
-//get current temps form database
 var variableH = 6;
 var veriableM = 30;
 var variable = "6:30";
 
-//$("#weekdayStartTime1").attr("placeholder", variable);
-
+// wait for clicks on the buttons
 
 // handling the show temperature click
 $(".showTemp").on("click", function(event){
 	event.preventDefault();
 	console.log("got the show click");
+	//get current temps from database
 	$.get('curTemp', (temps) => {
 		console.log(temps);
 		console.log("temp1 - ", temps [0].createdAt);
@@ -26,6 +24,7 @@ $(".showTemp").on("click", function(event){
 	});
 });
 
+// get the recirculator settings from the database
 $(".getRecircSettings").on("click", function(event){
 	event.preventDefault();
 	console.log("got the get recirc settings click");
@@ -45,6 +44,7 @@ $(".getRecircSettings").on("click", function(event){
     });
 });
 
+// Handle the change red button
 $(".messageRedChange").on("click", function(){
 	console.log("got the send Red Change message click");
     $.ajax({
@@ -57,6 +57,7 @@ $(".messageRedChange").on("click", function(){
     });
 });
 
+// Handle the change green button
 $(".messageGreenChange").on("click", function(event){
 	console.log("got the send Green message click");
     $.ajax({
@@ -69,6 +70,7 @@ $(".messageGreenChange").on("click", function(event){
     });
 });
 
+// manually turn the pump on
 $(".messageTurnPumpOn").on("click", function(event){
 	console.log("got the pump on message click");
     $.ajax({
@@ -81,6 +83,7 @@ $(".messageTurnPumpOn").on("click", function(event){
     });
 });
 
+// manually turn the pump off
 $(".messageTurnPumpOff").on("click", function(event){
 	console.log("got the pump off message click");
     $.ajax({
@@ -100,31 +103,6 @@ $(".about").on("click", function(event){
 	console.log("got the about click");
 	$.get('/about');
 })
-
-// http://api.jquery.com/data/
-// handling the save click
-$(document).on("click", ".saveNews", function(event){
-	var indexOfCurrentArticle = $( ".saveNews" ).index( this );
-	console.log("value - ");
-	console.log(indexOfCurrentArticle);
-
-	// https://stackoverflow.com/questions/15042245/reading-ajax-post-variables-in-node-js-with-express
-	$.ajax({
-		url: "/save",
-	 	type: 'POST',
-	 	dataType: "json",
-		data: {
-			index: indexOfCurrentArticle,
-			name: "some text"
-		},
-		success: function(data){
-			console.log("we got the return from the save")
-			showSavedStories();
-		}
-	});
-// end save click
-});
-
 
 
 // end doc ready

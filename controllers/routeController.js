@@ -29,7 +29,7 @@ app.use(express.static('public'));
 //app.set('view engine', 'hbs');
 
 const dbaccess = require ('./databasecontroller');
-const comControler = require ('./serialController');
+const comControler = require ('./communicationsController');
 //let SendMessageToArdunio = comControler.sendMessageToArdunio;
 
 //app.get('')

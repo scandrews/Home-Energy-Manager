@@ -15,7 +15,6 @@
 
   // buffers for receiving and sending data
   char packetBuffer [11];  //buffer to hold incoming packet,
-//  char ReplyBuffer[] = "acknowledged";       // a string to send back
 
   int sensorPin = A0; //define sensor pin
   int sensorValue;
@@ -107,14 +106,6 @@ void loop() {
    Udp.write(tBuffer3, 5);
    Udp.endPacket(); // end packet
 
-///////
-  Serial.print("The Green state - ");
-  Serial.print(greenState);
-  Serial.print(" Red State - ");
-  Serial.print(redState);
-  Serial.print(" Motor State - ");
-  Serial.println(motorState);
-
 // This section recieves UDP packets
 // if there's data available, read a packet
   int packetSize = Udp.parsePacket();
@@ -205,5 +196,12 @@ void loop() {
   digitalWrite(LED4, LOW);
 //  Serial.println("just set led4 low");
   delay(1000);
+///////
+  Serial.print("The Green state - ");
+  Serial.print(greenState);
+  Serial.print(" Red State - ");
+  Serial.print(redState);
+  Serial.print(" Motor State - ");
+  Serial.println(motorState);
    
 }

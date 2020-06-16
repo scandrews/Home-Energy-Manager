@@ -47,6 +47,16 @@ module.exports = function(sequelize, Datatypes){
 			allowNull: false,	
 		}
 	});
-	return temperatures
+	return temperatures;
+
+	var recirculatorHistory = sequelize.define("recirculatorHistory",{
+		pipetemperatures: {
+			type: Datatypes.FLOAT
+		},
+		recircOnOff: {
+			type: Datatypes.int (2)
+		}
+	});
+	return recirculatorHistory;
 };
 

@@ -6,7 +6,6 @@
 }
 
 body {
-    background-image: url("../images/beer.jpg");
     background-size: 100%;
 }
 
@@ -72,18 +71,6 @@ h1, h2 {
 }
 
 /* --------------------------------------- */
-/* these 2 were brought over from the dashboard file */
-
-#beerTitle {
-    color: blue;
-    font-size: large;
-}
-
-#findNewDivTitle {
-    color: white;
-}
-
-/*-----------------------------------------*/
 
 * {
   margin: 5px auto;

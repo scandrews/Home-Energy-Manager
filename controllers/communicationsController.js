@@ -84,7 +84,7 @@ server.on("message", function (StuffIn, remote) {
 server.bind(PORT);
 
 exports.sendMessageToArdunio = function (whatToDo){
-	console.log("in comm controller sent message, req.body -" + whatToDo);
+	console.log("in comm controller sent message, req.body - " + whatToDo);
 //	console.log(whatToDo);
 	switch (whatToDo){ 
 		case "greenChange":

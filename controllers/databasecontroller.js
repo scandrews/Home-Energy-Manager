@@ -8,10 +8,8 @@ var tempSum3 = 0;
 var tempcount = 0;
 var avgTemp2 = 0;
 var avgTemp3 = 0;
-var numOfReadingsToAvg = 25;
-//var tempToUse = [];
+var numOfReadingsToAvg = 250;
 var test = "Test";
-//var temperature1 = 11.11;
 
 var connection;
 
@@ -33,10 +31,8 @@ connection.connect((err) => {
   // get the recirculator settings from the data base
   exports.recircSettingsRecirCNTRL = function (what, fn) {
     console.log("dbase controoler get recirc settings from recirs controller");
-//    console.log("Ha Fuken Lo - " + what);
 //    console.log(fn);
     connection.query("SELECT * FROM recirculatorsettings", (err, result) => {
-//        console.log("After the db got the recirc settings");
 //        console.log(result);
         return ( fn ( result ));
     });
@@ -45,7 +41,6 @@ connection.connect((err) => {
   // get the recirculator settings from the data base
   exports.recircSettingsFrontEnd = function (req, res) {
     console.log("dbase controoler get recirc settings from the front end");
-//    console.log("Ha Fuken Lo");
     connection.query("SELECT * FROM recirculatorsettings", (err, result) => {
 //        console.log(result);
         res.send( result );
@@ -65,6 +60,7 @@ connection.connect((err) => {
     console.log("in save temp data");
 //    console.log(temp2, temp3);
 
+    // average temperature readings to numOfReadingsToAvg
     tempSum2 = tempSum2 + temp2;
     tempSum3 = tempSum3 + temp3;
     tempcount++;
@@ -86,6 +82,17 @@ connection.connect((err) => {
           return;
       });
     };
+  };
+
+  exports.savePipeTemp = function (action, pipeTemp){
+    connection.query("INSERT INTO recirculatorHistory SET ?",
+    {
+      pipetemperatures: pipeTemp,
+      recircOnOff: action,
+    }, (err) => {
+      if (err) throw err;
+      return;
+    });
   };
 
 // end connection
