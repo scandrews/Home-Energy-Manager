@@ -169,32 +169,13 @@ void loop() {
         Serial.println("hit the default");
         break;
     }
-    
    // end got a packet
    };
-//  digitalWrite(LED1, HIGH);
-//  Serial.println("just set led4 high");
-//  delay(200);
-//  digitalWrite(LED1, LOW);
-//  Serial.println("just set led4 low");
-//  delay(1000);
-//  digitalWrite(LED2, HIGH);
-//  Serial.println("just set led4 high");
-//  delay(200);
-//  digitalWrite(LED2, LOW);
-//  Serial.println("just set led4 low");
-//  delay(1000);
-//  digitalWrite(LED3, HIGH);
-//  Serial.println("just set led4 high");
-//  delay(200);
-//  digitalWrite(LED3, LOW);
-//  Serial.println("just set led4 low");
-//  delay(1000);
+   
+  // Blink led 4
   digitalWrite(LED4, HIGH);
-//  Serial.println("just set led4 high");
   delay(200);
   digitalWrite(LED4, LOW);
-//  Serial.println("just set led4 low");
   delay(1000);
 ///////
   Serial.print("The Green state - ");

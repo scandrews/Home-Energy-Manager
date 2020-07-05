@@ -47,3 +47,9 @@ comControler.serialComStuff();
 app.listen(PORT, function() {
   console.log("App listening on PORT: " + PORT);
 });
+
+// Listener for seperate host server
+// app.listen(PORT, '0.0.0.0', function() {
+//    console.log('Listening to port:  ' + PORT);
+//});
+
