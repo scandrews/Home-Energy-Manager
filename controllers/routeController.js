@@ -2,15 +2,7 @@
 var express = require("express");
 var bodyParser = require ("body-parser");
 var morgan = require("morgan");
-//var path = require ("path");
-//var PORT = process.env.PORT || 3000;
-//var router = express.Router();
-
-//app.use(express.json());
 var app = express();
-
-//const cors = require('cors');
-//app.use(cors());
 
 // set up express parsing
 app.use(bodyParser.json()); // support json encoded bodies
@@ -30,6 +22,7 @@ app.use(express.static('public'));
 
 const dbaccess = require ('./databasecontroller');
 const comControler = require ('./communicationsController');
+const recircController = require ('./recircController');
 //let SendMessageToArdunio = comControler.sendMessageToArdunio;
 
 //app.get('')
@@ -45,6 +38,12 @@ app.get('/curTemp', (req, res) => {
 	dbaccess.getTempData(req, res);
 });
 
+app.get('/curTempHistory', (req, res) => {
+	console.log("in the get curTemp route");
+//	console.log(req.body)
+	dbaccess.getTempData(req, res);
+});
+
 app.get('/recircSettings', (req, res) => {
 	console.log("in route controller get recirculator settings duuu");
 //	res.send("What da FAAA");
@@ -52,9 +51,15 @@ app.get('/recircSettings', (req, res) => {
 	};
 });
 
+app.get('/pipeTemp', (req, res) => {
+	console.log("in route controler, get pipe temp data");
+	dbaccess.getPipeTempData(req, res);
+});
+
 app.post('/sendMessage', (req, res) => {
-	console.log("in route controller send message");
-	console.log(req.body);
+	console.log("in route controller send message - " + req.body.message);
+	recircController.manualPumpChange(req.body.message);
+//	console.log(req.body);
 	comControler.sendMessageToArdunio(req.body.message);
 });
 

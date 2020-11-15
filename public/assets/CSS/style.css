@@ -6,8 +6,23 @@
 }
 
 body {
-    background-size: 100%;
+  background-size: 100%;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
+
+.chart--container {
+  height: 100%;
+  width: 100%;
+  min-height: 300px;
+}
+ 
+.zc-ref {
+  display: none;
+}
+
 
 .header.jumbotron{
     height: auto;

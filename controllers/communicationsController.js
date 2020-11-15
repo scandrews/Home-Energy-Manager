@@ -3,11 +3,11 @@ const data_access = require('./databasecontroller');
 const recircContrl = require('./recircController');
 
 // variables for the temperature sensor
-var tempSum1 = 0;
-var tempSum2 = 0;
-var tempcount = 0;
-var avgTemp1 = 0;
-var avgTemp2 = 0;
+//var tempSum1 = 0;
+//var tempSum2 = 0;
+//var tempcount = 0;
+//var avgTemp1 = 0;
+//var avgTemp2 = 0;
 var tempToUse = [];
 var test = "Test";
 var temperature1 = 11.11;
@@ -23,8 +23,8 @@ const Readline = SerialPort.parsers.Readline;
 
 // setup ethernet server
 var PORT = 6000;
-var HOST = '192.168.1.13';
-var clientAddress = '192.168.1.7'
+var HOST = '192.168.1.5';
+var clientAddress = '192.168.1.9'
 var dgram = require("dgram");
 var server = dgram.createSocket('udp4');
 
@@ -47,6 +47,7 @@ for (var k in interfaces) {
     }
 };
 console.log(addresses);
+HOST = addresses;
 
 var CtoF = function (inC){
 	return ((inC * 9/5) + 32);
@@ -54,29 +55,50 @@ var CtoF = function (inC){
 
 //  Start the ethernet server
 server.on("message", function (StuffIn, remote) {
-    console.log("got an ethernet message ");
-//    console.log(remote);
+//    console.log("got an ethernet message ");
+    console.log(remote);
     arduinoPort = remote.port;
-    console.log(StuffIn);
+//    console.log(StuffIn);
 
-	var tempC1 = StuffIn.toString("utf-8", 0, 5);
+	// t designates it as a temperature packet
+    if (StuffIn.toString("utf-8", 0, 1) == "t"){
+
+	var tempC1 = StuffIn.toString("utf-8", 1, 6);
     var tempF1 = CtoF (tempC1);
-    console.log("recirculator Temperature - " + tempF1);
-    recircContrl.checkRecirc(tempF1);
+    console.log("Temperature 1 C & F - " + tempC1 + " " + tempF1);
 
-
-    tempC2 = StuffIn.toString("utf8", 5, 10);
+    tempC2 = StuffIn.toString("utf-8", 6, 11);
 	tempF2 = CtoF(tempC2);
-//    console.log(tempC2 + " " + tempF2);
+    console.log("Temperature 2 C & F - " + tempC2 + " " + tempF2);
 
-    tempC3 = StuffIn.toString("utf8", 10, 15);
+    tempC3 = StuffIn.toString("utf-8", 11, 16);
 	tempF3 = CtoF(tempC3);
-//    console.log(tempC3 + " " + tempF3);
+    console.log("Temperature 3 C & F - " + tempC3 + " " + tempF3);
 
-    data_access.saveTempData(tempF2, tempF3);
+    tempC4 = StuffIn.toString("utf-8", 16, 21);
+	tempF4 = CtoF(tempC4);
+    console.log("Temperature 4 C & F - " + tempC4 + " " + tempF4);
+
+    recircContrl.checkRecirc(tempF4);
+
+    data_access.saveTempData(tempF1, tempF2, tempF3, tempF4);
+
+    // f designates it as a flag packet
+	} else if (StuffIn.toString("utf-8", 0, 1) == "f"){
+		var flag1 = StuffIn.toString("utf-8", 1, 2);
+		var flag2 = StuffIn.toString("utf-8", 3, 4);
+		var flag3 = StuffIn.toString("utf-8", 5, 6);
+		var flag4 = StuffIn.toString("utf-8", 7, 8);
+
+		console.log("flag1 - " + flag1);
+		console.log("flag2 - " + flag2);
+		console.log("flag3 - " + flag3);
+		console.log("flag4 - " + flag4);
+	};
+
 });
 
- server.on("listening", function () {
+server.on("listening", function () {
     var address = server.address();
     console.log('UDP Server listening on ' + address.address + ":" + address.port);
 });
@@ -84,7 +106,7 @@ server.on("message", function (StuffIn, remote) {
 server.bind(PORT);
 
 exports.sendMessageToArdunio = function (whatToDo){
-	console.log("in comm controller sent message, req.body - " + whatToDo);
+	console.log("in comm controller send message, req.body - " + whatToDo);
 //	console.log(whatToDo);
 	switch (whatToDo){ 
 		case "greenChange":
@@ -130,7 +152,7 @@ exports.serialComStuff = function (){
 	port.pipe(parser);
 	parser.on('data', function(inputString){
 		//	var newstr = inputString.split(" ");
-		console.log (inputString);
+		// console.log (inputString);
 		//	console.log (newstr);
 		
 	// end serial i/o section
