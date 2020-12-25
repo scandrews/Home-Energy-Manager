@@ -1,6 +1,7 @@
 //  Database controller all interaction with the database are here
 
 const mysql = require('mysql2');
+var comController = require ('./communicationsController');
 
 // variables for the temperature sensor
 var tempSum1 = 0;
@@ -12,6 +13,7 @@ var avgTemp1 = 0;
 var avgTemp2 = 0;
 var avgTemp3 = 0;
 var avgTemp4 = 0;
+var flags = [];
 var numOfReadingsToAvg = 10;
 //  30 min * 60 * numOfReadingsToAvg = 1800 - save every 30 min
 //  2  min * 60 * numOfReadingsToAvg / 2 = 600
@@ -19,13 +21,22 @@ var numOfReadingsToAvg = 10;
 //  20 sec * numOfReadingsToAvg * 2 = 1
 //  2 sec * numOfReadingsToAvg * currentSaveDelayCount = 20 sec
 //  2 sec * numOfReadingsToAvg * currentSaveDelayCount / 60 = 
+//  2 sec * 10 * 90 / 60 = 30 Min - current time between saves
+//var currentSaveDelayCount = 90;
 var currentSaveDelayCount = 90;
+var saveDelay = currentSaveDelayCount;
 var delayCount = 0;
+var temporaryTimes = [];
 var test = "Test";
 //var loopsSinceLastSettings = 0;
 //var checkSettingsIntervul = 100;
 
 var connection;
+
+exports.getCurrentTimes = function(){
+  temporaryTimes = [currentSaveDelayCount, tempcount];
+  return(temporaryTimes);
+};
 
 if (process.env.JAWSDB_URL) {
   connection = mysql.createConnection(process.env.JAWSDB_URL);
@@ -51,7 +62,7 @@ connection.connect((err) => {
 
 //    console.log(fn);
       connection.query("SELECT * FROM recirculatorsettings", (err, result) => {
-        console.log(result);
+        //console.log(result);
         return ( fn ( result ));
       });
 //    }else if loopsSinceLastSettings == checkSettingsIntervul {
@@ -88,8 +99,8 @@ connection.connect((err) => {
 
 
   exports.saveTempData = function (temp1, temp2, temp3, temp4) {
-    console.log("in save temp data");
-//    console.log(temp2, temp3);
+    console.log("in save temperature data");
+    console.log(temp1, temp2, temp3, temp4);
 
     // average temperature readings to numOfReadingsToAvg
     tempSum1 = tempSum1 + temp1;
@@ -97,42 +108,57 @@ connection.connect((err) => {
     tempSum3 = tempSum3 + temp3;
     tempSum4 = tempSum4 + temp4;
     tempcount++;
-    console.log("tempcount - " + tempcount);
+//    console.log(tempSum1, tempSum2, tempSum3, tempSum4);
+
+    console.log("tempcount - " + tempcount + " Current Save Delay Count - " + currentSaveDelayCount);
 
     if (tempcount == numOfReadingsToAvg) {
-      avgTemp1 = tempSum1/numOfReadingsToAvg;
-      avgTemp2 = tempSum2/numOfReadingsToAvg;
-      avgTemp3 = tempSum3/numOfReadingsToAvg;
-      avgTemp4 = tempSum4/numOfReadingsToAvg;
+      avgTemp1 = parseFloat((tempSum1/tempcount).toFixed(1));
+      avgTemp2 = parseFloat((tempSum2/tempcount).toFixed(1));
+      avgTemp3 = parseFloat((tempSum3/tempcount).toFixed(1));
+      avgTemp4 = parseFloat((tempSum4/tempcount).toFixed(1));
       tempSum1 = 0;
       tempSum2 = 0;
       tempSum3 = 0;
       tempSum4 = 0;
       tempcount = 0;
       console.log("averages - " + avgTemp1, avgTemp2, avgTemp3, avgTemp4);
-      console.log("delayCount - " + delayCount);
 
-      if (delayCount == currentSaveDelayCount){
+//      console.log("Current Save Delay Count - " + currentSaveDelayCount);
+      if (currentSaveDelayCount == 0){
 
-        console.log("Saving Temp Data");
-        connection.query("INSERT INTO temperatures SET ?",
-          {
-            tempOutDoors: avgTemp1,
-            tempFamilyRoom: avgTemp2,
-            tempBedRoom: avgTemp3,
-            tempPipe: avgTemp4
-          }, (err, result) => {
-            if (err) throw err;
-            return;
-        });
-        delayCount = 0;
-      }
+//        comController.returnFlags = function(flags){
+//          console.log("Flags in db controller - " +  flags)
+          console.log("Saving Temp Data");
+          connection.query("INSERT INTO temperatures SET ?",
+            {
+              tempOutDoors: avgTemp1,
+              tempFamilyRoom: avgTemp2,
+              tempBedRoom: avgTemp3,
+              tempPipe: avgTemp4
+            }, (err, result) => {
+              if (err) throw err;
+              return;
+            }
+          );
+          // end get flags from com controller
+//        };
+        currentSaveDelayCount = saveDelay;
+      };
+      currentSaveDelayCount --;
       delayCount++;
     };
   };
 
   exports.savePipeTemp = function (action, pipeTemp){
     console.log("In save pipe temp" + action + " , " + pipeTemp);
+    connection.query("delete from recirculatorhistory ORDER BY id limit 1", (err) => {
+      if (err) {
+        console.log("Got a DB error in savePipeTemp");
+        console.log (err);
+      };
+      return;
+    });
     connection.query("INSERT INTO recirculatorHistory SET ?",
     {
       pipetemperatures: pipeTemp,
@@ -144,6 +170,15 @@ connection.connect((err) => {
       };
       return;
     });
+  };
+
+  exports.changeState = function (action){
+    if (action == "changeHome-Away"){
+      connection.query ("UPDATE recirculatorsettings SET pipeTempOn = 35  WHERE id=2")
+    }
+    else if (action == "changeHome-Away"){
+      
+    }
   };
 
 // end connection

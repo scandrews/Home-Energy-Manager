@@ -12,6 +12,16 @@ var tempToUse = [];
 var test = "Test";
 var temperature1 = 11.11;
 
+// Status flags - from the Arduino
+var flag1 = 0;
+var flag2 = 0;
+var flag3 = 0;
+var flag4 = 0;
+
+var tempF1 = 0.0;
+var tempF2 = 0.0;
+var tempF3 = 0.0;
+var tempF4 = 0.0;
 
 
 // setup serial port
@@ -24,7 +34,7 @@ const Readline = SerialPort.parsers.Readline;
 // setup ethernet server
 var PORT = 6000;
 var HOST = '192.168.1.5';
-var clientAddress = '192.168.1.9'
+var clientAddress = '192.168.1.4'
 var dgram = require("dgram");
 var server = dgram.createSocket('udp4');
 
@@ -49,22 +59,67 @@ for (var k in interfaces) {
 console.log(addresses);
 HOST = addresses;
 
+
+//  State Machine for the whole application
+
+var allStates = {
+	stateHomeAway: "Home",
+	statePump: "off",
+	stateFurnace: "off",
+	stateWoodStove: "off"
+};
+
+exports.changeState = function (whichState){
+	console.log("in com cntrlr change state - " + whichState);
+	console.log("com controller allstates - " + allStates);
+	switch (whichState){
+		case "changeHome-Away":
+			if (allStates.stateHomeAway == "Home"){
+				allStates.stateHomeAway = "Away";
+				console.log ("new allstates - " + allStates.stateHomeAway);
+				return allStates
+			} else if (allStates.stateHomeAway == "Away"){
+				allStates.stateHomeAway = "Home";
+				console.log ("new allstates - " + allStates.stateHomeAway);
+				return allStates
+			}
+			break;
+		case "statePump":
+			allStates.statePump = "off"
+			break;
+		case "stateFurnace":
+			allStates.stateFurnace = "off"
+			break;
+		case "stateWoodStove":
+			allStates.stateWoodStove = "off"
+		default:
+			console.log("ERROR - change state function recieved other request")
+	}
+};
+
+exports.getState = function (){
+	return allStates
+};
+//  End state machine
+
+
+// function to convert C to F
 var CtoF = function (inC){
-	return ((inC * 9/5) + 32);
+	return (parseFloat(((inC * 9/5) + 32).toFixed(1)));
 };
 
 //  Start the ethernet server
 server.on("message", function (StuffIn, remote) {
-//    console.log("got an ethernet message ");
+	//    console.log("got an ethernet message ");
     console.log(remote);
     arduinoPort = remote.port;
-//    console.log(StuffIn);
+	//    console.log(StuffIn);
 
 	// t designates it as a temperature packet
     if (StuffIn.toString("utf-8", 0, 1) == "t"){
 
-	var tempC1 = StuffIn.toString("utf-8", 1, 6);
-    var tempF1 = CtoF (tempC1);
+	tempC1 = StuffIn.toString("utf-8", 1, 6);
+    tempF1 = CtoF (tempC1);
     console.log("Temperature 1 C & F - " + tempC1 + " " + tempF1);
 
     tempC2 = StuffIn.toString("utf-8", 6, 11);
@@ -85,10 +140,10 @@ server.on("message", function (StuffIn, remote) {
 
     // f designates it as a flag packet
 	} else if (StuffIn.toString("utf-8", 0, 1) == "f"){
-		var flag1 = StuffIn.toString("utf-8", 1, 2);
-		var flag2 = StuffIn.toString("utf-8", 3, 4);
-		var flag3 = StuffIn.toString("utf-8", 5, 6);
-		var flag4 = StuffIn.toString("utf-8", 7, 8);
+		flag1 = StuffIn.toString("utf-8", 1, 2);
+		flag2 = StuffIn.toString("utf-8", 3, 4);
+		flag3 = StuffIn.toString("utf-8", 5, 6);
+		flag4 = StuffIn.toString("utf-8", 7, 8);
 
 		console.log("flag1 - " + flag1);
 		console.log("flag2 - " + flag2);
@@ -109,7 +164,7 @@ exports.sendMessageToArdunio = function (whatToDo){
 	console.log("in comm controller send message, req.body - " + whatToDo);
 //	console.log(whatToDo);
 	switch (whatToDo){ 
-		case "greenChange":
+		case "changeHome-Away":
 			console.log("in send message CASE green");
 			server.send(greenChange, 0, 2, arduinoPort, clientAddress)
 			break;
@@ -139,6 +194,10 @@ exports.sendMessageToArdunio = function (whatToDo){
 	}
 };
 
+exports.returnFlags = function (){
+	var dataPac = [flag1, flag2, flag3, flag4, tempF1, tempF2, tempF3, tempF4];
+	return (dataPac);
+};
 
 // this section reads the serial port and console logs it
 exports.serialComStuff = function (){

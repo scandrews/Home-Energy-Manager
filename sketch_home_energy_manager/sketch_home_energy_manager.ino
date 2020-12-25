@@ -64,9 +64,94 @@ void setup() {
   pinMode(LED2, OUTPUT);
   pinMode(LED3, OUTPUT); // Motor output digital output 6
   pinMode(LED4, OUTPUT);
+
+  analogReference(EXTERNAL);
 }
 
 void loop() {
+
+  // This section recieves UDP packets
+  // if there's data available, read a packet
+  int packetSize = Udp.parsePacket();
+  if(packetSize > 0)
+  {
+    Serial.print("Arduino received packet of size ");
+    Serial.println(packetSize);
+    Serial.print("From ");
+    IPAddress remote = Udp.remoteIP();
+      for (int i =0; i < 4; i++)
+      {
+        Serial.print(remote[i], DEC);
+        if (i < 3)
+        {
+          Serial.print(".");
+        }
+      }
+    Serial.print(", port ");
+    Serial.println(Udp.remotePort());
+
+    // read the packet into packetBufffer
+    Udp.read(packetBuffer,UDP_TX_PACKET_MAX_SIZE);
+    Serial.print("Contents: ");
+    Serial.println(packetBuffer);
+    whatToDo = atoi (packetBuffer);
+
+    switch (whatToDo){
+      case 01:
+        if (greenState == 0){
+          digitalWrite(LED1, HIGH);
+          Serial.println("just set green high");
+          greenState = 1;
+          } else if (greenState == 1) {
+            digitalWrite(LED1, LOW);
+            Serial.println("just set green low");
+            greenState = 0;
+          }
+      break;
+      case 02:
+        if (redState == 0){
+          digitalWrite(LED2, HIGH);
+          Serial.println("just set red high");
+          redState = 1;
+        } else {
+          digitalWrite(LED2, LOW);
+          Serial.println("just set red low");
+          redState = 0;
+          }
+      break;
+      case 03:
+          digitalWrite(LED3, HIGH);   // output 4 motor output
+          Serial.println("just set run recirc high");
+          motorState = 1;
+      break;
+      case 04:
+          digitalWrite(LED3, LOW);
+          Serial.println("just set recirc low");
+          motorState = 0;
+      break;
+      default:
+        Serial.println("hit the default");
+        break;
+    }
+    // end got a packet
+   };
+
+
+  //  SEND FLAGS TO SERVER
+
+    char flags[100];
+    sprintf(flags, "%d:%d:%d:%d", greenState, redState, motorState, someState);
+    Serial.print("flags in one string ");
+    Serial.println(flags);
+
+    Udp.beginPacket(receiverIP, receiverPort);
+    Udp.write("f", 1);    //identify packet as a flag packet
+    Udp.write(flags, 7);
+    Udp.endPacket();
+
+  //  END SEND FLAGS
+
+    //  READ TEMPERATURES
    // read analog values and convert to centagrate
     sensorInput = analogRead(sensorPin1);    //read the analog sensor and store it
     float voltage = sensorInput * 5.0;       //find percentage of input reading
@@ -139,16 +224,17 @@ void loop() {
     Udp.write(tBuffer4, 5);
     Udp.endPacket(); // end packet
 
+////////
 
-  char flags[100];
-  sprintf(flags, "%d:%d:%d:%d", greenState, redState, motorState, someState);
-  Serial.print("flags in one string ");
-  Serial.println(flags);
-
-  Udp.beginPacket(receiverIP, receiverPort);
-  Udp.write("f", 1);    //identify packet as a flag packet
-  Udp.write(flags, 7);
-  Udp.endPacket();
+//    char flags[100];
+//    sprintf(flags, "%d:%d:%d:%d", greenState, redState, motorState, someState);
+//    Serial.print("flags in one string ");
+//    Serial.println(flags);
+//
+//    Udp.beginPacket(receiverIP, receiverPort);
+//    Udp.write("f", 1);    //identify packet as a flag packet
+//    Udp.write(flags, 7);
+//    Udp.endPacket();
 
   //Blink led 1 (digital output 2)
 //  digitalWrite(LED1, HIGH);
@@ -159,69 +245,69 @@ void loop() {
 
 // This section recieves UDP packets
 // if there's data available, read a packet
-  int packetSize = Udp.parsePacket();
-  if(packetSize > 0)
-  {
-    Serial.print("Arduino received packet of size ");
-    Serial.println(packetSize);
-    Serial.print("From ");
-    IPAddress remote = Udp.remoteIP();
-      for (int i =0; i < 4; i++)
-      {
-        Serial.print(remote[i], DEC);
-        if (i < 3)
-        {
-          Serial.print(".");
-        }
-      }
-    Serial.print(", port ");
-    Serial.println(Udp.remotePort());
-
-    // read the packet into packetBufffer
-    Udp.read(packetBuffer,UDP_TX_PACKET_MAX_SIZE);
-    Serial.print("Contents: ");
-    Serial.println(packetBuffer);
-    whatToDo = atoi (packetBuffer);
-
-    switch (whatToDo){
-      case 01:
-        if (greenState == 0){
-          digitalWrite(LED1, HIGH);
-          Serial.println("just set green high");
-          greenState = 1;
-          } else if (greenState == 1) {
-            digitalWrite(LED1, LOW);
-            Serial.println("just set green low");
-            greenState = 0;
-          }
-      break;
-      case 02:
-        if (redState == 0){
-          digitalWrite(LED2, HIGH);
-          Serial.println("just set red high");
-          redState = 1;
-        } else {
-          digitalWrite(LED2, LOW);
-          Serial.println("just set red low");
-          redState = 0;
-          }
-      break;
-      case 03:
-          digitalWrite(LED3, HIGH);   // output 4 motor output
-          Serial.println("just set run recirc high");
-          motorState = 1;
-      break;
-      case 04:
-          digitalWrite(LED3, LOW);
-          Serial.println("just set recirc low");
-          motorState = 0;
-      break;
-      default:
-        Serial.println("hit the default");
-        break;
-    }
-    // end got a packet
-   };
+//  int packetSize = Udp.parsePacket();
+//  if(packetSize > 0)
+//  {
+//    Serial.print("Arduino received packet of size ");
+//    Serial.println(packetSize);
+//    Serial.print("From ");
+//    IPAddress remote = Udp.remoteIP();
+//      for (int i =0; i < 4; i++)
+//      {
+//        Serial.print(remote[i], DEC);
+//        if (i < 3)
+//        {
+//          Serial.print(".");
+//        }
+//      }
+//    Serial.print(", port ");
+//    Serial.println(Udp.remotePort());
+//
+//    // read the packet into packetBufffer
+//    Udp.read(packetBuffer,UDP_TX_PACKET_MAX_SIZE);
+//    Serial.print("Contents: ");
+//    Serial.println(packetBuffer);
+//    whatToDo = atoi (packetBuffer);
+//
+//    switch (whatToDo){
+//      case 01:
+//        if (greenState == 0){
+//          digitalWrite(LED1, HIGH);
+//          Serial.println("just set green high");
+//          greenState = 1;
+//          } else if (greenState == 1) {
+//            digitalWrite(LED1, LOW);
+//            Serial.println("just set green low");
+//            greenState = 0;
+//          }
+//      break;
+//      case 02:
+//        if (redState == 0){
+//          digitalWrite(LED2, HIGH);
+//          Serial.println("just set red high");
+//          redState = 1;
+//        } else {
+//          digitalWrite(LED2, LOW);
+//          Serial.println("just set red low");
+//          redState = 0;
+//          }
+//      break;
+//      case 03:
+//          digitalWrite(LED3, HIGH);   // output 4 motor output
+//          Serial.println("just set run recirc high");
+//          motorState = 1;
+//      break;
+//      case 04:
+//          digitalWrite(LED3, LOW);
+//          Serial.println("just set recirc low");
+//          motorState = 0;
+//      break;
+//      default:
+//        Serial.println("hit the default");
+//        break;
+//    }
+//    // end got a packet
+//   };
    
   // Blink led 4 (digital output 5)
   digitalWrite(LED4, HIGH);

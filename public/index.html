@@ -19,6 +19,14 @@
 			<h2>Home Energy Manager</h2>
 		</div>
 
+		<div>
+			<span class="statusBox"></span>
+			<span class="temp1"> </span>
+			<span class="temp2"> </span>
+			<span class="temp3"> </span>
+			<span class="temp4"> </span>
+		</div>
+		
 
 		<nav class="navbar navbar-expand-lg navbar-light bg-light align-left">
 		  <div class="collapse navbar-collapse align-left" id="navbarSupportedContent">
@@ -30,13 +38,32 @@
 				<a class="nav-item nav-link showTemp" href="#">Show Temps</a>
 				<a class="nav-item nav-link getRecircSettings" href="#">Show Recirc Settings</a>
 				<a class="nav-item nav-link messageRedChange" href="#" name="changeRed">Red</a>
-				<a class="nav-item nav-link messageGreenChange" href="#">Green</a>
+				<a class="nav-item nav-link changeHomeAway" href="#">Away</a>
+				<a class="nav-item nav-link messageShowCurrentTemps" href="#">Current Temps</a>
 				<a class="nav-item nav-link" href="#">About</a>
 		    </div>
 		  </div>
 		</nav>
 
-		<!-- Div for status buttons
+
+		<!-- Div for the real time status Line -->
+		<table class = "table">
+			<thead>
+	    		<tr>
+	    			<th scope="col">Pump Status</th>
+					<th scope="col">Family Room Temp</th>
+					<th scope="col">Bed Room Temp</th>
+					<th scope="col">Outdoor Temp</th>
+					<th scope="col">Pipe Temp</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="curTempBlock1">
+	    			<td></td>
+				</tr>
+			</tbody>
+		</table>
+
 
 
 
@@ -46,21 +73,103 @@
 		</div>
 				
 	
-	<!-- Div for other temp chart -->
+		<!-- Div for other temp chart -->
 		<div id="otherTempsChart" class="chart--container">
 			<a class="zc-ref" href="https://www.zingchart.com">Powered by ZingChart</a>
 		</div>
 				
 	</div>
 
+	<div>
 
+<!--  new fucken -->
+
+	<div class="row">
+	<div class="col-sm-5" margin="5px">
+	<!-- This section displays the recirculator setting -->
+			<div class="card">
+				<div class="card-body my-card-body">
+				    <h5 class="card-header my-card-header">Recirculator Status</h5>
+				    <button type="button" class="btn btn-outline-dark">WTF Dark</button>
+				    <form>
+					  <div class="form-group row my-form-group">
+					    <label for="onTemperature" class="col-sm-6 col-form-label my-col-form-label">Until Save All</label>
+					    <div class="col-sm-4">
+					      <input type="onTemperature" class="form-control my-col-form-label" id="onTemperature" placeholder="On Temperature">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="offTemperature" class="col-sm-6 col-form-label my-col-form-label">Pump Running</label>
+					    <div class="col-sm-4">
+					      <input type="offTemperature" class="form-control my-col-form-label" id="offTemperature" placeholder="Off Temperature">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekdayStartTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekday Start Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekdayStartTime1" class="form-control my-col-form-label" id="weekdayStartTime1" placeholder="First Weekday On Time">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekdayOffTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekday End Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekdayOffTime1" class="form-control my-col-form-label" id="weekdayOffTime1" placeholder="First Weekday Off Time">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekdayStartTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekday Start Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekdayStartTime2" class="form-control my-col-form-label" id="weekdayStartTime2" placeholder="Second Weekday On Time">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekdayOffTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekday End Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekdayOffTime2" class="form-control my-col-form-label" id="weekdayOffTime2" placeholder="Second Weekday Off Time">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekendStartTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekend Start Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekendStartTime1" class="form-control my-col-form-label" id="weekendStartTime1" placeholder="First Weekday On Time">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekendOffTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekend End Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekendOffTime1" class="form-control my-col-form-label" id="weekendOffTime1" placeholder="First Weekend Off Time">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekendStartTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekend Start Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekendStartTime2" class="form-control my-col-form-label" id="weekendStartTime2" placeholder="Second Weekend On Time">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekendOffTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekend End Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekendOffTime2" class="form-control my-col-form-label" id="weekendOffTime2" placeholder="Second Weekend Off Time">
+					    </div>
+					  </div>
+					</form>
+				</div>
+			</div>
+
+
+<!-- TOO  -->
+
+	</div>
+	<div class="col-sm-5">
+
+
+<!--  Fucken hello  -->
 
 	<!-- This section displays the recirculator setting -->
-	<div class="col-xs-12 col-md-8">
-		<div>
 			<div class="card">
 				<div class="card-body my-card-body">
 				    <h5 class="card-header my-card-header">Recirculator Settings</h5>
+				    <button type="button" class="btn btn-outline-dark">Dark</button>
 				    <form>
 					  <div class="form-group row my-form-group">
 					    <label for="onTemperature" class="col-sm-6 col-form-label my-col-form-label">On Temperature</label>
@@ -126,8 +235,16 @@
 				</div>
 			</div>
 
-		</div>		
+
 	</div>
+	</div>
+
+
+<!--  yeah fucken hello  -->
+
+	</div>
+
+
 	<div>
 		<p>
 	</div>
@@ -138,17 +255,13 @@
     			<th scope="col">TIME</th>
 				<th scope="col">Family Room Temp</th>
 				<th scope="col">Bed Room Temp</th>
+				<th scope="col">Outdoor Temp</th>
+				<th scope="col">Pipe Temp</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr class="tempblock1">
     			<td></td>
-			</tr>
-			<tr class="tempblock2"> 
-				<td></td>
-			</tr>
-			<tr class="tempblock3"> 
-				<td></td>
 			</tr>
 		</tbody>
 	</table>

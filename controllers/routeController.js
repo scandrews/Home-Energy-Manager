@@ -32,6 +32,15 @@ app.get('/about', (req, res) => {
 	res.sendFile(__dirname, "./views/about.html");
 });
 
+app.get('/currentTemps', (req, res) => {
+	console.log("in the get current temperatures route");
+	dataPackage = comControler.returnFlags();
+	temporyTimes = dbaccess.getCurrentTimes();
+	dataPackage.push(temporyTimes);
+	console.log("still in get current temps route data - " + dataPackage);
+	res.send(dataPackage);	
+});
+
 app.get('/curTemp', (req, res) => {
 	console.log("in the get curTemp route");
 //	console.log(req.body)
@@ -58,11 +67,22 @@ app.get('/pipeTemp', (req, res) => {
 
 app.post('/sendMessage', (req, res) => {
 	console.log("in route controller send message - " + req.body.message);
-	recircController.manualPumpChange(req.body.message);
-//	console.log(req.body);
-	comControler.sendMessageToArdunio(req.body.message);
+	if (req.body.message == "changeHome-Away"){
+		newState = comControler.changeState(req.body.message)
+			console.log("GOT THE RETURN - " + newState.stateHomeAway + newState.statePump);
+			res.send(newState)
+		;
+	} else {
+		recircController.manualPumpChange(req.body.message);
+		//	console.log(req.body);
+		comControler.sendMessageToArdunio(req.body.message);
+	};
 });
 
+app.get('/currentStatus', (req, res) => {
+	console.log("in route controler, get current status");
+	return comControler.returnFlags();
+});
 
 
 module.exports = app;
