@@ -30,12 +30,16 @@ $(".messageShowCurrentTemps").on("click", function(){
 
 	function writeTemperatures(localTempArray){
 		console.log(localTempArray);
-		$(".curTempBlock1").html("<td>" + localTempArray[2] + 
-						"</td><td>" + localTempArray[4] + 
-						"</td><td>" + localTempArray[5] + 
-						"</td><td>" + localTempArray[6] +
-						"</td><td>" + localTempArray[7] +
-						"</td><td>" + time + "</td>");
+		$(".curTempBlock1").html("<td>" + localTempArray[2] +  //pump status
+							"</td><td>" + localTempArray[5] +  //outdoor sun
+							"</td><td>" + localTempArray[6] +  //Bedroom
+							"</td><td>" + localTempArray[9] + //Family room
+							"</td><td>" + localTempArray[6] +  //Bed Room
+							"</td><td>" + localTempArray[5] +  //Desk
+							"</td><td>" + localTempArray[7] +  //Pipe
+							"</td><td>" + localTempArray[4] +  //Wood
+							"</td><td>" + localTempArray[8] +  //Furnace
+							"</td><td>" + time + "</td>");
 
 	};
 
@@ -145,7 +149,7 @@ $(".messageChartPipeTemps").on("click", function(event){
 		const myConfig = {
     	    type: 'line',
         	title: {
-				text: 'Current Pipe Temperature',
+				text: 'Recirculator status',
 				fontSize: 22,
 				color: '#5d7d9a'
 			},
@@ -179,40 +183,6 @@ $(".messageChartPipeTemps").on("click", function(event){
 			},
 
 			"labels": labelArray,
-			//"labels": [{
-			//      "text": "11,245 Android",
-			//      "background-color": "#90A23B",
-			//      "font-size": "14px",
-			//      "font-family": "arial",
-			//      "font-weight": "normal",
-			//      "font-color": "#FFFFFF",
-			//      "padding": "10%",
-			//      "border-radius": "3px",
-			//      "offset-y": -30,
-			//      "shadow": false,
-			//      "callout": true,
-			//      "callout-height": "10px",
-			//      "callout-width": "15px",
-			//      "hook": "node:index=4"
-			//    },
-			//    {
-			//      "text": "9,750 iOS",
-			//      "background-color": "#787878",
-			//      "font-size": "14px",
-			//      "font-family": "arial",
-			//      "font-weight": "normal",
-			//      "font-color": "#FFFFFF",
-			//      "padding": "10%",
-			//      "border-radius": "3px",
-			//      "shadow": false,
-			//      "callout": true,
-			//      "callout-height": "10px",
-			//      "callout-width": "15px",
-			//      "hook": "node:index=5",
-			//      "offset-y": -30
-			//    },
-			//      ],
-
 
 			series: [{
 				// plot 1 values, linear data
@@ -220,22 +190,7 @@ $(".messageChartPipeTemps").on("click", function(event){
 				// values: [23, 20, 27, 29, 25, 17, 15],
 				text: 'Pipe Temperature',
 				backgroundColor: '#4d80a6'
-			}
-
-			//,
-//	          {
-	            // plot 2 values, linear data
-//	            values: [35, 42, 33, 49, 35, 47, 35],
-//	            text: 'Week 2',
-//	            backgroundColor: '#70cfeb'
-//	          },
-//	          {
-	            // plot 2 values, linear data
-//	            values: [15, 22, 13, 33, 44, 27, 31],
-//	            text: 'Week 3',
-//	            backgroundColor: '#8ee9de'
-//	          }
-			]
+			}]
 		};
      
 		// render chart with width and height to
@@ -258,10 +213,14 @@ $(".messageChartPipeTemps").on("click", function(event){
 $(".messageChartOtherTemps").on("click", function(event){
 	event.preventDefault();
 	const labels = [];
-	const outDoorTempArray = [];
+	const outDoorShadeTempArray = [];
+	const outDoorSunTempArray = [];
 	const familyTempArray = [];
 	const bedRmTempArray = [];
 	const pipeTempArray = [];
+	const deskTempArray = [];
+	const furnaceTempArray = [];
+	const woodStoveTempArray = [];
 	var time = [];
 	console.log("got the Chart Other Temps click");
 
@@ -275,10 +234,14 @@ $(".messageChartOtherTemps").on("click", function(event){
 
 		for (i=0; i<temps.length; i++){
 			var od = temps[i].createdAt;
-			var ot = temps[i].tempOutDoors;
-			var ft = temps[i].tempFamilyRoom;
-			var bt = temps[i].tempBedRoom;
+			var oshadet = temps[i].tempOutDoorsShade;
+			var osunt = temps[i].tempOutDoorsSun;
+			var frt = temps[i].tempFamilyRoom;
+			var brt = temps[i].tempBedRoom;
 			var pt = temps[i].tempPipe;
+			var dt = temps[i].tempDesk;
+			var ft = temps[i].tempFurnace;
+			var wst = temps[i].tempWoodStove;
 
 			var t = od.split(/[- : T .]/);
 			console.log(t);
@@ -290,14 +253,22 @@ $(".messageChartOtherTemps").on("click", function(event){
 			time = t[3] + ":" + t[4] + ":" + t[5];
 			console.log(time);
 			labels [i] = time;
-			Math.round(ot);
-			Math.round(ft);
-			Math.round(bt);
+			Math.round(oshadet);
+			Math.round(osunt);
+			Math.round(frt);
+			Math.round(brt);
 			Math.round(pt);
-			outDoorTempArray[i] = ot;
-			familyTempArray[i] = ft;
-			bedRmTempArray[i] = bt;
+			Math.round(dt);
+			Math.round(ft);
+			Math.round(wst);
+			outDoorShadeTempArray[i] = oshadet;
+			outDoorSunTempArray[i] = osunt;
+			familyTempArray[i] = frt;
+			bedRmTempArray[i] = brt;
 			pipeTempArray[i] = pt
+			deskTempArray[i] = dt
+			furnaceTempArray[i] = ft
+			woodStoveTempArray[i] = wst
 		}
 
 
@@ -306,7 +277,7 @@ $(".messageChartOtherTemps").on("click", function(event){
 		const myConfig = {
     	    type: 'line',
         	title: {
-				text: 'Current House Temperatures',
+				text: 'House Temperatures History',
 				fontSize: 22,
 				color: '#5d7d9a'
 			},
@@ -339,69 +310,61 @@ $(".messageChartOtherTemps").on("click", function(event){
 				}
 			},
 
-
-			// "labels": [{
-			//       "text": "11,245 Android",
-			//       "background-color": "#90A23B",
-			//       "font-size": "14px",
-			//       "font-family": "arial",
-			//       "font-weight": "normal",
-			//       "font-color": "#FFFFFF",
-			//       "padding": "10%",
-			//       "border-radius": "3px",
-			//       "offset-y": -30,
-			//       "shadow": false,
-			//       "callout": true,
-			//       "callout-height": "10px",
-			//       "callout-width": "15px",
-			//       "hook": "node:plot=2;index=4"
-			//     },
-			//     {
-			//       "text": "9,750 iOS",
-			//       "background-color": "#787878",
-			//       "font-size": "14px",
-			//       "font-family": "arial",
-			//       "font-weight": "normal",
-			//       "font-color": "#FFFFFF",
-			//       "padding": "10%",
-			//       "border-radius": "3px",
-			//       "shadow": false,
-			//       "callout": true,
-			//       "callout-height": "10px",
-			//       "callout-width": "15px",
-			//       "hook": "node:plot=2;index=5",
-			//       "offset-y": -30
-			//     },
-			//       ],
-
-
 			series: [{
 				// plot 1 values, linear data
-				values: outDoorTempArray,
+				values: outDoorShadeTempArray,
 				// values: [23, 20, 27, 29, 25, 17, 15],
-				text: 'Wood Stove Temperature',
-				backgroundColor: '#4d80a6'
-			},
-	          {
+				text: 'Outside Shade Temperature',
+				backgroundColor: '#8eefde'
+				},
+				{
 	            // plot 2 values, linear data
-	            values: familyTempArray,
+	            values: outDoorSunTempArray,
 	            // values: [35, 42, 33, 49, 35, 47, 35],
-	            text: 'Family Room Temperature',
+	            text: 'Outside Sun Temperature',
 	            backgroundColor: '#70cfeb'
 	          },
 	          {
 	            // plot 3 values, linear data
-	            values: bedRmTempArray,
+	            values: familyTempArray,
 	            //values: [15, 22, 13, 33, 44, 27, 31],
-	            text: 'Bedroom Temperature',
+	            text: 'Family Room Temperature',
 	            backgroundColor: '#8ee9de'
 	          },
 	          {
 	            // plot 4 values, linear data
+	            values: bedRmTempArray,
+	            // values: [15, 22, 13, 33, 44, 27, 31],
+	            text: 'Bedroom Temperature',
+	            backgroundColor: '#4d80a6'
+	          },
+				{
+	            // plot 5 values, linear data
 	            values: pipeTempArray,
 	            // values: [15, 22, 13, 33, 44, 27, 31],
-	            text: 'Pipe Temps',
-	            backgroundColor: '#8eefde'
+	            text: 'Pipe Temperature',
+	            backgroundColor: '#4d80a6'
+	          },
+				{
+	            // plot 6 values, linear data
+	            values: deskTempArray,
+	            // values: [15, 22, 13, 33, 44, 27, 31],
+	            text: 'Desk Temps',
+	            backgroundColor: '#4d80a6'
+	          },
+				{
+	            // plot 7 values, linear data
+	            values: furnaceTempArray,
+	            // values: [15, 22, 13, 33, 44, 27, 31],
+	            text: 'Furnace Temperature',
+	            backgroundColor: '#4d80a6'
+				},
+				{
+	            // plot 8 values, linear data
+	            values: woodStoveTempArray,
+	            // values: [15, 22, 13, 33, 44, 27, 31],
+	            text: 'Wood Stove Temperature',
+	            backgroundColor: '#4d80a6'
 	          }
 			]
 		};

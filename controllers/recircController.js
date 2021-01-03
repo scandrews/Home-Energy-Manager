@@ -1,16 +1,19 @@
-
+//  This module is called every time a temperature is recieved
+//  
 var comController = require ('./communicationsController');
 var dbController = require ('./databasecontroller');
 
-//var showerTemp = "120";
 var isPumpOn = false;
 var recircOn = 04;
 var recircOff = 05;
-var weekend = false;
 var loopCount = 0;
-var testCount = 0;
-var getSettingsInterval = 10;   // we'll get the recirc settings on this interval
-var savePipeDataInterval = 1;
+var getSettingsCount = 0;
+var getSettingsInterval = 100;   // we'll get the recirc settings on this interval
+var savePipeDataInterval = 30;
+var savePipeDataCount = 0;
+//var saveRunningPipeDataInterval = 15;
+//var savePumpOffPipeDataInterval = 15;
+
 var recircSettings = [{
 	id: 0,
     pipeTempOn: 0,
@@ -39,8 +42,8 @@ exports.manualPumpChange = function (newState){
 	if (pumpState.statePump == "off"){
 		//set object
 		//set so doesn't update recirc settings
-		comController.sendMessageToArdunio("runRecirc")
-
+		comController.sendMessageToArdunio("runRecirc");
+		dbController.savePipeTemp("turnRecircOn", recircTemp);
 	}
 	if (newState == "turnPumpOn"){
 		isPumpOn = true;
@@ -70,55 +73,54 @@ exports.checkRecirc = function (recircTemp){
 	
 	// don't hit the db for the recirc settings every time through
 	// console.log (recircSettings[0].id);
-	console.log (testCount);
+	console.log ("get setting count - " + getSettingsCount);
 
 	// if NOT the first time through or if we've been through test count times, do normal processing
 	// otherwise get the recirc settings
-	if (recircSettings[0].id == 1 && testCount < getSettingsInterval) {
+	if (recircSettings[0].id == 1 && getSettingsCount < getSettingsInterval) {
 		//console.log("have the settings");
-		testCount++;
-
-		function saveData (curState, Temp){
-			
-		}
+		getSettingsCount++;
 
 		// pump is running so check if temp good
 		function checkIfTurnOff (){
 			// when pump is running save temp every other time through
-			if (savePipeDataInterval == 15){
+			if (savePipeDataCount == savePipeDataInterval){
 				dbController.savePipeTemp("recircIsOn", recircTemp);
-				savePipeDataInterval = 0;
+				savePipeDataCount = 0;
 			};
-			savePipeDataInterval ++;
+			savePipeDataCount ++;
 			if (recircTemp > recircSettings[0].pipeTempOff){
 				console.log("pump is on and temp is greater than target");
 				// pump is on, but reached temp so turn off
 				dbController.savePipeTemp("turningRecircOff", recircTemp);
 				comController.sendMessageToArdunio("stopRecirc");
+				comController.changeState("statePump", "off");
 				isPumpOn = false;
 			};
 		}
 
 		// with time parameters and pump is NOT running so check temps
 		function inTimeCheckTemps(){
-			console.log("within time parameters - loopCount = " + loopCount +" of " + 200);
+			console.log("within time parameters - loopCount = " + loopCount +" of " + savePipeDataInterval);
 			loopCount ++;
-			if (loopCount >= 200){
+			if (loopCount >= savePipeDataInterval){
 				dbController.savePipeTemp("recircIsOff", recircTemp);
 				loopCount = 0;
 			};
 			if (recircTemp < recircSettings[0].pipeTempOn){
 				// temp is below trigger
 				console.log("pump is off and temp is less than should be");
+				loopCount = 0;
 				isPumpOn = true;
 				// turn pump on
+				comController.sendMessageToArdunio("runRecirc");
 				dbController.savePipeTemp("turnRecircOn", recircTemp);
-				comController.sendMessageToArdunio("runRecirc")
+				comController.changeState("statePump", "on");
 			};
 		};
 
-
-//		console.log ("just back from getting recirc settings - " + recircSettings);	
+		//*****************************************
+		//*****	Main processing starts here	*******
 		console.log(currentTime);
 		homeAwayStateHere = comController.getState();
 		console.log("homeaway state - " + homeAwayStateHere.stateHomeAway);
@@ -127,15 +129,16 @@ exports.checkRecirc = function (recircTemp){
 		// Check if in home or away mode
 		} else if (homeAwayStateHere.stateHomeAway == "Home"){
 		// pump in NOT running so check if weekend	
+
 				if(date_ob.getDay() == 6 || date_ob.getDay() == 0){
-				console.log("It's a weekend YEA");
-				if (currentTime >= recircSettings[0].weekEndOn1 && currentTime <= recircSettings[0].weekEndOff1){
-					// we are within the time parameters
-					inTimeCheckTemps();
-				} else if (currentTime >= recircSettings[0].weekEndOn2 && currentTime <= recircSettings[0].weekEndOff2){
-					inTimeCheckTemps();
+					console.log("It's a weekend YEA");
+					if (currentTime >= recircSettings[0].weekEndOn1 && currentTime <= recircSettings[0].weekEndOff1){
+						// we are within the time parameters
+						inTimeCheckTemps();
+					} else if (currentTime >= recircSettings[0].weekEndOn2 && currentTime <= recircSettings[0].weekEndOff2){
+						inTimeCheckTemps();
+						}
 					}
-				}
 				else {
 					console.log("NOT a weekend");
 					//console.log(currentTime + "  " + recircSettings[0].weekDayOn1 + "  " + recircSettings[0].weekDayOff1);
@@ -154,7 +157,7 @@ exports.checkRecirc = function (recircTemp){
 		dbController.recircSettingsRecirCNTRL("somethign", function (tempRecircSettings) {
 			console.log(tempRecircSettings);
 			recircSettings = tempRecircSettings;
-			testCount = 0;
+			getSettingsCount = 0;
 		});
 	};
 // end export check recirc

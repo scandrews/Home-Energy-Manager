@@ -22,6 +22,8 @@ var tempF1 = 0.0;
 var tempF2 = 0.0;
 var tempF3 = 0.0;
 var tempF4 = 0.0;
+var tempF5 = 0.0;
+var tempF6 = 0.0;
 
 
 // setup serial port
@@ -69,7 +71,7 @@ var allStates = {
 	stateWoodStove: "off"
 };
 
-exports.changeState = function (whichState){
+exports.changeState = function (whichState, toWhatState){
 	console.log("in com cntrlr change state - " + whichState);
 	console.log("com controller allstates - " + allStates);
 	switch (whichState){
@@ -85,7 +87,7 @@ exports.changeState = function (whichState){
 			}
 			break;
 		case "statePump":
-			allStates.statePump = "off"
+			allStates.statePump = toWhatState;
 			break;
 		case "stateFurnace":
 			allStates.stateFurnace = "off"
@@ -134,9 +136,17 @@ server.on("message", function (StuffIn, remote) {
 	tempF4 = CtoF(tempC4);
     console.log("Temperature 4 C & F - " + tempC4 + " " + tempF4);
 
+    tempC5 = StuffIn.toString("utf-8", 21, 26);
+	tempF5 = CtoF(tempC5);
+    console.log("Temperature 5 C & F - " + tempC5 + " " + tempF5);
+
+    tempC6 = StuffIn.toString("utf-8", 26, 31);
+	tempF6 = CtoF(tempC6);
+    console.log("Temperature 6 C & F - " + tempC6 + " " + tempF6);
+
     recircContrl.checkRecirc(tempF4);
 
-    data_access.saveTempData(tempF1, tempF2, tempF3, tempF4);
+    data_access.saveTempData(tempF1, tempF2, tempF3, tempF4, tempF5, tempF6);
 
     // f designates it as a flag packet
 	} else if (StuffIn.toString("utf-8", 0, 1) == "f"){
@@ -195,7 +205,7 @@ exports.sendMessageToArdunio = function (whatToDo){
 };
 
 exports.returnFlags = function (){
-	var dataPac = [flag1, flag2, flag3, flag4, tempF1, tempF2, tempF3, tempF4];
+	var dataPac = [flag1, flag2, flag3, flag4, tempF1, tempF2, tempF3, tempF4, tempF5, tempF6];
 	return (dataPac);
 };
 
@@ -210,9 +220,9 @@ exports.serialComStuff = function (){
 
 	port.pipe(parser);
 	parser.on('data', function(inputString){
-		//	var newstr = inputString.split(" ");
-		// console.log (inputString);
-		//	console.log (newstr);
+		var newstr = inputString.split(" ");
+		console.log (inputString);
+		console.log (newstr);
 		
 	// end serial i/o section
 	});

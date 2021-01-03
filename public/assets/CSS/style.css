@@ -5,6 +5,22 @@
     font-size: 25px;
 }
 
+.navbar{
+    padding: 0rem 0rem;
+}
+
+.nav-link{
+  padding: 0rem 0rem 0rem 0rem;
+}
+
+.nav-item {
+    margin: 1px;
+}
+
+.collapse {
+  margin: 0px auto;
+}
+
 body {
   background-size: 100%;
   height: 100%;

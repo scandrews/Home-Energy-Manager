@@ -8,11 +8,19 @@ var tempSum1 = 0;
 var tempSum2 = 0;
 var tempSum3 = 0;
 var tempSum4 = 0;
+var tempSum5 = 0;
+var tempSum6 = 0;
+var tempSum7 = 0;
+var tempSum8 = 0;
 var tempcount = 0;
 var avgTemp1 = 0;
 var avgTemp2 = 0;
 var avgTemp3 = 0;
 var avgTemp4 = 0;
+var avgTemp5 = 0;
+var avgTemp6 = 0;
+var avgTemp7 = 0;
+var avgTemp8 = 0;
 var flags = [];
 var numOfReadingsToAvg = 10;
 //  30 min * 60 * numOfReadingsToAvg = 1800 - save every 30 min
@@ -23,7 +31,8 @@ var numOfReadingsToAvg = 10;
 //  2 sec * numOfReadingsToAvg * currentSaveDelayCount / 60 = 
 //  2 sec * 10 * 90 / 60 = 30 Min - current time between saves
 //var currentSaveDelayCount = 90;
-var currentSaveDelayCount = 90;
+// the period between all temperature saves
+var currentSaveDelayCount = 30;
 var saveDelay = currentSaveDelayCount;
 var delayCount = 0;
 var temporaryTimes = [];
@@ -56,25 +65,15 @@ connection.connect((err) => {
   // get the recirculator settings from the data base
   exports.recircSettingsRecirCNTRL = function (what, fn) {
     console.log("dbase controoler get recirc settings from recirs controller");
-    // only hit the db every 99 times otherwise just return the variable
-  //  if loopsSinceLastSettings == 0 {
-  //    loopsSinceLastSettings++;
-
-//    console.log(fn);
-      connection.query("SELECT * FROM recirculatorsettings", (err, result) => {
-        //console.log(result);
-        return ( fn ( result ));
-      });
-//    }else if loopsSinceLastSettings == checkSettingsIntervul {
-//      loopsSinceLastSettings = 0;
-//    }
+    connection.query("SELECT * FROM recirculatorsettings", (err, result) => {
+      return ( fn ( result ));
+    });
   };
 
   // get the recirculator settings from the data base
   exports.recircSettingsFrontEnd = function (req, res) {
     console.log("dbase controoler get recirc settings from the front end");
     connection.query("SELECT * FROM recirculatorsettings", (err, result) => {
-//        console.log(result);
         res.send( result );
     });
   };
@@ -82,31 +81,32 @@ connection.connect((err) => {
   // retrieve the stored temp data for display
   exports.getTempData = function (req, res) {
     console.log("in get temp data  yyyoooo");
-    connection.query("SELECT * FROM temperatures ORDER BY id DESC LIMIT 30", (err, result) => {
-//          console.log(result);
-          res.send( result );
-      });
+    connection.query("SELECT * FROM temperatures ORDER BY id DESC LIMIT 40", (err, result) => {
+      res.send( result );
+    });
   };
 
   // retrieve the pipe temperature data
   exports.getPipeTempData = function (req, res) {
     console.log("in dbcontroler get pipe data");
-    connection.query("SELECT * FROM recirculatorHistory ORDER By id DESC LIMIT 30", (err, result) => {
-      console.log(result);
+    connection.query("SELECT * FROM recirculatorHistory ORDER By id DESC LIMIT 40", (err, result) => {
+      //console.log(result);
       res.send ( result );
     });
   };
 
 
-  exports.saveTempData = function (temp1, temp2, temp3, temp4) {
+  exports.saveTempData = function (temp1, temp2, temp3, temp4, temp5, temp6) {
     console.log("in save temperature data");
-    console.log(temp1, temp2, temp3, temp4);
+    console.log(temp1, temp2, temp3, temp4, temp5, temp6);
 
     // average temperature readings to numOfReadingsToAvg
     tempSum1 = tempSum1 + temp1;
     tempSum2 = tempSum2 + temp2;
     tempSum3 = tempSum3 + temp3;
     tempSum4 = tempSum4 + temp4;
+    tempSum5 = tempSum5 + temp5;
+    tempSum6 = tempSum6 + temp6;
     tempcount++;
 //    console.log(tempSum1, tempSum2, tempSum3, tempSum4);
 
@@ -117,12 +117,16 @@ connection.connect((err) => {
       avgTemp2 = parseFloat((tempSum2/tempcount).toFixed(1));
       avgTemp3 = parseFloat((tempSum3/tempcount).toFixed(1));
       avgTemp4 = parseFloat((tempSum4/tempcount).toFixed(1));
+      avgTemp5 = parseFloat((tempSum5/tempcount).toFixed(1));
+      avgTemp6 = parseFloat((tempSum6/tempcount).toFixed(1));
       tempSum1 = 0;
       tempSum2 = 0;
       tempSum3 = 0;
       tempSum4 = 0;
+      tempSum5 = 0;
+      tempSum6 = 0;
       tempcount = 0;
-      console.log("averages - " + avgTemp1, avgTemp2, avgTemp3, avgTemp4);
+      console.log("averages - " + avgTemp1, avgTemp2, avgTemp3, avgTemp4, avgTemp5, avgTemp6);
 
 //      console.log("Current Save Delay Count - " + currentSaveDelayCount);
       if (currentSaveDelayCount == 0){
@@ -130,12 +134,24 @@ connection.connect((err) => {
 //        comController.returnFlags = function(flags){
 //          console.log("Flags in db controller - " +  flags)
           console.log("Saving Temp Data");
+//          connection.query("delete from temperatures ORDER BY id limit 1", (err) => {
+//            if (err) {
+//              console.log("Got a DB error in savePipeTemp");
+//              console.log (err);
+//            };
+//            return;
+//          });
+          // NOTE:  assignment of temps to locations
           connection.query("INSERT INTO temperatures SET ?",
             {
-              tempOutDoors: avgTemp1,
+              tempOutDoorsSun: 70,
+              tempOutDoorsShade: 71,
               tempFamilyRoom: avgTemp2,
               tempBedRoom: avgTemp3,
-              tempPipe: avgTemp4
+              tempDesk: avgTemp6,
+              tempPipe: avgTemp4,
+              tempWoodStove: avgTemp1,
+              tempFurnace: avgTemp5
             }, (err, result) => {
               if (err) throw err;
               return;
@@ -152,7 +168,7 @@ connection.connect((err) => {
 
   exports.savePipeTemp = function (action, pipeTemp){
     console.log("In save pipe temp" + action + " , " + pipeTemp);
-    connection.query("delete from recirculatorhistory ORDER BY id limit 1", (err) => {
+    connection.query("DELETE FROM recirculatorhistory ORDER BY id limit 1", (err) => {
       if (err) {
         console.log("Got a DB error in savePipeTemp");
         console.log (err);

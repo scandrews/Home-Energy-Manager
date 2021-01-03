@@ -2,6 +2,8 @@
 #include <Ethernet.h>
 #include <EthernetUdp.h>
 #include <math.h>
+//#include <OneWire.h> 
+//#include <DallasTemperature.h>
 
   // config for the Aduino side
   byte arduinoMac[] = { 0xA8, 0x61, 0x0A, 0xAE, 0x41, 0x66 };
@@ -17,13 +19,23 @@
   // buffers for receiving and sending data
   char packetBuffer [11];  //buffer to hold incoming packet,
 
-  int sensorPin1 = A0; //define sensor pin
-  int sensorPin2 = A1;
-  int sensorPin3 = A2;
-  int sensorPin4 = A3;
+  //define sensor pins
+  int sensorPin1 = A0; // Wood Stove
+  int sensorPin2 = A1; // Bread Board
+  int sensorPin3 = A2; // Bedroom
+  int sensorPin4 = A3; // Pipe
+  int sensorPin5 = A4; // Furnace
+  int sensorPin6 = A5; // Bread Board
   
-  int sensorValue;
-  int sensorInput;
+  //int sensorValue;
+  float sensorInput1;
+  float sensorInput2;
+  float sensorInput3;
+  float sensorInput4;
+  float sensorInput5;
+  float sensorInput6;
+
+  float voltage;
 
   int whatToDo;
 
@@ -37,6 +49,17 @@
   int LED3 = 6;  // motor output
   int LED4 = 5;  // Blinker
 
+  // one wire set up for input D2
+  //#define ONE_WIRE_BUS 2;
+
+  // Setup a oneWire instance to communicate with any OneWire devices  
+  // (not just Maxim/Dallas temperature ICs) 
+//  OneWire oneWire(ONE_WIRE_BUS); 
+
+  // Pass our oneWire reference to Dallas Temperature. 
+//  DallasTemperature sensors(&oneWire);
+//  float temp5 = 0;
+  
 // setup code
 void setup() {
    Serial.begin(9600); //Start the Serial Port at 9600 baud (default)
@@ -65,8 +88,10 @@ void setup() {
   pinMode(LED3, OUTPUT); // Motor output digital output 6
   pinMode(LED4, OUTPUT);
 
-  analogReference(EXTERNAL);
+//  analogReference(EXTERNAL);
+//  analogReference(INTERNAL);
 }
+
 
 void loop() {
 
@@ -151,29 +176,45 @@ void loop() {
 
   //  END SEND FLAGS
 
-    //  READ TEMPERATURES
+  //  READ TEMPERATURES
    // read analog values and convert to centagrate
-    sensorInput = analogRead(sensorPin1);    //read the analog sensor and store it
-    float voltage = sensorInput * 5.0;       //find percentage of input reading
+    sensorInput1 = analogRead(sensorPin1);    //read the analog sensor and store it
+    voltage = sensorInput1 * 5.0;       //find percentage of input reading
     voltage /= 1024;                 //
     float tempC1 = (voltage - 0.5) * 100 ;               //Subtract the offset 
 
-    int sensorInput2 = analogRead(sensorPin2);    //read the analog sensor and store it
-    float voltage2 = sensorInput2 * 5.0;       //find percentage of input reading
-    voltage2 /= 1024;                 //
-    float tempC2 = (voltage2 - 0.5) * 100 ;               //Subtract the offset 
+    sensorInput2 = analogRead(sensorPin2);    //read the analog sensor and store it
+    voltage = sensorInput2 * 5.0;       //find percentage of input reading
+    voltage /= 1024;                 //
+    float tempC2 = (voltage - 0.5) * 100 ;               //Subtract the offset 
 
-    int sensorInput3 = analogRead(sensorPin3);    //read the analog sensor and store it
-    float voltage3 = sensorInput3 * 5.0;       //find percentage of input reading
-    voltage3 /= 1024;                 //
-    float tempC3 = (voltage3 - 0.5) * 100 ;               //Subtract the offset 
+    sensorInput3 = analogRead(sensorPin3);    //read the analog sensor and store it
+    voltage = sensorInput3 * 5.0;       //find percentage of input reading
+    voltage /= 1024;                 //
+    float tempC3 = (voltage - 0.5) * 100 ;               //Subtract the offset 
 
-    int sensorInput4 = analogRead(sensorPin4);    //read the analog sensor and store it
-    float voltage4 = sensorInput4 * 5.0;       //find percentage of input reading
-    voltage4 /= 1024;                 //
-    float tempC4 = (voltage4 - 0.5) * 100 ;               //Subtract the offset 
-    
+    sensorInput4 = analogRead(sensorPin4);    //read the analog sensor and store it
+    voltage = sensorInput4 * 5.0;       //find percentage of input reading
+    voltage /= 1024;                 //
+    float tempC4 = (voltage - 0.5) * 100 ;               //Subtract the offset 
+
+    sensorInput5 = analogRead(sensorPin5);    //read the analog sensor and store it
+    voltage = sensorInput5 * 5.0;       //find percentage of input reading
+    voltage /= 1024;                 //
+    float tempC5 = (voltage - 0.5) * 100 ;               //Subtract the offset 
+
+    sensorInput6 = analogRead(sensorPin6);    //read the analog sensor and store it
+    voltage = sensorInput6 * 5.0;       //find percentage of input reading
+    voltage /= 1024;                 //
+    float tempC6 = (voltage - 0.5) * 100 ;               //Subtract the offset 
+
    // end temp sense section
+
+//  sensors.requestTemperatures(); // Send the command to get temperature readings 
+//  temp5 = sensors.getTempCByIndex(0); // Why "byIndex"?  
+   // You can have more than one DS18B20 on the same bus.  
+   // 0 refers to the first IC on the wire 
+   
 
     Serial.print  ("Serial Data - Current Temperature: ");
     Serial.print  ("temp1: ");
@@ -184,15 +225,21 @@ void loop() {
     Serial.print  (tempC3);
     Serial.print  (" pipe temp: ");
     Serial.println(tempC4);
+//    Serial.print ("DS18 Data - ";
+//    Serial.println(temp5);
 
     char tBuffer1[8];
     char tBuffer2[8];
     char tBuffer3[8];
     char tBuffer4[8];
+    char tBuffer5[8];
+    char tBuffer6[8];
     dtostrf(tempC1,5,2,tBuffer1);
     dtostrf(tempC2,5,2,tBuffer2);
     dtostrf(tempC3,5,2,tBuffer3);
     dtostrf(tempC4,5,2,tBuffer4);
+    dtostrf(tempC5,5,2,tBuffer5);
+    dtostrf(tempC6,5,2,tBuffer6);
 
     Serial.print("Temperatures in Byte Array - ");
     Serial.print(tBuffer1);
@@ -222,6 +269,8 @@ void loop() {
     Udp.write(tBuffer2, 5);
     Udp.write(tBuffer3, 5);
     Udp.write(tBuffer4, 5);
+    Udp.write(tBuffer5, 5);
+    Udp.write(tBuffer6, 5);
     Udp.endPacket(); // end packet
 
 ////////
