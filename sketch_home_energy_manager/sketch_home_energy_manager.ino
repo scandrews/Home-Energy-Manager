@@ -2,8 +2,8 @@
 #include <Ethernet.h>
 #include <EthernetUdp.h>
 #include <math.h>
-//#include <OneWire.h> 
-//#include <DallasTemperature.h>
+#include <OneWire.h> 
+#include <DallasTemperature.h>
 
   // config for the Aduino side
   byte arduinoMac[] = { 0xA8, 0x61, 0x0A, 0xAE, 0x41, 0x66 };
@@ -50,14 +50,14 @@
   int LED4 = 5;  // Blinker
 
   // one wire set up for input D2
-  //#define ONE_WIRE_BUS 2;
+  int ONE_WIRE_BUS = 3;
 
   // Setup a oneWire instance to communicate with any OneWire devices  
   // (not just Maxim/Dallas temperature ICs) 
-//  OneWire oneWire(ONE_WIRE_BUS); 
+  OneWire oneWire(ONE_WIRE_BUS); 
 
   // Pass our oneWire reference to Dallas Temperature. 
-//  DallasTemperature sensors(&oneWire);
+  DallasTemperature sensors(&oneWire);
 //  float temp5 = 0;
   
 // setup code
@@ -83,13 +83,16 @@ void setup() {
   Serial.print(" port ");
   Serial.println(arduinoPort);
 
-  pinMode(LED1, OUTPUT); // Declare the LED as an output
-  pinMode(LED2, OUTPUT);
-  pinMode(LED3, OUTPUT); // Motor output digital output 6
-  pinMode(LED4, OUTPUT);
+   pinMode(LED1, OUTPUT); // Declare the LED as an output
+   pinMode(LED2, OUTPUT);
+   pinMode(LED3, OUTPUT); // Motor output digital output 6
+   pinMode(LED4, OUTPUT);
 
 //  analogReference(EXTERNAL);
 //  analogReference(INTERNAL);
+
+   // Start the Digital Sensor library
+   sensors.begin();
 }
 
 
@@ -210,8 +213,11 @@ void loop() {
 
    // end temp sense section
 
-//  sensors.requestTemperatures(); // Send the command to get temperature readings 
-//  temp5 = sensors.getTempCByIndex(0); // Why "byIndex"?  
+  // to issue a global temperature and Requests to all devices on the bus
+    // Send the command to get temperature readings 
+    sensors.requestTemperatures();
+
+    float tempC7 = sensors.getTempCByIndex(0); // Why "byIndex"?  
    // You can have more than one DS18B20 on the same bus.  
    // 0 refers to the first IC on the wire 
    
@@ -224,9 +230,9 @@ void loop() {
     Serial.print  (" temp3: ");
     Serial.print  (tempC3);
     Serial.print  (" pipe temp: ");
-    Serial.println(tempC4);
-//    Serial.print ("DS18 Data - ";
-//    Serial.println(temp5);
+    Serial.print  (tempC4);
+    Serial.print ("DS18 Data - ");
+    Serial.println(tempC5);
 
     char tBuffer1[8];
     char tBuffer2[8];
@@ -234,12 +240,14 @@ void loop() {
     char tBuffer4[8];
     char tBuffer5[8];
     char tBuffer6[8];
+    char tBuffer7[8];
     dtostrf(tempC1,5,2,tBuffer1);
     dtostrf(tempC2,5,2,tBuffer2);
     dtostrf(tempC3,5,2,tBuffer3);
     dtostrf(tempC4,5,2,tBuffer4);
     dtostrf(tempC5,5,2,tBuffer5);
     dtostrf(tempC6,5,2,tBuffer6);
+    dtostrf(tempC7,5,2,tBuffer7);
 
     Serial.print("Temperatures in Byte Array - ");
     Serial.print(tBuffer1);
@@ -271,6 +279,7 @@ void loop() {
     Udp.write(tBuffer4, 5);
     Udp.write(tBuffer5, 5);
     Udp.write(tBuffer6, 5);
+    Udp.write(tBuffer7, 5);
     Udp.endPacket(); // end packet
 
 ////////

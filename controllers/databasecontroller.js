@@ -96,9 +96,9 @@ connection.connect((err) => {
   };
 
 
-  exports.saveTempData = function (temp1, temp2, temp3, temp4, temp5, temp6) {
+  exports.saveTempData = function (temp1, temp2, temp3, temp4, temp5, temp6, temp7) {
     console.log("in save temperature data");
-    console.log(temp1, temp2, temp3, temp4, temp5, temp6);
+    console.log(temp1, temp2, temp3, temp4, temp5, temp6, temp7);
 
     // average temperature readings to numOfReadingsToAvg
     tempSum1 = tempSum1 + temp1;
@@ -107,6 +107,7 @@ connection.connect((err) => {
     tempSum4 = tempSum4 + temp4;
     tempSum5 = tempSum5 + temp5;
     tempSum6 = tempSum6 + temp6;
+    tempSum7 = tempSum7 + temp7;
     tempcount++;
 //    console.log(tempSum1, tempSum2, tempSum3, tempSum4);
 
@@ -119,14 +120,16 @@ connection.connect((err) => {
       avgTemp4 = parseFloat((tempSum4/tempcount).toFixed(1));
       avgTemp5 = parseFloat((tempSum5/tempcount).toFixed(1));
       avgTemp6 = parseFloat((tempSum6/tempcount).toFixed(1));
+      avgTemp7 = parseFloat((tempSum7/tempcount).toFixed(1));
       tempSum1 = 0;
       tempSum2 = 0;
       tempSum3 = 0;
       tempSum4 = 0;
       tempSum5 = 0;
       tempSum6 = 0;
+      tempSum7 = 0;
       tempcount = 0;
-      console.log("averages - " + avgTemp1, avgTemp2, avgTemp3, avgTemp4, avgTemp5, avgTemp6);
+      console.log("averages - " + avgTemp1, avgTemp2, avgTemp3, avgTemp4, avgTemp5, avgTemp6, avgTemp7);
 
 //      console.log("Current Save Delay Count - " + currentSaveDelayCount);
       if (currentSaveDelayCount == 0){
@@ -134,17 +137,17 @@ connection.connect((err) => {
 //        comController.returnFlags = function(flags){
 //          console.log("Flags in db controller - " +  flags)
           console.log("Saving Temp Data");
-//          connection.query("delete from temperatures ORDER BY id limit 1", (err) => {
-//            if (err) {
-//              console.log("Got a DB error in savePipeTemp");
-//              console.log (err);
-//            };
-//            return;
-//          });
+          connection.query("delete from temperatures ORDER BY id limit 1", (err) => {
+            if (err) {
+              console.log("Got a DB error in delete PipeTemp");
+              console.log (err);
+            };
+            return;
+          });
           // NOTE:  assignment of temps to locations
           connection.query("INSERT INTO temperatures SET ?",
             {
-              tempOutDoorsSun: 70,
+              tempOutDoorsSun: avgTemp7,
               tempOutDoorsShade: 71,
               tempFamilyRoom: avgTemp2,
               tempBedRoom: avgTemp3,
@@ -153,7 +156,10 @@ connection.connect((err) => {
               tempWoodStove: avgTemp1,
               tempFurnace: avgTemp5
             }, (err, result) => {
-              if (err) throw err;
+              if (err) {
+                  console.log("Got a DB error in savePipeTemp");
+                  console.log (err);
+              };
               return;
             }
           );
@@ -196,6 +202,71 @@ connection.connect((err) => {
       
     }
   };
+
+//    ******  Under construction   ********
+
+  exports.upDateRecircSettings = function (newSettings) {
+    console.log("in dbcntrlr");
+    console.log(newSettings);
+
+    // get existing settings and compare
+    //connection.query ("SELECT * FROM recirculatorSettings WHERE id=1", (err, result) => {
+    //  console.log("got back from getting recirc settings in update recirc setting");
+    //  console.log(result);
+    //  for (i=1; i < newSettings.length; i++) {
+    //    compare newSettings[i] to result[i]
+
+    for (var key in newSettings){
+      if (newSettings[key] == ''){
+        console.log("nothing at - " + key)
+      } else {
+        console.log("At - " + key + " got - " + newSettings[key])
+
+//SET @colname := '' ; 
+//SELECT t.rslt FROM table1 t WHERE t.id = 1 ORDER BY t.rslt LIMIT 1 INTO @colname ;
+
+//SET @sql := CONCAT('SELECT `',@colname,'` FROM table2 ORDER BY 1') ;
+
+//PREPARE stmt FROM @sql ; 
+//EXECUTE stmt ;
+//DEALLOCATE PREPARE stmt ;
+
+
+//SET @config := (SELECT CONFIG FROM yourtable WHERE id=1);
+//SET @sql := CONCAT('SELECT FIELDCONTENT AS `', @config, '` FROM TABLENAME');
+
+//PREPARE stmt FROM @sql;
+//EXECUTE stmt;
+//  --------------------
+
+
+//        SET config := (UPDATE CONFIG FROM recirculatorsettings WHERE id=1);
+//        SET sql := CONCAT('UPDATE newSettings[key] AS `', config, '` FROM recirculatorsettings');
+//        PREPARE stmt FROM sql;
+
+//                        UPDATE recirculatorSettings SET pipeTempOn = 95 WHERE id=1;
+        var x = newSettings[key];
+
+//exports.insertIntoDb = function(tableName,insertObj) {
+//  connection.query('INSERT INTO ?? SET ?', [ tableName, insertObj ], ...)
+//};
+
+
+        connection.query ("UPDATE recirculatorSettings SET ?? = ? WHERE id=1", {key, x}, (err, result) => {
+            if (err) {
+            console.log("Got a DB error in update reg setting");
+            console.log (err);
+            };
+            return;
+        })
+      }
+    }
+  };
+
+
+
+//    })
+//  }
 
 // end connection
 });

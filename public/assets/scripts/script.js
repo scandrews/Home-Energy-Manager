@@ -422,6 +422,34 @@ $(".getRecircSettings").on("click", function(event){
     });
 });
 
+
+$(".upDateRecircSettings").on("click", function(event){
+	event.preventDefault();
+	console.log("got the update click");
+	var newSettings = {
+		onTemp: $("#onTemperature").val().trim(),
+		offTemp: $("#offTemperature").val().trim(),
+		firstWDOnTime: $("#weekdayStartTime1").val().trim(),
+		firstWDOffTime: $("#weekdayOffTime1").val().trim(),
+		secondWDOnTime: $("#weekdayStartTime2").val().trim(),
+		secondWDOffTime: $("#weekdayOffTime2").val().trim(),
+		firstWEOnTime: $("#weekendStartTime1").val().trim(),
+		firstWEOffTime: $("#weekendOffTime1").val().trim(),
+		secondWEOnTime: $("#weekendStartTime2").val().trim(),
+		secondWEOffTime: $("#weekendOffTime2").val().trim(),
+	};
+
+	$.ajax({
+		url: "http://localhost:2000/upDateRecircSettings",
+		type: "POST",
+		data: newSettings,
+		success: function(d) {
+			console.log("the post worked");
+		}
+	})
+})
+
+
 // Handle the change red button
 $(".messageRedChange").on("click", function(){
 	console.log("got the send Red Change message click");

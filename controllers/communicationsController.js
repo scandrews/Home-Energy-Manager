@@ -24,6 +24,7 @@ var tempF3 = 0.0;
 var tempF4 = 0.0;
 var tempF5 = 0.0;
 var tempF6 = 0.0;
+var tempF7 = 0.0;
 
 
 // setup serial port
@@ -112,10 +113,10 @@ var CtoF = function (inC){
 
 //  Start the ethernet server
 server.on("message", function (StuffIn, remote) {
-	//    console.log("got an ethernet message ");
+	console.log("got an ethernet message ");
     console.log(remote);
     arduinoPort = remote.port;
-	//    console.log(StuffIn);
+	console.log(StuffIn);
 
 	// t designates it as a temperature packet
     if (StuffIn.toString("utf-8", 0, 1) == "t"){
@@ -144,9 +145,13 @@ server.on("message", function (StuffIn, remote) {
 	tempF6 = CtoF(tempC6);
     console.log("Temperature 6 C & F - " + tempC6 + " " + tempF6);
 
+    tempC7 = StuffIn.toString("utf-8", 31, 36);
+	tempF7 = CtoF(tempC7);
+    console.log("Temperature 7 C & F - " + tempC7 + " " + tempF7);
+
     recircContrl.checkRecirc(tempF4);
 
-    data_access.saveTempData(tempF1, tempF2, tempF3, tempF4, tempF5, tempF6);
+    data_access.saveTempData(tempF1, tempF2, tempF3, tempF4, tempF5, tempF6, tempF7);
 
     // f designates it as a flag packet
 	} else if (StuffIn.toString("utf-8", 0, 1) == "f"){

@@ -72,7 +72,7 @@ app.post('/sendMessage', (req, res) => {
 			console.log("GOT THE RETURN - " + newState.stateHomeAway + newState.statePump);
 			res.send(newState)
 		;
-	} else {
+	} else if (req.body.message == "ManualTurnPumpOn") {
 		recircController.manualPumpChange(req.body.message);
 		//	console.log(req.body);
 		comControler.sendMessageToArdunio(req.body.message);
@@ -84,5 +84,10 @@ app.get('/currentStatus', (req, res) => {
 	return comControler.returnFlags();
 });
 
+app.post('/upDateRecircSettings', function (req, res) {
+	console.log("in route Controller update recirc settings");
+	console.log(req.body);
+	dbaccess.upDateRecircSettings(req.body);
+});
 
 module.exports = app;
