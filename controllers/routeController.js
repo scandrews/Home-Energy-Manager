@@ -87,7 +87,39 @@ app.get('/currentStatus', (req, res) => {
 app.post('/upDateRecircSettings', function (req, res) {
 	console.log("in route Controller update recirc settings");
 	console.log(req.body);
-	dbaccess.upDateRecircSettings(req.body);
+	var stuffBack = dbaccess.upDateRecircSettings(req.body);
+	return(stuffBack);
 });
+
+app.get('/generalSettings', (req, res) => {
+	console.log("in route controler get general settings");
+	var IPAddresses = comControler.getIPAddresses();
+	var dbSettings = dbaccess.getdbSettings();
+	console.log(IPAddresses);
+	console.log(dbSettings);
+		var generalSettings = {
+			tempSaveInterval : dbSettings[0],
+			numDataPointsToGraph : dbSettings[1],
+			serverIPAddress : IPAddresses[0],
+			arduinoIPAddress : IPAddresses[1],
+			something : 'something',
+			somethingelse : "somethingelse",
+			somefkn : "somefkn",
+			somethingelse2 : "somethingelse",
+			somefkn2 : "somefkn",
+			runMode : "normal"
+		}
+		res.send (generalSettings)
+});
+
+app.post('/upDateGeneralSettings', function (req, res) {
+	console.log("in route Controller update general settings");
+	console.log(req.body);
+
+//  need to handle
+
+//	dbaccess.upDateRecircSettings(req.body);
+});
+
 
 module.exports = app;

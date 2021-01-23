@@ -31,11 +31,11 @@ $(".messageShowCurrentTemps").on("click", function(){
 	function writeTemperatures(localTempArray){
 		console.log(localTempArray);
 		$(".curTempBlock1").html("<td>" + localTempArray[2] +  //pump status
-							"</td><td>" + localTempArray[5] +  //outdoor sun
+							"</td><td>" + localTempArray[10] +  //outdoor sun
 							"</td><td>" + localTempArray[6] +  //Bedroom
-							"</td><td>" + localTempArray[9] + //Family room
+							"</td><td>" + localTempArray[5] + //Family room
 							"</td><td>" + localTempArray[6] +  //Bed Room
-							"</td><td>" + localTempArray[5] +  //Desk
+							"</td><td>" + localTempArray[9] +  //Desk
 							"</td><td>" + localTempArray[7] +  //Pipe
 							"</td><td>" + localTempArray[4] +  //Wood
 							"</td><td>" + localTempArray[8] +  //Furnace
@@ -46,22 +46,21 @@ $(".messageShowCurrentTemps").on("click", function(){
 	$.get('currentTemps', (temps) => {
 		console.log(temps);
 		writeTemperatures(temps);
-//		intervalId = setInterval(count(temps), 1000);
 
-//    	function count (temps) {
-//	   	    time--;
-
+		//		intervalId = setInterval(count(temps), 1000);
+		//    	function count (temps) {
+		//	   	    time--;
 	       	// update the screen to the new converted time
-//			writeTemperatures(temps);
-//	       	if (time <= 0){
-//	       		clearInterval(intervalId);
-//				$.get('currentTemps', (temps) => {
-//					console.log(temps);
-//					writeTemperatures(temps);
-//			    });
+		//			writeTemperatures(temps);
+		//	       	if (time <= 0){
+		//	       		clearInterval(intervalId);
+		//				$.get('currentTemps', (temps) => {
+		//					console.log(temps);
+		//					writeTemperatures(temps);
+		//			    });
+		//       		}
+		//    	};
 
-//       		}
-//    	};
 	});
 
 });
@@ -77,10 +76,10 @@ $(".messageChartPipeTemps").on("click", function(event){
 	var time = [];
 	console.log("got the Chart Pipe Temps click");
 
-// to convert mysql timestamp
-// https://stackoverflow.com/questions/3075577/convert-mysql-datetime-stamp-into-javascripts-date-format
+	// to convert mysql timestamp
+	// https://stackoverflow.com/questions/3075577/convert-mysql-datetime-stamp-into-javascripts-date-format
 
-// get the pipe temperature data
+	// get the pipe temperature data
 	$.get('pipeTemp', (temps) => {
 		console.log("data back from pipe temps - ");
 		console.log(temps);
@@ -402,6 +401,7 @@ $(".showTemp").on("click", function(event){
 	});
 });
 
+
 // get the recirculator settings from the database
 $(".getRecircSettings").on("click", function(event){
 	event.preventDefault();
@@ -422,22 +422,23 @@ $(".getRecircSettings").on("click", function(event){
     });
 });
 
-
+// Update the recirculator settings
 $(".upDateRecircSettings").on("click", function(event){
 	event.preventDefault();
 	console.log("got the update click");
 	var newSettings = {
-		onTemp: $("#onTemperature").val().trim(),
-		offTemp: $("#offTemperature").val().trim(),
-		firstWDOnTime: $("#weekdayStartTime1").val().trim(),
-		firstWDOffTime: $("#weekdayOffTime1").val().trim(),
-		secondWDOnTime: $("#weekdayStartTime2").val().trim(),
-		secondWDOffTime: $("#weekdayOffTime2").val().trim(),
-		firstWEOnTime: $("#weekendStartTime1").val().trim(),
-		firstWEOffTime: $("#weekendOffTime1").val().trim(),
-		secondWEOnTime: $("#weekendStartTime2").val().trim(),
-		secondWEOffTime: $("#weekendOffTime2").val().trim(),
+		pipeTempOn: $("#onTemperature").val().trim(),
+		pipeTempOff: $("#offTemperature").val().trim(),
+		weekDayOn1: $("#weekdayStartTime1").val().trim(),
+		weekDayOff1: $("#weekdayOffTime1").val().trim(),
+		weekDayOn2: $("#weekdayStartTime2").val().trim(),
+		weekDayOff2: $("#weekdayOffTime2").val().trim(),
+		weekEndOn1: $("#weekendStartTime1").val().trim(),
+		weekEndOff1: $("#weekendOffTime1").val().trim(),
+		weekEndOn2: $("#weekendStartTime2").val().trim(),
+		weekEndOff2: $("#weekendOffTime2").val().trim(),
 	};
+	console.log(newSettings);
 
 	$.ajax({
 		url: "http://localhost:2000/upDateRecircSettings",
@@ -445,9 +446,59 @@ $(".upDateRecircSettings").on("click", function(event){
 		data: newSettings,
 		success: function(d) {
 			console.log("the post worked");
+			console.log(d);
 		}
 	})
-})
+});
+
+// Handle the GET other settings button
+$(".getGeneralSettings").on("click", function(event){
+	event.preventDefault();
+	console.log("got the get general settings click");
+	$.get('generalSettings', (stuff) => {
+		console.log(stuff);
+		$("#tempSaveInterval").attr("placeholder", stuff.tempSaveInterval);
+		$("#dataPointsInGraph").attr("placeholder", stuff.numDataPointsToGraph);
+		$("#serverIPAddress").attr("placeholder", stuff.serverIPAddress);
+		$("#ArduinoIPAddress").attr("placeholder", stuff.arduinoIPAddress);
+		$("#someThing").attr("placeholder", stuff.something);
+		$("#somethingElse").attr("placeholder", stuff.somethingelse);
+		$("#somefkn").attr("placeholder", stuff.somefkn);
+		$("#somethingelse2").attr("placeholder", stuff.somethingelse2);
+		$("#somefkn2").attr("placeholder", stuff.somefkn2);
+		$("#runMode").attr("placeholder", stuff.runMode);
+    });
+});
+
+
+// Update the General settings
+$(".upDateGeneralSettings").on("click", function(event){
+	event.preventDefault();
+	console.log("got the update general click");
+	var newGenSettings = {
+		pipeTempOn: $("#tempSaveInterval").val().trim(),
+		pipeTempOff: $("#dataPointsInGraph").val().trim(),
+		weekDayOn1: $("#serverIPAddress").val().trim(),
+		weekDayOff1: $("#ArduinoIPAddress").val().trim(),
+		weekDayOn2: $("#someThing").val().trim(),
+		weekDayOff2: $("#somethingElse").val().trim(),
+		weekEndOn1: $("#somefkn").val().trim(),
+		weekEndOff1: $("#somethingelse2").val().trim(),
+		weekEndOn2: $("#somefkn2").val().trim(),
+		weekEndOff2: $("#runMode").val().trim(),
+	};
+	console.log(newGenSettings);
+
+	$.ajax({
+		url: "http://localhost:2000/upDateGeneralSettings",
+		type: "POST",
+		data: newGenSettings,
+		success: function(d) {
+			console.log("the post worked");
+		}
+	})
+});
+
 
 
 // Handle the change red button
@@ -490,7 +541,7 @@ $(".messageTurnPumpOn").on("click", function(event){
     $.ajax({
     	url: "http://localhost:2000/sendMessage",
         type: "POST",
-        data: {message: "turnPumpOn"},
+        data: {message: "ManualTurnPumpOn"},
         success: function(d) {
         	console.log("SUCCESS in the pump on");
             alert("successs "+ JSON.stringify(d));

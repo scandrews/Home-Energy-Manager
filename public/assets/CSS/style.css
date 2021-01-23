@@ -29,6 +29,9 @@ body {
   padding: 0;
 }
 
+.curTempBlocl1{
+  
+}
 .chart--container {
   height: 100%;
   width: 100%;
@@ -64,6 +67,7 @@ body {
   padding-top: 0px;
   padding-bottom: 0px;
   height: inherit;
+  text-align: left;
 }
 
 .my-jumbotron {

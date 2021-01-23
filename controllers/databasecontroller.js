@@ -35,6 +35,7 @@ var numOfReadingsToAvg = 10;
 var currentSaveDelayCount = 30;
 var saveDelay = currentSaveDelayCount;
 var delayCount = 0;
+var numDataPointsRead = 40;
 var temporaryTimes = [];
 var test = "Test";
 //var loopsSinceLastSettings = 0;
@@ -81,7 +82,15 @@ connection.connect((err) => {
   // retrieve the stored temp data for display
   exports.getTempData = function (req, res) {
     console.log("in get temp data  yyyoooo");
-    connection.query("SELECT * FROM temperatures ORDER BY id DESC LIMIT 40", (err, result) => {
+    var temp = "SELECT * FROM temperatures ORDER By id DESC LIMIT ";
+    var oursql = temp.concat(numDataPointsRead);
+    console.log(oursql);
+    connection.query( oursql, (err, result) => {
+        console.log(result);
+        if (err) {
+          console.log("Got a DB error in getTempData (other)");
+          console.log (err);
+          };
       res.send( result );
     });
   };
@@ -89,12 +98,26 @@ connection.connect((err) => {
   // retrieve the pipe temperature data
   exports.getPipeTempData = function (req, res) {
     console.log("in dbcontroler get pipe data");
-    connection.query("SELECT * FROM recirculatorHistory ORDER By id DESC LIMIT 40", (err, result) => {
-      //console.log(result);
-      res.send ( result );
+    var temp = "SELECT * FROM recirculatorHistory ORDER By id DESC LIMIT ";
+    var oursql = temp.concat(numDataPointsRead);
+    console.log(oursql);
+    connection.query( oursql, (err, result) => {
+        console.log(result);
+        if (err) {
+          console.log("Got a DB error in getPipeTempData");
+          console.log (err);
+          };
+        res.send ( result );
     });
   };
 
+
+  exports.getdbSettings = function (){
+    console.log("in db controller get db settings");
+    var dbSettings = [currentSaveDelayCount, numDataPointsRead];
+    console.log(dbSettings);
+    return dbSettings;
+  };
 
   exports.saveTempData = function (temp1, temp2, temp3, temp4, temp5, temp6, temp7) {
     console.log("in save temperature data");
@@ -148,7 +171,7 @@ connection.connect((err) => {
           connection.query("INSERT INTO temperatures SET ?",
             {
               tempOutDoorsSun: avgTemp7,
-              tempOutDoorsShade: 71,
+              tempOutDoorsShade: 40,
               tempFamilyRoom: avgTemp2,
               tempBedRoom: avgTemp3,
               tempDesk: avgTemp6,
@@ -220,44 +243,25 @@ connection.connect((err) => {
       if (newSettings[key] == ''){
         console.log("nothing at - " + key)
       } else {
-        console.log("At - " + key + " got - " + newSettings[key])
+        console.log("At - " + key + " got - " + newSettings[key]);
+        var y = newSettings[key];
+        var x = key;
+        if (typeof newSettings[key] === 'string'){
+          y = "'" + y + "'"
+        };
+        var firstString = "UPDATE recirculatorsettings SET ";
+        var secondString = " = ";
+        var thirdString = " WHERE id=1";
+        NewString = firstString.concat(x, secondString, y, thirdString);
+        console.log (NewString);
 
-//SET @colname := '' ; 
-//SELECT t.rslt FROM table1 t WHERE t.id = 1 ORDER BY t.rslt LIMIT 1 INTO @colname ;
-
-//SET @sql := CONCAT('SELECT `',@colname,'` FROM table2 ORDER BY 1') ;
-
-//PREPARE stmt FROM @sql ; 
-//EXECUTE stmt ;
-//DEALLOCATE PREPARE stmt ;
-
-
-//SET @config := (SELECT CONFIG FROM yourtable WHERE id=1);
-//SET @sql := CONCAT('SELECT FIELDCONTENT AS `', @config, '` FROM TABLENAME');
-
-//PREPARE stmt FROM @sql;
-//EXECUTE stmt;
-//  --------------------
-
-
-//        SET config := (UPDATE CONFIG FROM recirculatorsettings WHERE id=1);
-//        SET sql := CONCAT('UPDATE newSettings[key] AS `', config, '` FROM recirculatorsettings');
-//        PREPARE stmt FROM sql;
-
-//                        UPDATE recirculatorSettings SET pipeTempOn = 95 WHERE id=1;
-        var x = newSettings[key];
-
-//exports.insertIntoDb = function(tableName,insertObj) {
-//  connection.query('INSERT INTO ?? SET ?', [ tableName, insertObj ], ...)
-//};
-
-
-        connection.query ("UPDATE recirculatorSettings SET ?? = ? WHERE id=1", {key, x}, (err, result) => {
-            if (err) {
+        connection.query( NewString, (err, result) => {
+          console.log(result);
+          if (err) {
             console.log("Got a DB error in update reg setting");
             console.log (err);
-            };
-            return;
+          };
+          return(newSettings);
         })
       }
     }

@@ -103,7 +103,7 @@
 
 	<div>
 
-<!--  Keep this one for recirc settings -->
+	<!--  Div for recirc settings -->
 
 	<div class="row">
 	<div class="col-sm-5" margin="5px">
@@ -114,8 +114,9 @@
 				    <button type="button" class="btn btn-outline-dark getRecircSettings" href="#">Show Setting</button>
 				    <button type="button" class="btn btn-outline-dark upDateRecircSettings" href="#">Update Settings</button>
 				    <form>
+
 					  <div class="form-group row my-form-group">
-					    <label for="onTemperature" class="col-sm-6 col-form-label my-col-form-label">On Temperature</label>
+					    <label for="onTemperature" class="col-sm-6 col-form-label my-col-form-label" type="search">On Temperature</label>
 					    <div class="col-sm-4">
 					      <input type="onTemperature" class="form-control my-col-form-label" id="onTemperature" placeholder="On Temperature">
 					    </div>
@@ -185,72 +186,73 @@
 	<div class="col-sm-5">
 
 
-<!--  Fucken hello  -->
+<!--  Division for general settings  -->
 
-	<!-- This section displays the recirculator setting -->
+	<!-- This section displays the general settings -->
 			<div class="card">
 				<div class="card-body my-card-body">
-				    <h5 class="card-header my-card-header">Recirculator Settings</h5>
-				    <button type="button" class="btn btn-outline-dark">Dark</button>
+				    <h5 class="card-header my-card-header">Settings</h5>
+				    <button type="button" class="btn btn-outline-dark getGeneralSettings">Show</button>
+				    <button type="button" class="btn btn-outline-dark upDateGeneralSettings" href="#">Update Settings</button>
 				    <form>
 					  <div class="form-group row my-form-group">
-					    <label for="onTemperature" class="col-sm-6 col-form-label my-col-form-label">On Temperature</label>
+					    <label for="tempSaveInterval" class="col-sm-6 col-form-label my-col-form-label">temperature save interval</label>
 					    <div class="col-sm-4">
-					      <input type="onTemperature" class="form-control my-col-form-label" id="onTemperature" placeholder="On Temperature">
+					      <input type="tempSaveInterval" class="form-control my-col-form-label" id="tempSaveInterval" placeholder="Temperature Save">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="offTemperature" class="col-sm-6 col-form-label my-col-form-label">Off Temperature</label>
+					    <label for="dataPointsInGraph" class="col-sm-6 col-form-label my-col-form-label">Number of data points in graph</label>
 					    <div class="col-sm-4">
-					      <input type="offTemperature" class="form-control my-col-form-label" id="offTemperature" placeholder="Off Temperature">
+					      <input type="dataPointsInGraph" class="form-control my-col-form-label" id="dataPointsInGraph" placeholder="Num of Data Points">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="weekdayStartTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekday Start Time</label>
+					    <label for="serverIPAddress" class="col-sm-6 col-form-label my-col-form-label">Server IP Address</label>
 					    <div class="col-sm-4">
-					      <input type="weekdayStartTime1" class="form-control my-col-form-label" id="weekdayStartTime1" placeholder="First Weekday On Time">
+					      <input type="serverIPAddress" class="form-control my-col-form-label" id="serverIPAddress" placeholder="Server IP Address">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="weekdayOffTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekday End Time</label>
+					    <label for="ArduinoIPAddress" class="col-sm-6 col-form-label my-col-form-label">Arduino IP Address</label>
 					    <div class="col-sm-4">
-					      <input type="weekdayOffTime1" class="form-control my-col-form-label" id="weekdayOffTime1" placeholder="First Weekday Off Time">
+					      <input type="ArduinoIPAddress" class="form-control my-col-form-label" id="ArduinoIPAddress" placeholder="First Weekday Off Time">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="weekdayStartTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekday Start Time</label>
+					    <label for="someThing" class="col-sm-6 col-form-label my-col-form-label">Something</label>
 					    <div class="col-sm-4">
-					      <input type="weekdayStartTime2" class="form-control my-col-form-label" id="weekdayStartTime2" placeholder="Second Weekday On Time">
+					      <input type="someThing" class="form-control my-col-form-label" id="someThing" placeholder="Second Weekday On Time">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="weekdayOffTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekday End Time</label>
+					    <label for="somethingElse" class="col-sm-6 col-form-label my-col-form-label">Second Weekday End Time</label>
 					    <div class="col-sm-4">
-					      <input type="weekdayOffTime2" class="form-control my-col-form-label" id="weekdayOffTime2" placeholder="Second Weekday Off Time">
+					      <input type="somethingElse" class="form-control my-col-form-label" id="somethingElse" placeholder="Second Weekday Off Time">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="weekendStartTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekend Start Time</label>
+					    <label for="somefkn" class="col-sm-6 col-form-label my-col-form-label">First Weekend Start Time</label>
 					    <div class="col-sm-4">
-					      <input type="weekendStartTime1" class="form-control my-col-form-label" id="weekendStartTime1" placeholder="First Weekday On Time">
+					      <input type="somefkn" class="form-control my-col-form-label" id="somefkn" placeholder="First Weekday On Time">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="weekendOffTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekend End Time</label>
+					    <label for="somethingelse2" class="col-sm-6 col-form-label my-col-form-label">First Weekend End Time</label>
 					    <div class="col-sm-4">
-					      <input type="weekendOffTime1" class="form-control my-col-form-label" id="weekendOffTime1" placeholder="First Weekend Off Time">
+					      <input type="somethingelse2" class="form-control my-col-form-label" id="somethingelse2" placeholder="First Weekend Off Time">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="weekendStartTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekend Start Time</label>
+					    <label for="somefkn2" class="col-sm-6 col-form-label my-col-form-label">Second Weekend Start Time</label>
 					    <div class="col-sm-4">
-					      <input type="weekendStartTime2" class="form-control my-col-form-label" id="weekendStartTime2" placeholder="Second Weekend On Time">
+					      <input type="somefkn2" class="form-control my-col-form-label" id="somefkn2" placeholder="Second Weekend On Time">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="weekendOffTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekend End Time</label>
+					    <label for="runMode" class="col-sm-6 col-form-label my-col-form-label">Run Mode</label>
 					    <div class="col-sm-4">
-					      <input type="weekendOffTime2" class="form-control my-col-form-label" id="weekendOffTime2" placeholder="Second Weekend Off Time">
+					      <input type="runMode" class="form-control my-col-form-label" id="runMode" placeholder="Arduino Initiated">
 					    </div>
 					  </div>
 					</form>

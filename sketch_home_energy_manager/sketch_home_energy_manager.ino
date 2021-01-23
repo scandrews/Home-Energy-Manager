@@ -9,8 +9,8 @@
   byte arduinoMac[] = { 0xA8, 0x61, 0x0A, 0xAE, 0x41, 0x66 };
   unsigned int arduinoPort = 8888;      // port of Arduino
   
-  // config for the PC side
-  IPAddress receiverIP(192, 168, 1, 5); // IP of udp packets receiver
+  // config for the server side
+  IPAddress receiverIP(192, 168, 1, 5); // IP of udp packets receiver - server
   unsigned int receiverPort = 6000;      // port to listen on my PC
 
   // An EthernetUDP instance to let us send and receive packets over UDP
@@ -20,12 +20,12 @@
   char packetBuffer [11];  //buffer to hold incoming packet,
 
   //define sensor pins
-  int sensorPin1 = A0; // Wood Stove
-  int sensorPin2 = A1; // Bread Board
-  int sensorPin3 = A2; // Bedroom
-  int sensorPin4 = A3; // Pipe
-  int sensorPin5 = A4; // Furnace
-  int sensorPin6 = A5; // Bread Board
+  int sensorPin1 = A0; // 1 - Wood Stove
+  int sensorPin2 = A1; // 2 - Bread Board
+  int sensorPin3 = A2; // 3 - Bedroom
+  int sensorPin4 = A3; // 4 - Pipe
+  int sensorPin5 = A4; // 5 - Furnace
+  int sensorPin6 = A5; // 6 - Bread Board
   
   //int sensorValue;
   float sensorInput1;
@@ -211,7 +211,7 @@ void loop() {
     voltage /= 1024;                 //
     float tempC6 = (voltage - 0.5) * 100 ;               //Subtract the offset 
 
-   // end temp sense section
+   // end analog temperature sense section
 
   // to issue a global temperature and Requests to all devices on the bus
     // Send the command to get temperature readings 
