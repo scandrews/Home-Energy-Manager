@@ -2,6 +2,8 @@
 
 $(document).ready(function() {
 
+var serverIPAddress = "";
+
 var time = 2;
 
 // timer to get periodicaly get status
@@ -28,10 +30,10 @@ var variable = "6:30";
 $(".messageShowCurrentTemps").on("click", function(){
 	console.log("got the show current temperature message click");
 
+	var localPumpStatus = '0ff';
 	function writeTemperatures(localTempArray){
 		console.log(localTempArray);
-		$(".curTempBlock1").html("<td>" + localTempArray[2] +  //pump status
-							"</td><td>" + localTempArray[10] +  //outdoor sun
+		$(".curTempBlock1").html("<td>" + localTempArray[10] +  //outdoor sun
 							"</td><td>" + localTempArray[6] +  //Bedroom
 							"</td><td>" + localTempArray[5] + //Family room
 							"</td><td>" + localTempArray[6] +  //Bed Room
@@ -39,12 +41,18 @@ $(".messageShowCurrentTemps").on("click", function(){
 							"</td><td>" + localTempArray[7] +  //Pipe
 							"</td><td>" + localTempArray[4] +  //Wood
 							"</td><td>" + localTempArray[8] +  //Furnace
-							"</td><td>" + time + "</td>");
-
+							"</td>");
+		$(".timeToSaveStatus").html("<td>" + localTempArray[11][2] + "</td>");
+		$(".pumpStatus").html("<td>" + localPumpStatus + "</td>");
 	};
 
 	$.get('currentTemps', (temps) => {
 		console.log(temps);
+		if(temps[2] == 1){
+			localPumpStatus = 'on'
+		} else if (temps[2] == 0){
+			localPumpStatus = 'off'
+		}
 		writeTemperatures(temps);
 
 		//		intervalId = setInterval(count(temps), 1000);
@@ -186,7 +194,6 @@ $(".messageChartPipeTemps").on("click", function(event){
 			series: [{
 				// plot 1 values, linear data
 				values: pipeTempArray,
-				// values: [23, 20, 27, 29, 25, 17, 15],
 				text: 'Pipe Temperature',
 				backgroundColor: '#4d80a6'
 			}]
@@ -290,7 +297,6 @@ $(".messageChartOtherTemps").on("click", function(event){
 				},
 				// convert text on scale indices
 				labels: labels
-				//  labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 			},
 			scaleY: {
 			// scale label with unicode character
@@ -312,56 +318,48 @@ $(".messageChartOtherTemps").on("click", function(event){
 			series: [{
 				// plot 1 values, linear data
 				values: outDoorShadeTempArray,
-				// values: [23, 20, 27, 29, 25, 17, 15],
 				text: 'Outside Shade Temperature',
 				backgroundColor: '#8eefde'
 				},
 				{
 	            // plot 2 values, linear data
 	            values: outDoorSunTempArray,
-	            // values: [35, 42, 33, 49, 35, 47, 35],
 	            text: 'Outside Sun Temperature',
 	            backgroundColor: '#70cfeb'
 	          },
 	          {
 	            // plot 3 values, linear data
 	            values: familyTempArray,
-	            //values: [15, 22, 13, 33, 44, 27, 31],
 	            text: 'Family Room Temperature',
 	            backgroundColor: '#8ee9de'
 	          },
 	          {
 	            // plot 4 values, linear data
 	            values: bedRmTempArray,
-	            // values: [15, 22, 13, 33, 44, 27, 31],
 	            text: 'Bedroom Temperature',
 	            backgroundColor: '#4d80a6'
 	          },
 				{
 	            // plot 5 values, linear data
 	            values: pipeTempArray,
-	            // values: [15, 22, 13, 33, 44, 27, 31],
 	            text: 'Pipe Temperature',
 	            backgroundColor: '#4d80a6'
 	          },
 				{
 	            // plot 6 values, linear data
 	            values: deskTempArray,
-	            // values: [15, 22, 13, 33, 44, 27, 31],
 	            text: 'Desk Temps',
 	            backgroundColor: '#4d80a6'
 	          },
 				{
 	            // plot 7 values, linear data
 	            values: furnaceTempArray,
-	            // values: [15, 22, 13, 33, 44, 27, 31],
 	            text: 'Furnace Temperature',
 	            backgroundColor: '#4d80a6'
 				},
 				{
 	            // plot 8 values, linear data
 	            values: woodStoveTempArray,
-	            // values: [15, 22, 13, 33, 44, 27, 31],
 	            text: 'Wood Stove Temperature',
 	            backgroundColor: '#4d80a6'
 	          }
@@ -397,7 +395,11 @@ $(".showTemp").on("click", function(event){
 		console.log("temp2 - ", temps[0].tempBedRoom);
 		console.log("temp2 - ", temps[0].tempOutDoors);
 		console.log("temp2 - ", temps[0].tempPipe);
-		$(".tempblock1").html("<td>" + temps[0].createdAt + "</td><td>" + temps[0].tempFamilyRoom + "</td><td>" + temps[0].tempBedRoom + "</td><td>" + temps[0].tempOutDoors + "</td><td>" + temps[0].tempPipe + "</td>");
+		$(".tempblock1").html("<td>" + temps[0].createdAt + 
+						 "</td><td>" + temps[0].tempFamilyRoom + 
+						 "</td><td>" + temps[0].tempBedRoom + 
+						 "</td><td>" + temps[0].tempOutDoors + 
+						 "</td><td>" + temps[0].tempPipe + "</td>");
 	});
 });
 
@@ -440,8 +442,10 @@ $(".upDateRecircSettings").on("click", function(event){
 	};
 	console.log(newSettings);
 
+//	var serverURL = "'http://" + serverIPAddress + ":2000/upDateRecircSettings'";
+	var serverURL =	"http://localhost:2000/upDateRecircSettings";
 	$.ajax({
-		url: "http://localhost:2000/upDateRecircSettings",
+		url: serverURL,
 		type: "POST",
 		data: newSettings,
 		success: function(d) {
@@ -457,6 +461,7 @@ $(".getGeneralSettings").on("click", function(event){
 	console.log("got the get general settings click");
 	$.get('generalSettings', (stuff) => {
 		console.log(stuff);
+		serverIPAddress = stuff.serverIPAddress;
 		$("#tempSaveInterval").attr("placeholder", stuff.tempSaveInterval);
 		$("#dataPointsInGraph").attr("placeholder", stuff.numDataPointsToGraph);
 		$("#serverIPAddress").attr("placeholder", stuff.serverIPAddress);
@@ -473,24 +478,26 @@ $(".getGeneralSettings").on("click", function(event){
 
 // Update the General settings
 $(".upDateGeneralSettings").on("click", function(event){
-	event.preventDefault();
+	//event.preventDefault();
 	console.log("got the update general click");
 	var newGenSettings = {
-		pipeTempOn: $("#tempSaveInterval").val().trim(),
-		pipeTempOff: $("#dataPointsInGraph").val().trim(),
+		tempSaveInterval: $("#tempSaveInterval").val().trim(),
+		dataPointsToGraph: $("#dataPointsInGraph").val().trim(),
 		weekDayOn1: $("#serverIPAddress").val().trim(),
 		weekDayOff1: $("#ArduinoIPAddress").val().trim(),
 		weekDayOn2: $("#someThing").val().trim(),
 		weekDayOff2: $("#somethingElse").val().trim(),
 		weekEndOn1: $("#somefkn").val().trim(),
-		weekEndOff1: $("#somethingelse2").val().trim(),
-		weekEndOn2: $("#somefkn2").val().trim(),
-		weekEndOff2: $("#runMode").val().trim(),
+		serverIPAddress: $("#serverIPAddress").val().trim(),
+		arduinoIPAddress: $("#ArduinoIPAddress").val().trim(),
+		runMode: $("#runMode").val().trim(),
 	};
 	console.log(newGenSettings);
+//	var serverURL = "'http://" + serverIPAddress + ":2000/upDateGeneralSettings'";
+	var serverURL = "http://localhost:2000/upDateGeneralSettings"
 
 	$.ajax({
-		url: "http://localhost:2000/upDateGeneralSettings",
+		url: serverURL,
 		type: "POST",
 		data: newGenSettings,
 		success: function(d) {
@@ -536,20 +543,26 @@ $(".changeHomeAway").on("click", function(event){
 
 // manually turn the pump on
 $(".messageTurnPumpOn").on("click", function(event){
-	$(this).text('Turn Pump Off');
+	//$(this).text('Turn Pump Off');
 	console.log("got the pump on message click");
     $.ajax({
     	url: "http://localhost:2000/sendMessage",
         type: "POST",
-        data: {message: "ManualTurnPumpOn"},
-        success: function(d) {
-        	console.log("SUCCESS in the pump on");
-            alert("successs "+ JSON.stringify(d));
+        data: {message: "ManualPumpChange"},
+        success: function(returnState) {
+        	console.log("Back from the server - " + returnState);
+        	if (returnState == "on"){
+        		$(".messageTurnPumpOn").text("Stop Recirculator");
+			} else if (returnState == "off"){
+				$(".messageTurnPumpOn").text("Run Recirculator");
+			}
+        	console.log("SUCCESS in the change start/stop Recirc state");
         }
     });
 });
 
 // manually turn the pump off
+// delete this - make the pump change toggle
 $(".messageTurnPumpOff").on("click", function(event){
 	console.log("got the pump off message click");
     $.ajax({

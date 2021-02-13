@@ -35,7 +35,7 @@ app.get('/about', (req, res) => {
 app.get('/currentTemps', (req, res) => {
 	console.log("in the get current temperatures route");
 	dataPackage = comControler.returnFlags();
-	temporyTimes = dbaccess.getCurrentTimes();
+	temporyTimes = dbaccess.getCurrentTimes();  // add curent save time here
 	dataPackage.push(temporyTimes);
 	console.log("still in get current temps route data - " + dataPackage);
 	res.send(dataPackage);	
@@ -48,7 +48,7 @@ app.get('/curTemp', (req, res) => {
 });
 
 app.get('/curTempHistory', (req, res) => {
-	console.log("in the get curTemp route");
+	console.log("in the get curTemp History route");
 //	console.log(req.body)
 	dbaccess.getTempData(req, res);
 });
@@ -69,13 +69,14 @@ app.post('/sendMessage', (req, res) => {
 	console.log("in route controller send message - " + req.body.message);
 	if (req.body.message == "changeHome-Away"){
 		newState = comControler.changeState(req.body.message)
-			console.log("GOT THE RETURN - " + newState.stateHomeAway + newState.statePump);
-			res.send(newState)
-		;
-	} else if (req.body.message == "ManualTurnPumpOn") {
-		recircController.manualPumpChange(req.body.message);
-		//	console.log(req.body);
-		comControler.sendMessageToArdunio(req.body.message);
+		console.log("GOT THE RETURN - " + newState.stateHomeAway + newState.statePump);
+		res.send(newState);
+	} else if (req.body.message == "ManualPumpChange") {
+		newPState = recircController.manualPumpChange(req.body.message);
+		//comControler.changeState()
+		//newState = comControler.getState();
+		console.log("GOT THE RETURN - " + newPState);
+		res.send(newPState);
 	};
 });
 
@@ -87,13 +88,15 @@ app.get('/currentStatus', (req, res) => {
 app.post('/upDateRecircSettings', function (req, res) {
 	console.log("in route Controller update recirc settings");
 	console.log(req.body);
-	var stuffBack = dbaccess.upDateRecircSettings(req.body);
-	return(stuffBack);
+	dbaccess.upDateRecircSettings(req.body, function (){
+		console.log("got back from updating te db with new recirc settings");
+		recircController.changedRecircSettings();
+	});
 });
 
-app.get('/generalSettings', (req, res) => {
-	console.log("in route controler get general settings");
+var getCurrentGeneralSettings = function (){
 	var IPAddresses = comControler.getIPAddresses();
+	//var serverIPAddress = comControler.sendMessageToArdunio("getServerIPAddress", "x")
 	var dbSettings = dbaccess.getdbSettings();
 	console.log(IPAddresses);
 	console.log(dbSettings);
@@ -109,16 +112,45 @@ app.get('/generalSettings', (req, res) => {
 			somefkn2 : "somefkn",
 			runMode : "normal"
 		}
-		res.send (generalSettings)
+	return (generalSettings)
+};
+
+app.get('/generalSettings', (req, res) => {
+	console.log("in route controler get general settings");
+	generalSettings = getCurrentGeneralSettings();
+	res.send (generalSettings)
 });
 
 app.post('/upDateGeneralSettings', function (req, res) {
 	console.log("in route Controller update general settings");
-	console.log(req.body);
-
-//  need to handle
-
-//	dbaccess.upDateRecircSettings(req.body);
+	newSettings = req.body;
+	console.log(newSettings);
+	for (var key in newSettings){
+		if (newSettings[key] == ''){
+			console.log("nothing at - " + key)
+		}else {
+			console.log("At - " + key + " got - " + newSettings[key]);
+			switch (key){
+				case "serverIPAddress":
+					var returnStatus = comControler.sendMessageToArdunio ("updateServerIPAddress", newSettings[key])
+					console.log("return from change server IP Address - " + returnStatus);
+				break;
+				case "tempSaveInterval":
+					var returnStatus = dbaccess.upDateTempSaveIterval(newSettings[key])
+					console.log("return from update temp save interval - " + returnStatus);
+				break;
+				case "dataPointsToGraph":
+					var returnStatus = dbaccess.updateNumDataPointsToChart(newSettings[key]);
+					console.log("return from #of points to graph - " + returnStatus);
+				break;
+				default:
+					console.log("ERROR");
+				break;
+			}
+		}
+	};
+	var currentSettings = getCurrentGeneralSettings();
+	res.send (currentSettings);
 });
 
 

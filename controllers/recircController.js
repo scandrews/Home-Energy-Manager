@@ -3,7 +3,6 @@
 var comController = require ('./communicationsController');
 var dbController = require ('./databasecontroller');
 
-var isPumpOn = false;
 var recircOn = 04;
 var recircOff = 05;
 var loopCount = 0;
@@ -27,33 +26,49 @@ var recircSettings = [{
     weekEndOn2: '0',
     weekEndOff2: '0'
 }];
-var homeAwayStateHere = {};
-var pumpState = "";
+var allStatesHere = {};
+var pumpState = "off";
+var isPumpOn = false;
+var recirculatorTemp = 0.0;
+
 
 //console.log("starting recirc controller");
 //dbController.recircSettingsRecirCNTRL("somethign", function (recircSettings) {
 //console.log("Starting recircontroller, settings - " + recircSettings);
 //});
 
-// set the pump state flag when maually turned on or off
+// Front end requested a forced pump change
 exports.manualPumpChange = function (newState){
-	pumpState = comController.getState;
-	console.log("recirc controller pumpState - " + pumpState);
-	if (pumpState.statePump == "off"){
-		//set object
-		//set so doesn't update recirc settings
+	console.log("in recirc cntrlr manual pump change");
+	allStates = comController.getState;
+	console.log("recirc controller All States - ");
+	console.log(allStates);
+	if (pumpState == "on"){
+		console.log("pump is on and manula request to turn off");
+		comController.sendMessageToArdunio("stopRecirc");
+		dbController.savePipeTemp("ManualPumpOff", recirculatorTemp);
+		pumpState = "off";
+	} else if (pumpState == "off"){
+		console.log("pump is off and manual request to turn on");
 		comController.sendMessageToArdunio("runRecirc");
-		dbController.savePipeTemp("turnRecircOn", recircTemp);
-	}
-	if (newState == "turnPumpOn"){
-		isPumpOn = true;
-	} else if (newState == "turnPumpOff"){
-		isPumpOn = false;
-	}
+		dbController.savePipeTemp("ManualPumpOn", recirculatorTemp);
+		pumpState = "on";
+	};
+	return (pumpState);
+};
+
+// this is called from the route controller to force an update
+exports.changedRecircSettings = function (){
+	// The Recirc settings were just changed so force a get them from the db
+	dbController.recircSettingsRecirCNTRL("somethign", function (tempRecircSettings) {
+		console.log(tempRecircSettings);
+		recircSettings = tempRecircSettings;
+		getSettingsCount = 0;
+	});
 };
 
 exports.checkRecirc = function (recircTemp){
-
+	recirculatorTemp = recircTemp;
 	// get the current time
 	let date_ob = new Date();
 	let hours = date_ob.getHours();
@@ -83,19 +98,27 @@ exports.checkRecirc = function (recircTemp){
 
 		// pump is running so check if temp good
 		function checkIfTurnOff (){
-			// when pump is running save temp every other time through
+			console.log("in recirc controller check if turn off");
+			savePipeDataCount ++;
+			// when pump is running save temp every savepipedatainterval time through
 			if (savePipeDataCount == savePipeDataInterval){
 				dbController.savePipeTemp("recircIsOn", recircTemp);
 				savePipeDataCount = 0;
 			};
-			savePipeDataCount ++;
-			if (recircTemp > recircSettings[0].pipeTempOff){
-				console.log("pump is on and temp is greater than target");
+
+			console.log(pumpState);
+			console.log(allStatesHere.statePump);
+			// if the state has changed
+			if (pumpState != allStatesHere.statePump){
+			//if (recircTemp > recircSettings[0].pipeTempOff){
+			//	console.log("pump is on and temp is greater than target");
 				// pump is on, but reached temp so turn off
+				console.log("Detected a turn pump off");
 				dbController.savePipeTemp("turningRecircOff", recircTemp);
 				comController.sendMessageToArdunio("stopRecirc");
-				comController.changeState("statePump", "off");
+				//comController.changeState("statePump", "off");
 				isPumpOn = false;
+				pumpState = "off";
 			};
 		}
 
@@ -112,24 +135,30 @@ exports.checkRecirc = function (recircTemp){
 				console.log("pump is off and temp is less than should be");
 				loopCount = 0;
 				isPumpOn = true;
+				pumpState = "on";
 				// turn pump on
 				comController.sendMessageToArdunio("runRecirc");
 				dbController.savePipeTemp("turnRecircOn", recircTemp);
-				comController.changeState("statePump", "on");
+				//comController.changeState("statePump", "on");
 			};
 		};
 
 		//*****************************************
 		//*****	Main processing starts here	*******
 		console.log(currentTime);
-		homeAwayStateHere = comController.getState();
-		console.log("homeaway state - " + homeAwayStateHere.stateHomeAway);
-		if (isPumpOn){
+		allStatesHere = comController.getState();
+
+		console.log("All States - ");
+		console.log(allStatesHere);
+		console.log("homeaway state - " + allStatesHere.stateHomeAway);
+		console.log("Pump State - " + pumpState);
+		if (pumpState == "on"){
 			checkIfTurnOff()
 		// Check if in home or away mode
-		} else if (homeAwayStateHere.stateHomeAway == "Home"){
+		} else if (allStatesHere.stateHomeAway == "Home"){
 		// pump in NOT running so check if weekend	
 
+				// All Time Checks Here
 				if(date_ob.getDay() == 6 || date_ob.getDay() == 0){
 					console.log("It's a weekend YEA");
 					if (currentTime >= recircSettings[0].weekEndOn1 && currentTime <= recircSettings[0].weekEndOff1){

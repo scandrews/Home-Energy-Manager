@@ -1,4 +1,4 @@
-#include <SPI.h>
+#include <SPI.h>  //Serial communications
 #include <Ethernet.h>
 #include <EthernetUdp.h>
 #include <math.h>
@@ -10,15 +10,16 @@
   unsigned int arduinoPort = 8888;      // port of Arduino
   
   // config for the server side
-  IPAddress receiverIP(192, 168, 1, 5); // IP of udp packets receiver - server
+  IPAddress receiverIP(192, 168, 1, 9); // IP of udp packets receiver - server
   unsigned int receiverPort = 6000;      // port to listen on my PC
 
   // An EthernetUDP instance to let us send and receive packets over UDP
   EthernetUDP Udp;
 
   // buffers for receiving and sending data
-  char packetBuffer [11];  //buffer to hold incoming packet,
-
+  char packetBuffer [17];  //buffer to hold incoming packet,
+                           // 12 for IP numbers + 3 for the periods + 2 for my lead "what to do"
+                           
   //define sensor pins
   int sensorPin1 = A0; // 1 - Wood Stove
   int sensorPin2 = A1; // 2 - Bread Board
@@ -26,7 +27,7 @@
   int sensorPin4 = A3; // 4 - Pipe
   int sensorPin5 = A4; // 5 - Furnace
   int sensorPin6 = A5; // 6 - Bread Board
-  
+
   //int sensorValue;
   float sensorInput1;
   float sensorInput2;
@@ -35,7 +36,10 @@
   float sensorInput5;
   float sensorInput6;
 
+  float tempC4;
   float voltage;
+
+  float pipeTempUpper = 110;
 
   int whatToDo;
 
@@ -97,33 +101,127 @@ void setup() {
 
 
 void loop() {
+  Serial.print("Arduino tinks the Current Server IP Address - ");
+  Serial.println(receiverIP);
+
+  // This section checks if the pump is running and turns it off
+  // when temperature is reached
+  if (motorState == 1){
+    if (((tempC4 * 9/5) + 32) >= pipeTempUpper){
+          digitalWrite(LED3, LOW);
+          Serial.println("just set recirc low");
+          motorState = 0;
+    };
+  };
 
   // This section recieves UDP packets
   // if there's data available, read a packet
   int packetSize = Udp.parsePacket();
   if(packetSize > 0)
   {
-    Serial.print("Arduino received packet of size ");
-    Serial.println(packetSize);
-    Serial.print("From ");
-    IPAddress remote = Udp.remoteIP();
-      for (int i =0; i < 4; i++)
-      {
-        Serial.print(remote[i], DEC);
-        if (i < 3)
-        {
-          Serial.print(".");
+      Serial.print("Arduino received packet of size ");
+      Serial.println(packetSize);
+      Serial.print("From ");
+      IPAddress remote = Udp.remoteIP();
+        for (int i =0; i < 4; i++) {
+          Serial.print(remote[i], DEC);
+          if (i < 3) {
+            Serial.print(".");
+          }
         }
-      }
-    Serial.print(", port ");
-    Serial.println(Udp.remotePort());
+      Serial.print(", port ");
+      Serial.println(Udp.remotePort());
 
-    // read the packet into packetBufffer
-    Udp.read(packetBuffer,UDP_TX_PACKET_MAX_SIZE);
-    Serial.print("Contents: ");
-    Serial.println(packetBuffer);
-    whatToDo = atoi (packetBuffer);
+      // read the packet into packetBufffer
+      Udp.read(packetBuffer,UDP_TX_PACKET_MAX_SIZE);
+      Serial.print("Contents: ");
+      Serial.println(packetBuffer);   // packetBuffer is type char [17]
 
+      Serial.print("first part packet buffer - ");
+      Serial.print(packetBuffer[0]);
+      Serial.print("second part packet buffer - ");
+      Serial.println(packetBuffer[1]);
+
+      //    IPAddress receiverIP(192, 168, 1, 9); // IP of udp packets receiver - server
+      IPAddress newIPAddress2 (0, 0, 0, 0);
+      for (int i=0; i<4; i++){
+         newIPAddress2[i] = packetBuffer[i+3];
+      };
+
+      Serial.print("new IP Address in newAddress2 veriable - ");
+      Serial.println(newIPAddress2);
+
+     //    char Value2;
+     //    char firstIPsection2;
+     //    char secondIPsection2;
+     //    char thirdIPsection2;
+     //    char fourthIPsection2;
+     //    Value2 = strtok(packetBuffer," ");
+     //    firstIPsection2 = strtok(NULL, " .");
+     //    secondIPsection2 = strtok(NULL, " .");
+     //    thirdIPsection2 = strtok(NULL, " .");
+     //    fourthIPsection2 = strtok(NULL, " .");
+
+     //    Serial.print("Try for binary - ");
+     //    Serial.println(firstIPsection2);
+
+
+    char * Value1;
+    char * firstIPsection;
+    char * secondIPsection;
+    char * thirdIPsection;
+    char * fourthIPsection;
+    Value1 = strtok(packetBuffer," ");
+    firstIPsection = strtok(NULL, " .");
+    secondIPsection = strtok(NULL, " .");
+    thirdIPsection = strtok(NULL, " .");
+    fourthIPsection = strtok(NULL, " .");
+
+    Serial.print("first IP section - ");
+    Serial.print(firstIPsection);
+    Serial.print(" Second IP section - ");
+    Serial.print(secondIPsection);
+    Serial.print(" Third IP section - ");
+    Serial.print(thirdIPsection);
+    Serial.print(" Forth IP section - ");
+    Serial.println(fourthIPsection);
+
+    //    IPAddress newIPAddress;
+    char newIPAddress[30];
+    strcpy(newIPAddress, byte(firstIPsection));
+    strcat(newIPAddress, ", ");
+    strcat(newIPAddress, byte(secondIPsection));
+    strcat(newIPAddress, ", ");
+    strcat(newIPAddress, byte(thirdIPsection));
+    strcat(newIPAddress, ", ");
+    strcat(newIPAddress, byte(fourthIPsection));
+
+    //    tryagainIP[0] = byte firstIPsection;
+    //    tryagainIP[1] = byte secondIPsection;
+    //    tryagainIP[2] = byte thirdIPsection;
+    //    tryagainIP[3] = byte 
+    
+    //    char buf[30];
+    //  const char *first = "sent ";
+    //  const char *second = "message";
+    //  strcpy(buf,first);
+    //  strcat(buf,second);
+
+      //    whatToDo = Value1;
+    whatToDo = atoi (Value1);
+      //    char NewIPAddress = atoi (Value2);
+
+    Serial.print("value 1 - ");
+    Serial.print(Value1);
+    Serial.print(" What To Do - ");
+    Serial.print(whatToDo);
+    Serial.print(" value 2 - ");
+    Serial.print(firstIPsection);
+    Serial.print(" second IP Section - ");
+    Serial.print(secondIPsection);
+    Serial.print(" New IP Address - ");
+    Serial.println(newIPAddress);
+    
     switch (whatToDo){
       case 01:
         if (greenState == 0){
@@ -157,15 +255,35 @@ void loop() {
           Serial.println("just set recirc low");
           motorState = 0;
       break;
+      case 05:
+          Serial.println("got the update server IP Address packet");
+//          receiverIP = cast(
+
+          //IPAddress addr;
+//          if (receiverIP.fromString(newIPAddress)) {
+//                Serial.println("it was a valid address, do something with it");
+//          }
+//          bool i;
+//          receiverIP == 
+//          i = receiverIP.fromString(newIPAddress);
+//          if (i) {
+//            Serial.println("trying to set the IP - ");
+//            for (int a = 0; a < 4; a++) {
+//                recieverIP[a] = ip[a];
+//            }
+//          }
+
+//          receiverIP = fromString(newIPAddress);
+      break;
       default:
         Serial.println("hit the default");
         break;
     }
-    // end got a packet
-   };
+ // end got a packet
+ };
 
 
-  //  SEND FLAGS TO SERVER
+//  SEND FLAGS TO SERVER
 
     char flags[100];
     sprintf(flags, "%d:%d:%d:%d", greenState, redState, motorState, someState);
@@ -177,9 +295,9 @@ void loop() {
     Udp.write(flags, 7);
     Udp.endPacket();
 
-  //  END SEND FLAGS
+//  END SEND FLAGS
 
-  //  READ TEMPERATURES
+//  READ TEMPERATURES
    // read analog values and convert to centagrate
     sensorInput1 = analogRead(sensorPin1);    //read the analog sensor and store it
     voltage = sensorInput1 * 5.0;       //find percentage of input reading
@@ -199,7 +317,7 @@ void loop() {
     sensorInput4 = analogRead(sensorPin4);    //read the analog sensor and store it
     voltage = sensorInput4 * 5.0;       //find percentage of input reading
     voltage /= 1024;                 //
-    float tempC4 = (voltage - 0.5) * 100 ;               //Subtract the offset 
+    tempC4 = (voltage - 0.5) * 100 ;               //Subtract the offset 
 
     sensorInput5 = analogRead(sensorPin5);    //read the analog sensor and store it
     voltage = sensorInput5 * 5.0;       //find percentage of input reading
@@ -231,7 +349,7 @@ void loop() {
     Serial.print  (tempC3);
     Serial.print  (" pipe temp: ");
     Serial.print  (tempC4);
-    Serial.print ("DS18 Data - ");
+    Serial.print (" DS18 Data - ");
     Serial.println(tempC5);
 
     char tBuffer1[8];
@@ -258,19 +376,6 @@ void loop() {
     Serial.print(" temp4: ");
     Serial.println(tBuffer4);
 
-    // Blink led 2 (digital output 3)
-//    digitalWrite(LED2, HIGH);
-//    delay(500);
-//    digitalWrite(LED2, LOW);
-//    delay(500);
-
-    // Blink led 3 (digital output 1)
-//    digitalWrite(LED3, HIGH);
-//    delay(500);
-//    digitalWrite(LED3, LOW);
-//    delay(500);
-
-
     Udp.beginPacket(receiverIP, receiverPort); //start udp packet
     Udp.write("t", 1);  //identify packet as a temperture packet
     Udp.write(tBuffer1, 5); //write sensor data to udp packet
@@ -283,22 +388,6 @@ void loop() {
     Udp.endPacket(); // end packet
 
 ////////
-
-//    char flags[100];
-//    sprintf(flags, "%d:%d:%d:%d", greenState, redState, motorState, someState);
-//    Serial.print("flags in one string ");
-//    Serial.println(flags);
-//
-//    Udp.beginPacket(receiverIP, receiverPort);
-//    Udp.write("f", 1);    //identify packet as a flag packet
-//    Udp.write(flags, 7);
-//    Udp.endPacket();
-
-  //Blink led 1 (digital output 2)
-//  digitalWrite(LED1, HIGH);
-//  delay(500);
-//  digitalWrite(LED1, LOW);
-//  delay(500);
 
 
 // This section recieves UDP packets
@@ -360,6 +449,7 @@ void loop() {
 //          Serial.println("just set recirc low");
 //          motorState = 0;
 //      break;
+
 //      default:
 //        Serial.println("hit the default");
 //        break;

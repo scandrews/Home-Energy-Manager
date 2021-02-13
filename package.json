@@ -24,5 +24,6 @@
     "sequelize": "^5.21.8",
     "serialport": "^8.0.7",
     "socket.io": "^2.3.0"
+
   }
 }

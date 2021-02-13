@@ -2,12 +2,6 @@
 const data_access = require('./databasecontroller');
 const recircContrl = require('./recircController');
 
-// variables for the temperature sensor
-//var tempSum1 = 0;
-//var tempSum2 = 0;
-//var tempcount = 0;
-//var avgTemp1 = 0;
-//var avgTemp2 = 0;
 var tempToUse = [];
 var test = "Test";
 var temperature1 = 11.11;
@@ -35,20 +29,30 @@ const SerialPort = require('serialport');
 const Readline = SerialPort.parsers.Readline;
 
 // setup ethernet server
-var PORT = 6000;
-var clientAddress = "192.168.1.4";
 var dgram = require("dgram");
 var server = dgram.createSocket('udp4');
+var PORT = 6000;
+var arduinoAddress = '';
+var serverAddress = '';
+var tempIPs = [];
 
 var greenChange = '01';
 var redChange = '02';
 var runRecirculator = '03';
 var stopRecirculator = '04';
+var updateServerIPAddress = '05';
+var getServerIPAddress = '06';
 
+// get my local IP Address and console.log it
+//var ip = require('ip');
+//console.log ("my server IP address is - ");
+//console.log(ip.address());
 
 // get my local IP Address and console log it
 var os = require('os');
 var interfaces = os.networkInterfaces();
+//console.log ("initial interfaces - ");
+//console.log(interfaces);
 var addresses = [];
 for (var k in interfaces) {
     for (var k2 in interfaces[k]) {
@@ -58,9 +62,11 @@ for (var k in interfaces) {
         }
     }
 };
-console.log(addresses);
-HOST = addresses;
-
+//console.log("The Addresses are :");
+//console.log(addresses);
+serverIPAddress = addresses[1];
+console.log("Server IP Address - " + serverIPAddress);
+//console.log(serverIPAddress);
 
 //  State Machine for the whole application
 
@@ -104,10 +110,15 @@ exports.getState = function (){
 };
 //  End state machine
 
+// supplies IP addresses to the fron end
 exports.getIPAddresses = function (){
-	HOST.push(clientAddress);
-	console.log("in com cntrlr get IPs " + HOST);
-	return HOST;
+//	tempIPs = '';
+	console.log(serverIPAddress);
+	tempIPs[0] = serverIPAddress;
+	console.log(tempIPs);
+	tempIPs[1] = (arduinoAddress);
+	console.log("in com cntrlr get IPs " + tempIPs);
+	return tempIPs;
 };
 
 exports.getComSettings = function (){
@@ -119,53 +130,58 @@ var CtoF = function (inC){
 	return (parseFloat(((inC * 9/5) + 32).toFixed(1)));
 };
 
+//  Ethernet RECIEVER
 //  Start the ethernet server
 server.on("message", function (StuffIn, remote) {
 	console.log("got an ethernet message ");
     console.log(remote);
+    console.log(remote.address);
+
+    arduinoAddress = remote.address;
     arduinoPort = remote.port;
 	console.log(StuffIn);
 
 	// t designates it as a temperature packet
     if (StuffIn.toString("utf-8", 0, 1) == "t"){
 
-    	// wood stove
-	tempC1 = StuffIn.toString("utf-8", 1, 6);
-    tempF1 = CtoF (tempC1);
-    console.log("Temperature 1 C & F - " + tempC1 + " " + tempF1);
+    	//It Was A Temperature Packet
+	    // wood stove
+		tempC1 = StuffIn.toString("utf-8", 1, 6);
+	    tempF1 = CtoF (tempC1);
+	    console.log("Temperature 1 C & F - " + tempC1 + " " + tempF1);
 
-    //  bread board
-    tempC2 = StuffIn.toString("utf-8", 6, 11);
-	tempF2 = CtoF(tempC2);
-    console.log("Temperature 2 C & F - " + tempC2 + " " + tempF2);
+	    //  bread board
+	    tempC2 = StuffIn.toString("utf-8", 6, 11);
+		tempF2 = CtoF(tempC2);
+	    console.log("Temperature 2 C & F - " + tempC2 + " " + tempF2);
 
-    //  bedroom
-    tempC3 = StuffIn.toString("utf-8", 11, 16);
-	tempF3 = CtoF(tempC3);
-    console.log("Temperature 3 C & F - " + tempC3 + " " + tempF3);
+	    //  bedroom
+	    tempC3 = StuffIn.toString("utf-8", 11, 16);
+		tempF3 = CtoF(tempC3);
+	    console.log("Temperature 3 C & F - " + tempC3 + " " + tempF3);
 
-    //  pipe
-    tempC4 = StuffIn.toString("utf-8", 16, 21);
-	tempF4 = CtoF(tempC4);
-    console.log("Temperature 4 C & F - " + tempC4 + " " + tempF4);
+	    //  pipe
+	    tempC4 = StuffIn.toString("utf-8", 16, 21);
+		tempF4 = CtoF(tempC4);
+	    console.log("Temperature 4 C & F - " + tempC4 + " " + tempF4);
 
-    //  furnace
-    tempC5 = StuffIn.toString("utf-8", 21, 26);
-	tempF5 = CtoF(tempC5);
-    console.log("Temperature 5 C & F - " + tempC5 + " " + tempF5);
+	    //  furnace
+	    tempC5 = StuffIn.toString("utf-8", 21, 26);
+		tempF5 = CtoF(tempC5);
+	    console.log("Temperature 5 C & F - " + tempC5 + " " + tempF5);
 
-    //  bread board
-    tempC6 = StuffIn.toString("utf-8", 26, 31);
-	tempF6 = CtoF(tempC6);
-    console.log("Temperature 6 C & F - " + tempC6 + " " + tempF6);
+	    //  bread board
+	    tempC6 = StuffIn.toString("utf-8", 26, 31);
+		tempF6 = CtoF(tempC6);
+	    console.log("Temperature 6 C & F - " + tempC6 + " " + tempF6);
 
-    tempC7 = StuffIn.toString("utf-8", 31, 36);
-	tempF7 = CtoF(tempC7);
-    console.log("Temperature 7 C & F - " + tempC7 + " " + tempF7);
+	    tempC7 = StuffIn.toString("utf-8", 31, 36);
+		tempF7 = CtoF(tempC7);
+	    console.log("Temperature 7 C & F - " + tempC7 + " " + tempF7);
 
-    recircContrl.checkRecirc(tempF4);
+	    recircContrl.checkRecirc(tempF4);
 
-    data_access.saveTempData(tempF1, tempF2, tempF3, tempF4, tempF5, tempF6, tempF7);
+	    data_access.saveTempData(tempF1, tempF2, tempF3, tempF4, tempF5, tempF6, tempF7);
 
     // f designates it as a flag packet
 	} else if (StuffIn.toString("utf-8", 0, 1) == "f"){
@@ -176,49 +192,67 @@ server.on("message", function (StuffIn, remote) {
 
 		console.log("flag1 - " + flag1);
 		console.log("flag2 - " + flag2);
-		console.log("flag3 - " + flag3);
+		console.log("flag3 - " + flag3);  // motor state
 		console.log("flag4 - " + flag4);
+		if(flag3 == 1){
+			allStates.statePump = "on";
+		} else if (flag3 == 0){
+			allStates.statePump = "off";
+		};
 	};
 
 });
 
 server.on("listening", function () {
-    var address = server.address();
-    console.log('UDP Server listening on ' + address.address + ":" + address.port);
+    serverAddress = server.address();
+    console.log('UDP Server listening on ' + serverAddress.address + ":" + serverAddress.port);
 });
 
 server.bind(PORT);
 
-exports.sendMessageToArdunio = function (whatToDo){
+// ethernet SENDER
+exports.sendMessageToArdunio = function (whatToDo, data){
 	console.log("in comm controller send message, req.body - " + whatToDo);
 //	console.log(whatToDo);
 	switch (whatToDo){ 
 		case "changeHome-Away":
 			console.log("in send message CASE green");
-			server.send(greenChange, 0, 2, arduinoPort, clientAddress)
+			server.send(greenChange, 0, 2, arduinoPort, arduinoAddress)
 			break;
 		case "redChange":
 			console.log("in CASE red");
-			server.send(redChange, 0, 2, arduinoPort, clientAddress)
+			server.send(redChange, 0, 2, arduinoPort, arduinoAddress)
 			break;
 		case "runRecirc":
 			console.log("in send message run recirculator - from recirc controller");
-			server.send(runRecirculator, 0, 2, arduinoPort, clientAddress);
+			server.send(runRecirculator, 0, 2, arduinoPort, arduinoAddress);
 			break;
 		case "stopRecirc":
 			console.log("in CASE send message stop recirculator - from recirc controller");
-			server.send(stopRecirculator, 0, 2, arduinoPort, clientAddress);
+			server.send(stopRecirculator, 0, 2, arduinoPort, arduinoAddress);
 			break;
-		case "turnPumpOn":
+		case "ManualTurnPumpOn":
 			console.log("in CASE send message turn pump on - from front end");
-			server.send(runRecirculator, 0, 2, arduinoPort, clientAddress);
+			server.send(runRecirculator, 0, 2, arduinoPort, arduinoAddress);
 			break;
 		case "turnPumpOff":
 			console.log("in CASE send message stop recirculator - from front end");
-			server.send(stopRecirculator, 0, 2, arduinoPort, clientAddress);
+			server.send(stopRecirculator, 0, 2, arduinoPort, arduinoAddress);
 			break;
+		case "updateServerIPAddress":
+			console.log("in CASE update Server IP Address");
+			console.log(data);
+			var dataToSend = updateServerIPAddress + " " + data;
+			charsToSend = dataToSend.length + 3;
+			console.log(dataToSend + " - " + charsToSend);
+			server.send(dataToSend, 0, charsToSend, arduinoPort, arduinoAddress);
+			break;
+		case "getServerIPAddress":
+			console.log("in CASE get server IP address");
+			server.send(getServerIPAddress, 0, 2, arduinoPort, arduinoAddress);
+
 		default:
-			server.send('WTF', 0, 3, arduinoPort, clientAddress)
+			server.send('WTF', 0, 3, arduinoPort, arduinoAddress)
 			console.log("in case WTF");
 	}
 };
@@ -254,9 +288,9 @@ exports.serialComStuff = function (){
 
 	port.pipe(parser);
 	parser.on('data', function(inputString){
-		var newstr = inputString.split(" ");
-		console.log (inputString);
-		console.log (newstr);
+		//var newstr = inputString.split(" ");
+		console.log ("serialprint - " + inputString);
+		//console.log (newstr);
 		
 	// end serial i/o section
 	});

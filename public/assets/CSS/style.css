@@ -29,9 +29,27 @@ body {
   padding: 0;
 }
 
-.curTempBlocl1{
-  
+.cur-temp-labels {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top: 1px;
+  padding-bottom: 1px;
 }
+
+.cur-temp-item-labels {
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+.curTempBlocl1{
+  padding-top: 1px;
+  padding-bottom: 1px; 
+}
+
+.otherTempsChartcontainer{
+  height: 500px;
+}
+
 .chart--container {
   height: 100%;
   width: 100%;
@@ -45,8 +63,8 @@ body {
 
 .header.jumbotron{
     height: auto;
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-top: 4px;
+    padding-bottom: 4px;
     margin-bottom: 2px;
 }
 

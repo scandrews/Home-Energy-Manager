@@ -34,7 +34,6 @@
 				<a class="nav-item nav-link messageChartPipeTemps" href="#">Chart Pipe Temp</a>
 				<a class="nav-item nav-link messageChartOtherTemps" href="#">Chart All Temps</a>
 				<a class="nav-item nav-link messageTurnPumpOn" href="#">Run Recirculator</a>
-				<a class="nav-item nav-link messageTurnPumpOff" href="#">Turn Pump Off</a>
 				<a class="nav-item nav-link showTemp" href="#">Show Temps</a>
 				<a class="nav-item nav-link getRecircSettings" href="#">Show Recirc Settings</a>
 				<a class="nav-item nav-link messageRedChange" href="#" name="changeRed">Red</a>
@@ -48,34 +47,52 @@
 		<nav class="navbar navbar-expand-lg navbar-light bg-light align-left">
 		  <div class="collapse navbar-collapse align-left" id="navbarSupportedContent">
 		    <div class="navbar-nav">
-				<a class="nav-item nav-link messageChartPipeTemps" href="#">x x x x x x x x</a>
-				<a class="nav-item nav-link messageChartOtherTemps" href="#">.  Update in:    .</a>
-				<a class="nav-item nav-link messageTurnPumpOn" href="#">Run Recirculator</a>
-				<a class="nav-item nav-link messageTurnPumpOff" href="#">Turn Pump Off</a>
-				<a class="nav-item nav-link showTemp" href="#">Show Temps</a>
-				<a class="nav-item nav-link getRecircSettings" href="#">Show Recirc Settings</a>
-				<a class="nav-item nav-link messageRedChange" href="#" name="changeRed">Red</a>
-				<a class="nav-item nav-link changeHomeAway" href="#">Home</a>
-				<a class="nav-item nav-link messageShowCurrentTemps" href="#">.  Update  .</a>
-				<a class="nav-item nav-link" href="#">About</a>
+		    	<div>
+					<a class="nav-item nav-link messageChartPipeTemps" href="#">x x x x x x x x</a>
+				</div>
+				<div>
+					<a class="nav-item nav-link messageChartOtherTemps" href="#">  Update in:  </a>
+					<a class="timeToSaveStatus"></a>
+				</div>
+				<div>
+					<a class="nav-item nav-link" href="#">Pump Is</a>
+					<a class="pumpStatus"></a>
+				</div>
+				<div>
+					<a class="nav-item nav-link showTemp" href="#">Show Temps</a>
+				</div>
+				<div>
+					<a class="nav-item nav-link getRecircSettings" href="#">Show Recirc Settings</a>
+				</div>
+				<div>
+					<a class="nav-item nav-link messageRedChange" href="#" name="changeRed">Red</a>
+				</div>
+				<div>
+					<a class="nav-item nav-link changeHomeAway" href="#">Home</a>
+				</div>
+				<div>
+					<a class="nav-item nav-link messageShowCurrentTemps" href="#">.  Update  .</a>
+				</div>
+				<div>
+					<a class="nav-item nav-link" href="#">About</a>
+				</div>
 		    </div>
 		  </div>
 		</nav>
 
 
 		<!-- Div for the real time status Line -->
-		<table class = "table">
+		<table class = "table cur-temp-labels">
 			<thead>
 	    		<tr>
-	    			<th scope="col">Pump Status</th>
-					<th scope="col">Outdoor Sun Temp</th>
-					<th scope="col">Bedroom Temp</th>
-					<th scope="col">Family Room Temp</th>
-					<th scope="col">Bed Room Temp</th>
-					<th scope="col">Desk Temp</th>
-					<th scope="col">Pipe Temp</th>
-					<th scope="col">Wood Stove Temp</th>
-					<th scope="col">Furnace Temp</th>
+					<th scope="col" class= "cur-temp-item-labels">Outdoor Sun Temp</th>
+					<th scope="col" class= "cur-temp-item-labels">Bedroom Temp</th>
+					<th scope="col" class= "cur-temp-item-labels">Family Room Temp</th>
+					<th scope="col" class= "cur-temp-item-labels">Bed Room Temp</th>
+					<th scope="col" class= "cur-temp-item-labels">Desk Temp</th>
+					<th scope="col" class= "cur-temp-item-labels">Pipe Temp</th>
+					<th scope="col" class= "cur-temp-item-labels">Wood Stove Temp</th>
+					<th scope="col" class= "cur-temp-item-labels">Furnace Temp</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -83,19 +100,18 @@
 	    			<td></td>
 				</tr>
 			</tbody>
-		</table>
+ 		</table>
 
-
-
+	
+		<!-- Div for other temp chart -->
+		<div class="otherTempsChartcontainer">
+		<div id="otherTempsChart" class="chart--container">
+			<a class="zc-ref" href="https://www.zingchart.com">Powered by ZingChart</a>
+		</div>
+		</div>
 
 		<!-- Div for pipe temp chart -->
 		<div id="myChart" class="chart--container">
-			<a class="zc-ref" href="https://www.zingchart.com">Powered by ZingChart</a>
-		</div>
-				
-	
-		<!-- Div for other temp chart -->
-		<div id="otherTempsChart" class="chart--container">
 			<a class="zc-ref" href="https://www.zingchart.com">Powered by ZingChart</a>
 		</div>
 				
@@ -208,18 +224,6 @@
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="serverIPAddress" class="col-sm-6 col-form-label my-col-form-label">Server IP Address</label>
-					    <div class="col-sm-4">
-					      <input type="serverIPAddress" class="form-control my-col-form-label" id="serverIPAddress" placeholder="Server IP Address">
-					    </div>
-					  </div>
-					  <div class="form-group row my-form-group">
-					    <label for="ArduinoIPAddress" class="col-sm-6 col-form-label my-col-form-label">Arduino IP Address</label>
-					    <div class="col-sm-4">
-					      <input type="ArduinoIPAddress" class="form-control my-col-form-label" id="ArduinoIPAddress" placeholder="First Weekday Off Time">
-					    </div>
-					  </div>
-					  <div class="form-group row my-form-group">
 					    <label for="someThing" class="col-sm-6 col-form-label my-col-form-label">Something</label>
 					    <div class="col-sm-4">
 					      <input type="someThing" class="form-control my-col-form-label" id="someThing" placeholder="Second Weekday On Time">
@@ -249,6 +253,21 @@
 					      <input type="somefkn2" class="form-control my-col-form-label" id="somefkn2" placeholder="Second Weekend On Time">
 					    </div>
 					  </div>
+
+
+					  <div class="form-group row my-form-group">
+					    <label for="serverIPAddress" class="col-sm-6 col-form-label my-col-form-label">Server IP Address</label>
+					    <div class="col-sm-4">
+					      <input type="serverIPAddress" class="form-control my-col-form-label" id="serverIPAddress" placeholder="Server IP Address">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="ArduinoIPAddress" class="col-sm-6 col-form-label my-col-form-label">Arduino IP Address</label>
+					    <div class="col-sm-4">
+					      <input type="ArduinoIPAddress" class="form-control my-col-form-label" id="ArduinoIPAddress" placeholder="First Weekday Off Time">
+					    </div>
+					  </div>
+					  
 					  <div class="form-group row my-form-group">
 					    <label for="runMode" class="col-sm-6 col-form-label my-col-form-label">Run Mode</label>
 					    <div class="col-sm-4">
