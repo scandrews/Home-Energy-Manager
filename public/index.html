@@ -19,26 +19,32 @@
 			<h2>Home Energy Manager</h2>
 		</div>
 
-		<div>
+<!--		<div>
 			<span class="statusBox"></span>
 			<span class="temp1"> </span>
 			<span class="temp2"> </span>
 			<span class="temp3"> </span>
 			<span class="temp4"> </span>
 		</div>
-		
+-->		
 
-		<nav class="navbar navbar-expand-lg navbar-light bg-light align-left">
-		  <div class="collapse navbar-collapse align-left" id="navbarSupportedContent">
-		    <div class="navbar-nav">
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+		    <div class="navbar-nav btn-group">
 				<a class="nav-item nav-link messageChartPipeTemps" href="#">Chart Pipe Temp</a>
 				<a class="nav-item nav-link messageChartOtherTemps" href="#">Chart All Temps</a>
-				<a class="nav-item nav-link messageTurnPumpOn" href="#">Run Recirculator</a>
-				<a class="nav-item nav-link showTemp" href="#">Show Temps</a>
-				<a class="nav-item nav-link getRecircSettings" href="#">Show Recirc Settings</a>
+				<a class="nav-item nav-link messageShowCurrentTemps" href="#">Show Current Temps</a>
+				<a class="nav-item nav-link messageTurnPumpOn" href="#">Start Recirculator</a>
+				<a class="nav-item nav-link messageStartFurnace" href="#">Start Furnace</a>
 				<a class="nav-item nav-link messageRedChange" href="#" name="changeRed">Red</a>
-				<a class="nav-item nav-link changeHomeAway" href="#">Away</a>
-				<a class="nav-item nav-link messageShowCurrentTemps" href="#">Current Temps</a>
+				<a class="nav-item nav-link changeHomeAway dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"" href="#" >Mode</a>
+				  <div class="dropdown-menu">
+				    <a class="dropdown-item" href="#">Home</a>
+				    <a class="dropdown-item" href="#">Home Alone</a>
+				    <a class="dropdown-item" href="#">Guests</a>
+				    <a class="dropdown-item" href="#">Away</a>
+				  </div>
+
 				<a class="nav-item nav-link" href="#">About</a>
 		    </div>
 		  </div>
@@ -48,30 +54,29 @@
 		  <div class="collapse navbar-collapse align-left" id="navbarSupportedContent">
 		    <div class="navbar-nav">
 		    	<div>
-					<a class="nav-item nav-link messageChartPipeTemps" href="#">x x x x x x x x</a>
+					<a class="nav-item nav-link messageChartPipeTemps" href="#">   x x     x x x x   </a>
 				</div>
 				<div>
-					<a class="nav-item nav-link messageChartOtherTemps" href="#">  Update in:  </a>
+					<a class="nav-item nav-link messageChartOtherTemps" href="#">x  x     x Update in:  x</a>
 					<a class="timeToSaveStatus"></a>
 				</div>
 				<div>
-					<a class="nav-item nav-link" href="#">Pump Is</a>
+					<a class="nav-item nav-link messageShowCurrentTemps" href="#">x    x. Update   x x</a>
+				</div>
+				<div>
+					<a class="nav-item nav-link" href="#"> Recirculator Pump Is </a>
 					<a class="pumpStatus"></a>
 				</div>
 				<div>
-					<a class="nav-item nav-link showTemp" href="#">Show Temps</a>
+					<a class="nav-item nav-link showTemp" href="#"> Furnace Is </a>
+					<a class="furnaceStatus"></a>
 				</div>
 				<div>
-					<a class="nav-item nav-link getRecircSettings" href="#">Show Recirc Settings</a>
+					<a class="nav-item nav-link getRecircSettings" href="#">Arduino Max Temp</a>
+					<a class="arduinoMaxHouseTemp">
 				</div>
 				<div>
-					<a class="nav-item nav-link messageRedChange" href="#" name="changeRed">Red</a>
-				</div>
-				<div>
-					<a class="nav-item nav-link changeHomeAway" href="#">Home</a>
-				</div>
-				<div>
-					<a class="nav-item nav-link messageShowCurrentTemps" href="#">.  Update  .</a>
+					<a class="nav-item nav-link statusHomeAway" href="#">Home</a>
 				</div>
 				<div>
 					<a class="nav-item nav-link" href="#">About</a>
@@ -96,6 +101,7 @@
 				</tr>
 			</thead>
 			<tbody>
+				<!-- real time temp data will be written here  -->
 				<tr class="curTempBlock1">
 	    			<td></td>
 				</tr>
@@ -122,8 +128,8 @@
 	<!--  Div for recirc settings -->
 
 	<div class="row">
-	<div class="col-sm-5" margin="5px">
 	<!-- This section displays the recirculator setting -->
+	<div class="col-sm-5" margin="5px">
 			<div class="card">
 				<div class="card-body my-card-body">
 				    <h5 class="card-header my-card-header">Recirculator Settings</h5>
@@ -194,15 +200,91 @@
 					</form>
 				</div>
 			</div>
-
-
-<!-- TOO  -->
-
 	</div>
-	<div class="col-sm-5">
+<!-- End Recirc settings box -->
+
+<!-- Furnace Settings Box  -->
+
+	<div class="col-sm-5" margin="5px">
+			<div class="card">
+				<div class="card-body my-card-body">
+				    <h5 class="card-header my-card-header">Furnace Settings</h5>
+				    <button type="button" class="btn btn-outline-dark getFurnaceSettings" href="#">Show Setting</button>
+				    <button type="button" class="btn btn-outline-dark upDateFurnaceSettings" href="#">Update Settings</button>
+				    <form>
+
+					  <div class="form-group row my-form-group">
+					    <label for="onFurnTemperature" class="col-sm-6 col-form-label my-col-form-label" type="search">On Temperature</label>
+					    <div class="col-sm-4">
+					      <input type="onFurnTemperature" class="form-control my-col-form-label" id="onFurnTemperature" placeholder="On Temperature">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="offFurnTemperature" class="col-sm-6 col-form-label my-col-form-label">Off Temperature</label>
+					    <div class="col-sm-4">
+					      <input type="offFurnTemperature" class="form-control my-col-form-label" id="offFurnTemperature" placeholder="Off Temperature">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekdayFurnStartTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekday Start Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekdayFurnStartTime1" class="form-control my-col-form-label" id="weekdayFurnStartTime1" placeholder="First Weekday On Time">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekdayFurnOffTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekday End Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekdayFurnOffTime1" class="form-control my-col-form-label" id="weekdayFurnOffTime1" placeholder="First Weekday Off Time">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekdayFurnStartTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekday Start Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekdayFurnStartTime2" class="form-control my-col-form-label" id="weekdayFurnStartTime2" placeholder="Second Weekday On Time">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekdayFurnOffTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekday End Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekdayFurnOffTime2" class="form-control my-col-form-label" id="weekdayFurnOffTime2" placeholder="Second Weekday Off Time">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekendFurnStartTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekend Start Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekendFurnStartTime1" class="form-control my-col-form-label" id="weekendFurnStartTime1" placeholder="First Weekday On Time">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekendFurnOffTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekend End Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekendFurnOffTime1" class="form-control my-col-form-label" id="weekendFurnOffTime1" placeholder="First Weekend Off Time">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekendFurnStartTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekend Start Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekendFurnStartTime2" class="form-control my-col-form-label" id="weekendFurnStartTime2" placeholder="Second Weekend On Time">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="weekendFurnOffTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekend End Time</label>
+					    <div class="col-sm-4">
+					      <input type="weekendFurnOffTime2" class="form-control my-col-form-label" id="weekendFurnOffTime2" placeholder="Second Weekend Off Time">
+					    </div>
+					  </div>
+					</form>
+				</div>
+			</div>
+	</div>
+
+
+
+<!-- End Furnace settings box -->
 
 
 <!--  Division for general settings  -->
+	<div class="col-sm-5">
 
 	<!-- This section displays the general settings -->
 			<div class="card">
@@ -210,9 +292,9 @@
 				    <h5 class="card-header my-card-header">Settings</h5>
 				    <button type="button" class="btn btn-outline-dark getGeneralSettings">Show</button>
 				    <button type="button" class="btn btn-outline-dark upDateGeneralSettings" href="#">Update Settings</button>
-				    <form>
+				    <form class="generalSettingsForm">
 					  <div class="form-group row my-form-group">
-					    <label for="tempSaveInterval" class="col-sm-6 col-form-label my-col-form-label">temperature save interval</label>
+					    <label for="tempSaveInterval" class="col-sm-6 col-form-label my-col-form-label">Temperature Save Interval Min</label>
 					    <div class="col-sm-4">
 					      <input type="tempSaveInterval" class="form-control my-col-form-label" id="tempSaveInterval" placeholder="Temperature Save">
 					    </div>
@@ -224,33 +306,42 @@
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="someThing" class="col-sm-6 col-form-label my-col-form-label">Something</label>
+					    <label for="minHouseTemp" class="col-sm-6 col-form-label my-col-form-label">Min House Temperature</label>
 					    <div class="col-sm-4">
-					      <input type="someThing" class="form-control my-col-form-label" id="someThing" placeholder="Second Weekday On Time">
+					      <input type="minHouseTemp" class="form-control my-col-form-label" id="minHouseTemp" placeholder="65">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="somethingElse" class="col-sm-6 col-form-label my-col-form-label">Second Weekday End Time</label>
+					    <label for="maxHouseTemp" class="col-sm-6 col-form-label my-col-form-label">Max House Temperature</label>
 					    <div class="col-sm-4">
-					      <input type="somethingElse" class="form-control my-col-form-label" id="somethingElse" placeholder="Second Weekday Off Time">
+					      <input type="maxHouseTemp" class="form-control my-col-form-label" id="maxHouseTemp" placeholder="72">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="somefkn" class="col-sm-6 col-form-label my-col-form-label">First Weekend Start Time</label>
+					    <label for="minFurnaceTemp" class="col-sm-6 col-form-label my-col-form-label">Min Furnace Temperature</label>
 					    <div class="col-sm-4">
-					      <input type="somefkn" class="form-control my-col-form-label" id="somefkn" placeholder="First Weekday On Time">
+					      <input type="minFurnaceTemp" class="form-control my-col-form-label" id="minFurnaceTemp" placeholder="100">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="somethingelse2" class="col-sm-6 col-form-label my-col-form-label">First Weekend End Time</label>
+					    <label for="maxFurnaceTemp" class="col-sm-6 col-form-label my-col-form-label">Max Furnace Temperature</label>
 					    <div class="col-sm-4">
-					      <input type="somethingelse2" class="form-control my-col-form-label" id="somethingelse2" placeholder="First Weekend Off Time">
+					      <input type="maxFurnaceTemp" class="form-control my-col-form-label" id="maxFurnaceTemp" placeholder="180">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="somefkn2" class="col-sm-6 col-form-label my-col-form-label">Second Weekend Start Time</label>
-					    <div class="col-sm-4">
-					      <input type="somefkn2" class="form-control my-col-form-label" id="somefkn2" placeholder="Second Weekend On Time">
+					    <label for="whichSensor" class="col-sm-6 col-form-label my-col-form-label">Which Sensor Turns Furnace Off</label>
+					    <div class="col-sm-4 dropdown">
+					    	<!--<input type="whichSensor" class="form-control my-col-form-label" id="whichSensor" placeholder="Bedroom">  -->
+					    	<button class="btn btn-secondary dropdown-toggle whichSensor" type="button whichSensor" id="whichSensor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder="Bedroom">
+    							Bedroom
+  							</button>
+  							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+						    	<a class="dropdown-item changeFurnTurnOffBedroom" href="#">Bedroom</a>
+						    	<a class="dropdown-item changeFurnTurnOffFamilyroom" href="#">Family Room</a>
+						    	<a class="dropdown-item changeFurnTurnOffDesk" href="#">Desk</a>
+						    	<a class="dropdown-item changeFurnTurnOffNone" href="#">None</a>
+							</div>
 					    </div>
 					  </div>
 
@@ -264,7 +355,7 @@
 					  <div class="form-group row my-form-group">
 					    <label for="ArduinoIPAddress" class="col-sm-6 col-form-label my-col-form-label">Arduino IP Address</label>
 					    <div class="col-sm-4">
-					      <input type="ArduinoIPAddress" class="form-control my-col-form-label" id="ArduinoIPAddress" placeholder="First Weekday Off Time">
+					      <input type="ArduinoIPAddress" class="form-control my-col-form-label" id="ArduinoIPAddress" placeholder="Arduino IP Address">
 					    </div>
 					  </div>
 					  
@@ -277,41 +368,16 @@
 					</form>
 				</div>
 			</div>
+	</div>
 
 
 	</div>
-	</div>
-
 
 <!--  yeah fucken hello  -->
 
 	</div>
 
-
-	<div>
-		<p>
-	</div>
-
-	<table class = "table">
-		<thead>
-    		<tr>
-    			<th scope="col">TIME</th>
-				<th scope="col">Family Room Temp</th>
-				<th scope="col">Bed Room Temp</th>
-				<th scope="col">Outdoor Temp</th>
-				<th scope="col">Pipe Temp</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr class="tempblock1">
-    			<td></td>
-			</tr>
-		</tbody>
-	</table>
-
 </div>
-
-
 
 <!--  for Bootstrap --> 
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
