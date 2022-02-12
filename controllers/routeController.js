@@ -63,6 +63,11 @@ app.get('/recircSettings', (req, res) => {
 	};
 });
 
+app.get('/furnaceSettings',(req, res) => {
+	console.log("in Route Controller get furnace settings");
+	furnaceController.getFurnaceSettings(req, res);
+});
+
 app.get('/pipeTemp', (req, res) => {
 	console.log("in route controler, get pipe temp data");
 	dbaccess.getPipeTempData(req, res);
@@ -156,6 +161,7 @@ app.post('/upDateGeneralSettings', function (req, res) {
 					break;
 				case "setMinHouseTemp":
 					var returnStatus = comControler.sendMessageToArdunio ("changeHouseMinTemp", newSettings[key]);
+					furnaceController.setFurnaceTemps("minHouseTemp", newSettings[key]);
 					console.log("return from change min house temp");
 					break;
 				case "setMaxHouseTemp":
@@ -164,11 +170,11 @@ app.post('/upDateGeneralSettings', function (req, res) {
 					console.log("return from change max house temp");
 					break;
 				case "minFurnaceTemp":
-					var returnStatus = furnaceController.setFurnaceTemps ("changeMinFurnaceTemp", newSettings[key]);
+					var returnStatus = furnaceController.setFurnaceTemps ("minFurnaceTemp", newSettings[key]);
 					console.log("return from change min furnace temp");
 					break;
 				case "maxFurnaceTemp":
-					var returnStatus = furnaceController.setFurnaceTemps ("changeMaxFurnaceTemp", newSettings[key]);
+					var returnStatus = furnaceController.setFurnaceTemps ("maxFurnaceTemp", newSettings[key]);
 					console.log("return from change max furnace temp");
 					break;
 				case "whichSensor":

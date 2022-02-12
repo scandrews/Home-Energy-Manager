@@ -593,7 +593,7 @@ $(".upDateRecircSettings").on("click", function(event){
 $(".getFurnaceSettings").on("click", function(event){
 	event.preventDefault();
 	console.log("got the get furnace settings click");
-	$.get('recircSettings', (stuff) => {
+	$.get('furnaceSettings', (stuff) => {
 		console.log(stuff);
 		console.log(stuff[0].weekDayOn1 + stuff[0].pipeTempOn);
 		$("#onFurnTemperature").attr("placeholder", stuff[0].pipeTempOn);

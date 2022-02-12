@@ -33,7 +33,6 @@ var recircSettings = [{
 }];
 var allStates = {};
 var pumpState = "off";
-var isPumpOn = false;
 var recirculatorTemp = 0.0;
 
 
@@ -106,8 +105,7 @@ exports.checkRecirc = function (recircTemp){
 	dayAndTime.time = currentTime;
 
 		//	console.log("recirc temperature - " + recircTemp);
-		//	console.log("Is Pump On - " + isPumpOn);
-	
+		//	console.log("Is Pump On -	
 	// don't hit the db for the recirc settings every time through
 	// console.log (recircSettings[0].id);
 	console.log ("get setting count - " + getSettingsCount);
@@ -140,30 +138,31 @@ exports.checkRecirc = function (recircTemp){
 						// coment out the stop - depend on the Arduino to do
 						//comController.sendMessageToArdunio("stopRecirc");
 						//comController.changeState("statePump", "off");
-						isPumpOn = false;
+	
+						pumpState = "off";
+					} else if (allStates.stateRecircPump == "off"){
+						console.log("ERROR recirc cntrl and Arduino are out of sync - will set it OFF");
 						pumpState = "off";
 					};
 			};
-		}
+		};
 
 		// within time parameters and pump is NOT running so check temps
 		function inTimeCheckTemps(){
 			console.log("within time parameters - loopCount = " + loopCount +" of " + savePipeDataInterval);
 			loopCount ++;
-			if (loopCount >= savePipeDataInterval){
-				dbController.savePipeTemp("recircIsOff", recircTemp);
-				loopCount = 0;
-			};
 			if (recircTemp < recircSettings[0].pipeTempOn){
 				// temp is below trigger
 				console.log("Recirc Pump is off and temp is less than should be");
 				loopCount = 0;
-				isPumpOn = true;
 				pumpState = "on";
 				// turn pump on
 				comController.sendMessageToArdunio("runRecirc");
 				dbController.savePipeTemp("turnRecircOn", recircTemp);
 				//comController.changeState("statePump", "on");
+			} else if (loopCount >= savePipeDataInterval){
+				dbController.savePipeTemp("recircIsOff", recircTemp);
+				loopCount = 0;
 			};
 		};
 

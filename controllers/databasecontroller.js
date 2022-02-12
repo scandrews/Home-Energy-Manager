@@ -24,7 +24,7 @@ var avgTemp7 = 0;
 var avgTemp8 = 0;
 var flags = [];
 //var numOfReadingsToAvg = 20;
-var numOfReadingsToAvg = 5;
+var numOfReadingsToAvg = 10;
 var tempcount = 0;
 //  30 min * 60 * numOfReadingsToAvg = 1800 - save every 30 min
 //  2  min * 60 * numOfReadingsToAvg / 2 = 600
@@ -35,13 +35,13 @@ var tempcount = 0;
 //  2 sec * 10 * 90 / 60 = 30 Min - current time between saves
 //var currentSaveDelayCount = 90;
 // the period between all temperature saves
-var saveDelayIntervalMinutes = .2;
+var saveDelayIntervalMinutes = 3;
 var saveDelayIntervalSeconds = saveDelayIntervalMinutes * 60;
 var currentSaveDelayCount = saveDelayIntervalSeconds;
 var currentDelayCountMin = 0; // only used to display the count
 //var saveDelay = currentSaveDelayCount;
 //var delayCount = 0;
-var numDataPointsRead = 40;
+var numDataPointsRead = 300;
 var temporaryTimes = [];
 var test = "Test";
 
