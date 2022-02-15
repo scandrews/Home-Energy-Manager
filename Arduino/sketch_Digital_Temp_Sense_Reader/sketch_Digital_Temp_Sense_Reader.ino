@@ -7,7 +7,7 @@ terry@yourduino.com */
   #include <DallasTemperature.h>
 
   /*-----( Declare Constants )-----*/
-  #define ONE_WIRE_BUS 3 /*-(Sensor on D3)-*/
+  #define ONE_WIRE_BUS 7 /*-(Sensor on D3)-*/
   int LED4 = 5;  // D5 - Blinker
 
 

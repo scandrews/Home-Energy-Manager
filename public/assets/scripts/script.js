@@ -49,10 +49,11 @@ $(".messageShowCurrentTemps").on("click", function(){
 
 		
 		$(".curTempBlock1").html("<td>" + localTempArray[5][6] +  //outdoor sun
+							"</td><td>" + localTempArray[5][7] +  //outdoor shade
 							"</td><td>" + localTempArray[5][2] +  //Bedroom
 							"</td><td>" + localTempArray[5][1] +  //Family room
-							"</td><td>" + localTempArray[5][2] +  //Bed Room
 							"</td><td>" + localTempArray[5][5] +  //Desk
+							"</td><td>" + localTempArray[5][8] +  //water tank
 							"</td><td>" + localTempArray[5][3] +  //Pipe
 							"</td><td>" + localTempArray[5][0] +  //Wood stove temp
 							"</td><td>" + localTempArray[5][4] +  //Furnace
@@ -387,7 +388,7 @@ $(".messageChartOtherTemps").on("click", function(event){
 					effect: 'ANIMATION_EXPAND_BOTTOM',
 					method: 'ANIMATION_STRONG_EASE_OUT',
 					sequence: 'ANIMATION_BY_NODE',
-					speed: 275,
+					speed: 200,
 				}
 			},
 

@@ -62,6 +62,10 @@ module.exports = function(sequelize, Datatypes){
 			type: Datatypes.FLOAT,
 			allowNull: false,	
 		},
+		tempWaterTank: {
+			type: Datatypes.FLOAT,
+			allowNull: false,	
+		},
 		tempWoodStove: {
 			type: Datatypes.FLOAT,
 			allowNull: false,	
@@ -115,10 +119,12 @@ create table temperatures(
 	tempPipe FLOAT,
     tempWoodStove FLOAT,
 	tempFurnace FLOAT,
+	tempWaterTank FLOAT,
     furnaceOnOff varchar(16),
     createdAt TIMESTAMP NOT NULL,
     primary key (id)
     );
+
 
 create table recirculatorSettings(
 	id integer(10)auto_increment not null,

@@ -19,6 +19,8 @@ var tempF4 = 0.0; // pipe
 var tempFurnaceF = 0.0; // Furnace
 var tempF6 = 0.0; // breadboard
 var tempF7 = 0.0; // outdoor sun
+var tempF8 = 0.0; // outdoor shade
+var tempF9 = 0.0; // water tank
 
 
 // setup serial port
@@ -212,8 +214,18 @@ server.on("message", function (StuffIn, remote) {
 		tempF7 = CtoF(tempC7);
 	    console.log("Temperature 7 C & F - " + tempC7 + " " + tempF7);
 
+	    //  outside shade
+	    tempC8 = StuffIn.toString("utf-8", 36, 41);
+		tempF8 = CtoF(tempC8);
+	    console.log("Outside Shade - 8 C & F - " + tempC8 + " " + tempF8);
+
+	    //  water tank
+	    tempC9 = StuffIn.toString("utf-8", 41, 45);
+		tempF9 = CtoF(tempC9);
+	    console.log("Water Tank - 9 C & F - " + tempC9 + " " + tempF9);
+
         recircContrl.checkRecirc(tempF4);
-	    data_access.saveTempData(tempF1, tempF2, tempF3, tempF4, tempFurnaceF, tempF6, tempF7, furnaceText);
+	    data_access.saveTempData(tempF1, tempF2, tempF3, tempF4, tempFurnaceF, tempF6, tempF7, tempF8, tempF9, furnaceText);
 
     // f designates it as a flag packet
     // we will always get a flag packet before a temerature packet

@@ -14,7 +14,7 @@
   byte arduinoMac[] = { 0xA8, 0x61, 0x0A, 0xAE, 0x41, 0x66 };
   unsigned int arduinoPort = 8888;      // port of Arduino
   // config for the server side
-  IPAddress receiverIP(192, 168, 1, 4); // IP of udp packets receiver - server
+  IPAddress receiverIP(192, 168, 1, 3); // IP of udp packets receiver - server
   unsigned int receiverPort = 6000;      // port to listen on the server
   // An EthernetUDP instance to let us send and receive packets over UDP
   EthernetUDP Udp;
@@ -61,6 +61,7 @@
 
   int furnaceOutput = 2; // D2 - Bread Board LED - Furnace output
   int ONE_WIRE_BUS = 3;  // one wire set up for input D3
+  int ONE_WIRE_BUS2 = 7;  // one wire set up for input D3
                          // 4
   int LED4 = 5;          // D5 - Blinker
   int LED3 = 6;          // D6 - Recirc Pump motor output
@@ -68,14 +69,20 @@
   // Setup a oneWire instance to communicate with any OneWire devices  
   // (not just Maxim/Dallas temperature ICs) 
   OneWire oneWire(ONE_WIRE_BUS); 
+  OneWire oneWire2(ONE_WIRE_BUS2); 
 
   // Pass our oneWire reference to Dallas Temperature. 
   DallasTemperature sensors(&oneWire);
+  DallasTemperature sensors2(&oneWire2);
   //  float temp5 = 0;
   // variable to hold device addresses
   //DeviceAddress addCurSensor;
   DeviceAddress outdoorSun =  {0x28, 0xEE, 0xE6, 0xB0, 0x06, 0x00, 0x00, 0x22};
   DeviceAddress deskDigitalSensor =  {0x28, 0xFF, 0x45, 0x1A, 0xC1, 0x16, 0x05, 0xD1};
+  DeviceAddress outdoorShade =  {0x28, 0xBB, 0xF0, 0xEA, 0x0D, 0x00, 0x00, 0x05};
+  DeviceAddress waterTank =  {0x28, 0xFF, 0x55, 0x1E, 0xC0, 0x16, 0x05, 0x08
+
+};
   
 
 // setup code
@@ -337,13 +344,20 @@ void loop() {
   // to issue a global temperature and Requests to all devices on the bus
     // Send the command to get temperature readings 
     sensors.requestTemperatures();
+    sensors2.requestTemperatures();
 
     float tempC7 = sensors.getTempC(outdoorSun);
     float tempC6 = sensors.getTempC(deskDigitalSensor);
+    float tempC8 = sensors2.getTempC(outdoorShade);
+    float tempC9 = sensors2.getTempC(waterTank);
     Serial.print("Digital sensors - ");
     Serial.print(tempC6);
     Serial.print(", ");
-    Serial.println(tempC7);
+    Serial.print(tempC7);
+    Serial.print(", ");
+    Serial.print(tempC8);
+    Serial.print(", ");
+    Serial.println(tempC9);
 
     //float tempC7 = sensors.getTempCByIndex(0); // Why "byIndex"?  
    // You can have more than one DS18B20 on the same bus.  
@@ -369,6 +383,8 @@ void loop() {
     char tBuffer5[8];
     char tBuffer6[8];
     char tBuffer7[8];
+    char tBuffer8[8];
+    char tBuffer9[8];
     dtostrf(tempC1,5,2,tBuffer1);
     dtostrf(tempC2,5,2,tBuffer2);
     dtostrf(tempC3,5,2,tBuffer3);
@@ -376,6 +392,8 @@ void loop() {
     dtostrf(tempC5,5,2,tBuffer5);
     dtostrf(tempC6,5,2,tBuffer6);
     dtostrf(tempC7,5,2,tBuffer7);
+    dtostrf(tempC8,5,2,tBuffer8);
+    dtostrf(tempC9,5,2,tBuffer9);
 
 /*  //Serial.print("Temperatures in Byte Array - ");
     //Serial.print(tBuffer1);
@@ -395,6 +413,8 @@ void loop() {
     Udp.write(tBuffer5, 5);
     Udp.write(tBuffer6, 5);
     Udp.write(tBuffer7, 5);
+    Udp.write(tBuffer8, 5);
+    Udp.write(tBuffer9, 5);
     Udp.endPacket(); // end packet
 
 ////////

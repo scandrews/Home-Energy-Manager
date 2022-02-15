@@ -49,9 +49,13 @@ var FurnaceSettings = {
     minHouseTemp: 0,
     maxHouseTemp: 0,
     weekDayOn1: "06:00",
+    weekDayOn1_2: "06:10",
     weekDayOff1: "09:30",
+    weekDayOff1_2: "09:40",
     weekDayOn2: "16:30",
+    weekDayOn2_2: "16:40",
     weekDayOff2: "23:30",
+    weekDayOff2_2: "23:40",
     weekEndOn1: '0',
     weekEndOff1: '0',
     weekEndOn2: '0',
@@ -168,14 +172,14 @@ var FurnaceSettings = [{
 		console.log("NOT a weekend");
 		// at 6 AM we'll up the temps
 		console.log(FurnaceSettings.weekDayOn1);
-		if (currentTime > FurnaceSettings.weekDayOn1 && currentTime < FurnaceSettings.weekDayOff1){
+		if (currentTime > FurnaceSettings.weekDayOn1 && currentTime < FurnaceSettings.weekDayOn1_2){
 			console.log("just adjusted temps for morning");
 			minHouseTemp = morningMinTempWeekDay;
 			maxHouseTemp = morningMaxTempWeekDay;
 		};
 		// at 9 AM we'll set temps back down
 		console.log(FurnaceSettings.weekDayOff1);
-		if (currentTime > FurnaceSettings.weekDayOff1){
+		if (currentTime > FurnaceSettings.weekDayOff1 && currentTime < FurnaceSettings.weekDayOff1_2){
 		// && currentTime < FurnaceSettings.weekDayOn2){
 			console.log("just adjusted temps for mid day");
 			minHouseTemp = middayMinTempWeekDay;
@@ -183,7 +187,7 @@ var FurnaceSettings = [{
 		};
 		// at 4:30 PM we'll up the temps
 		console.log(FurnaceSettings.weekDayOn2);
-		if (currentTime > FurnaceSettings.weekDayOn2 && currentTime < FurnaceSettings.weekDayOn2 + "00:10"){
+		if (currentTime > FurnaceSettings.weekDayOn2 && currentTime < FurnaceSettings.weekDayOn2_2){
 			console.log("just adjusted furn temps for evening");
 			minHouseTemp = eveningMinTempWeekDay;
 			maxHouseTemp = eveningMaxTempWeekDay;
@@ -191,7 +195,7 @@ var FurnaceSettings = [{
 
 		// at 11:30 PM we'll set the temps down for night
 		console.log(FurnaceSettings.weekDayOff2);
-		if (currentTime > FurnaceSettings.weekDayOff2 /*&& currentTime < FurnaceSettings.weekDayOff2+"0:10"*/){
+		if (currentTime > FurnaceSettings.weekDayOff2 && currentTime < FurnaceSettings.weekDayOff2_2){
 			console.log("just adjusted furn temps for night");
 			minHouseTemp = nightMinTempWeekDay;
 			maxHouseTemp = nightMaxTempWeekDay;

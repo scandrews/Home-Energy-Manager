@@ -14,6 +14,7 @@ var tempSum5 = 0;
 var tempSum6 = 0;
 var tempSum7 = 0;
 var tempSum8 = 0;
+var tempSum9 = 0;
 var avgTemp1 = 0;
 var avgFamTemp = 0;
 var avgTemp3 = 0;
@@ -22,6 +23,7 @@ var avgTemp5 = 0;
 var avgTemp6 = 0;
 var avgTemp7 = 0;
 var avgTemp8 = 0;
+var avgTemp9 = 0;
 var flags = [];
 //var numOfReadingsToAvg = 20;
 var numOfReadingsToAvg = 10;
@@ -170,7 +172,7 @@ connection.connect((err) => {
   };
 
   exports.getCurentAvgTemps = function (){
-    var dataPac = [avgTemp1, avgFamTemp, avgTemp3, avgTemp4, avgTemp5, avgTemp6, avgTemp7];
+    var dataPac = [avgTemp1, avgFamTemp, avgTemp3, avgTemp4, avgTemp5, avgTemp6, avgTemp7, avgTemp8, avgTemp9];
         // 4 -  tempF1 Wood Stove
         // 5 -  tempF2 bread Board family room
         // 6 -  tempF3 bedroom
@@ -182,9 +184,9 @@ connection.connect((err) => {
   };
 
 
-  exports.saveTempData = function (temp1, temp2, temp3, temp4, temp5, temp6, temp7, furnAction) {
+  exports.saveTempData = function (temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, furnAction) {
     console.log("in save temperature data");
-    console.log(temp1, temp2, temp3, temp4, temp5, temp6, temp7, furnAction);
+    console.log(temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, furnAction);
     //testSaveDelayInterval = testSaveDelayInterval - 2;
     currentSaveDelayCount--;
     console.log(currentSaveDelayCount + " - current save delay Count");
@@ -200,6 +202,8 @@ connection.connect((err) => {
         tempSum5 = tempSum5 + temp5;
         tempSum6 = tempSum6 + temp6;
         tempSum7 = tempSum7 + temp7;
+        tempSum8 = tempSum8 + temp8;
+        tempSum9 = tempSum9 + temp9;
         tempcount++;
 
         if (tempcount == numOfReadingsToAvg) {
@@ -210,6 +214,8 @@ connection.connect((err) => {
           avgTemp5 = parseFloat((tempSum5/tempcount).toFixed(1));
           avgTemp6 = parseFloat((tempSum6/tempcount).toFixed(1));
           avgTemp7 = parseFloat((tempSum7/tempcount).toFixed(1));
+          avgTemp8 = parseFloat((tempSum8/tempcount).toFixed(1));
+          avgTemp9 = parseFloat((tempSum9/tempcount).toFixed(1));
           tempSum1 = 0;
           tempFamSum = 0;
           tempSum3 = 0;
@@ -217,8 +223,10 @@ connection.connect((err) => {
           tempSum5 = 0;
           tempSum6 = 0;
           tempSum7 = 0;
+          tempSum8 = 0;
+          tempSum9 = 0;
           tempcount = 0;
-          console.log("averages - " + avgTemp1, avgFamTemp, avgTemp3, avgTemp4, avgTemp5, avgTemp6, avgTemp7);
+          console.log("averages - " + avgTemp1, avgFamTemp, avgTemp3, avgTemp4, avgTemp5, avgTemp6, avgTemp7, avgTemp8, avgTemp9);
 
           furnaceController.checkFurnace(avgTemp5, avgFamTemp, avgTemp3, avgTemp6, avgTemp7);
 
@@ -227,7 +235,7 @@ connection.connect((err) => {
 
     //        comController.returnFlags = function(flags){
     //          console.log("Flags in db controller - " +  flags)
-
+/*
               console.log("Saving Temp Data");
               connection.query("delete from temperatures ORDER BY id limit 1", (err) => {
                 if (err) {
@@ -236,11 +244,12 @@ connection.connect((err) => {
                 };
                 return;
               });
-              // NOTE:  assignment of temps to locations
+*/              // NOTE:  assignment of temps to locations
               connection.query("INSERT INTO temperatures SET ?",
                 {
                   tempOutDoorsSun: avgTemp7,
-                  tempOutDoorsShade: 40,
+                  tempOutDoorsShade: avgTemp8,
+                  tempWaterTank: avgTemp9,
                   tempFamilyRoom: avgFamTemp,
                   tempBedRoom: avgTemp3,
                   tempDesk: avgTemp6,
