@@ -73,6 +73,11 @@ app.get('/pipeTemp', (req, res) => {
 	dbaccess.getPipeTempData(req, res);
 });
 
+app.post('/changeFurnState', (req,res) => {
+	console.log("Route CNTRL change Furnace State");
+	comControler.changeState("changeHome-Away", req.body.message);
+});
+
 app.post('/sendMessage', (req, res) => {
 	console.log("in route controller send message - " + req.body.message);
 	if (req.body.message == "changeHome-Away"){
@@ -117,6 +122,7 @@ var getCurrentGeneralSettings = function (){
 	//var serverIPAddress = comControler.sendMessageToArdunio("getServerIPAddress", "x")
 	var dbSettings = dbaccess.getdbSettings();
 	var furnSettings = furnaceController.getFurnaceSettings();
+	var states = comControler.getState();
 	console.log(IPAddresses);
 	console.log(dbSettings);
 		var generalSettings = {
@@ -130,7 +136,7 @@ var getCurrentGeneralSettings = function (){
 			currentSensor : furnSettings.currentSensor,
 			serverIPAddress : IPAddresses[0],
 			arduinoIPAddress : IPAddresses[1],
-			runMode : "normal"
+			runMode : states.stateHomeAway
 		}
 	return (generalSettings)
 };

@@ -98,21 +98,45 @@ var allStates = {
 
 	// called by -	recirc controller manual pump change
 	//			 -  furnace controller
+	//			 - furnace controller for run for hot water
 exports.changeState = function (whichState, toWhatState){
 	console.log("in com cntrlr change which state - " + whichState);
 	console.log("com controller to what state - " + toWhatState);
 	switch (whichState){
 		case "changeHome-Away":
 			console.log("In Com CNTRL change home/away, new state - " + toWhatState);
-			if (allStates.stateHomeAway == "Home"){
-				allStates.stateHomeAway = "Away";
-				console.log ("new allstates - " + allStates.stateHomeAway);
-				return allStates
-			} else if (allStates.stateHomeAway == "Away"){
-				allStates.stateHomeAway = "Home";
-				console.log ("new allstates - " + allStates.stateHomeAway);
-				return allStates
-			}
+			switch (toWhatState){
+				case "Run Furnace For Hot Water 30":
+					oldState = allStates.stateHomeAway;
+					allStates.stateHomeAway = "RunFurnForWtr30";
+					furnaceController.changeFurnState(30);
+					break;
+				case "Run Furnace For Hot Water 60":
+					oldState = allStates.stateHomeAway;
+					allStates.stateHomeAway = "RunFurnForWtr60";
+					furnaceController.changeFurnState(60);
+					break;
+				case "Home":
+					console.log("in case Home");
+					break
+				case "Home Alone":
+					console.log("in case Home Alone");
+					break;
+				case "Guests":
+					console.log("in case Guests");
+					break;
+				case "Away":
+					console.log("in case Away");
+					break;
+				case "back":
+					allStates.stateHomeAway = oldState;
+					break;
+				default:
+					console.log("ERROR in state default");
+				};
+
+			//allStates.stateHomeAway = toWhatState;
+			console.log ("new home-away state - " + allStates.stateHomeAway);
 			break;
 		case "stateRecircPump":
 			allStates.stateRecircPump = toWhatState;

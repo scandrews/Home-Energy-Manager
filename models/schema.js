@@ -113,15 +113,15 @@ create table temperatures(
 	id integer(10)auto_increment not null,
 	tempOutDoorsSun FLOAT,
     tempOutDoorsShade FLOAT,
-	tempFamilyRoom FLOAT,
 	tempBedRoom FLOAT,
+	tempFamilyRoom FLOAT,
     tempDesk FLOAT,
-	tempPipe FLOAT,
-    tempWoodStove FLOAT,
-	tempFurnace FLOAT,
 	tempWaterTank FLOAT,
+	tempPipe FLOAT,
+	tempFurnace FLOAT,
+    tempWoodStove FLOAT,
     furnaceOnOff varchar(16),
-    createdAt TIMESTAMP NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     primary key (id)
     );
 

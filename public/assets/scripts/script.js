@@ -199,7 +199,7 @@ $(".messageChartPipeTemps").on("click", function(event){
 					effect: 'ANIMATION_EXPAND_BOTTOM',
 					method: 'ANIMATION_STRONG_EASE_OUT',
 					sequence: 'ANIMATION_BY_NODE',
-					speed: 275,
+					speed: 150,
 				}
 			},
 
@@ -233,14 +233,15 @@ $(".messageChartPipeTemps").on("click", function(event){
 $(".messageChartOtherTemps").on("click", function(event){
 	event.preventDefault();
 	const labels = [];
-	const outDoorShadeTempArray = [];
 	const outDoorSunTempArray = [];
-	const familyTempArray = [];
+	const outDoorShadeTempArray = [];
 	const bedRmTempArray = [];
-	const pipeTempArray = [];
+	const familyTempArray = [];
 	const deskTempArray = [];
-	const furnaceTempArray = [];
+	const waterTankTempArray = [];
+	const pipeTempArray = [];
 	const woodStoveTempArray = [];
+	const furnaceTempArray = [];
 	var time = [];
 	console.log("got the Chart Other Temps click");
 
@@ -256,12 +257,13 @@ $(".messageChartOtherTemps").on("click", function(event){
 
 		for (i=0; i<temps.length; i++){
 			var od = temps[i].createdAt;
-			var oshadet = temps[i].tempOutDoorsShade;
 			var osunt = temps[i].tempOutDoorsSun;
-			var frt = temps[i].tempFamilyRoom;
+			var oshadet = temps[i].tempOutDoorsShade;
 			var brt = temps[i].tempBedRoom;
-			var pt = temps[i].tempPipe;
+			var frt = temps[i].tempFamilyRoom;
 			var dt = temps[i].tempDesk;
+			var wt = temps[i].tempWaterTank;
+			var pt = temps[i].tempPipe;
 			var ft = temps[i].tempFurnace;
 			var wst = temps[i].tempWoodStove;
 			//var furnStat = temps[i].furnaceOnOff;
@@ -289,10 +291,11 @@ $(".messageChartOtherTemps").on("click", function(event){
 			outDoorSunTempArray[i] = osunt;
 			familyTempArray[i] = frt;
 			bedRmTempArray[i] = brt;
-			pipeTempArray[i] = pt
-			deskTempArray[i] = dt
-			woodStoveTempArray[i] = wst
-			furnaceTempArray[i] = ft
+			pipeTempArray[i] = pt;
+			deskTempArray[i] = dt;
+			waterTankTempArray[i] = wt;
+			woodStoveTempArray[i] = wst;
+			furnaceTempArray[i] = ft;
 
 			if (temps[i].furnaceOnOff != "noChange"){
 				var onOffText = "";
@@ -308,6 +311,12 @@ $(".messageChartOtherTemps").on("click", function(event){
 						break;
 					case "manualOff":
 						onOffText = "Manual Off";
+						break;
+					case "FurnOnForWater":
+						onOffText = "OnForWater";
+						break;
+					case "FurnOffForWater":
+						onOffText = "OffForWater";
 						break;
 					default:
 						console.log("Error - Hit the default in the furnace change");
@@ -388,7 +397,7 @@ $(".messageChartOtherTemps").on("click", function(event){
 					effect: 'ANIMATION_EXPAND_BOTTOM',
 					method: 'ANIMATION_STRONG_EASE_OUT',
 					sequence: 'ANIMATION_BY_NODE',
-					speed: 200,
+					speed: 150,
 				}
 			},
 
@@ -445,6 +454,12 @@ $(".messageChartOtherTemps").on("click", function(event){
 	            // plot 7 values, linear data
 	            values: woodStoveTempArray,
 	            text: 'Wood Stove Temperature',
+	            backgroundColor: '#4d80a6'
+	          },
+				{
+	            // plot 8 values, linear data
+	            values: waterTankTempArray,
+	            text: 'Water Tank Temperature',
 	            backgroundColor: '#4d80a6'
 	          }
 			]
@@ -761,6 +776,7 @@ $(".messageRedChange").on("click", function(){
 });
 
 // Handle the change home/away button
+// Don;t thing this is used
 $(".changeHomeAway").on("click", function(event){
 	console.log("got the send change home/away click");
     $.ajax({
@@ -773,6 +789,29 @@ $(".changeHomeAway").on("click", function(event){
         }
     });
 });
+
+// Handle the state dropdown click
+$('#stateList li a').on('click', function(){
+    var newState = ($(this).text());
+    console.log("got the dropdown click value - " + newState);
+    $.ajax({
+    	url: "http://localhost:2000/changeFurnState",
+        type: "POST",
+        data: {message: newState},
+        success: function(returnState) {
+        	console.log("Back from the server - " + returnState);
+        	if (returnState == "on"){
+        		$(".messageTurnPumpOn").text("Stop Recirculator");
+			} else if (returnState == "off"){
+				$(".messageTurnPumpOn").text("Run Recirculator");
+			}
+        	console.log("SUCCESS in the change start/stop Recirc state");
+        }
+    });
+
+
+
+}); 
 
 // manually turn the pump on   or run recirc
 $(".messageTurnPumpOn").on("click", function(event){
