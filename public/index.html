@@ -34,36 +34,46 @@
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
 		  <div class="collapse navbar-collapse" id="navbarSupportedContent">
 		    <div class="navbar-nav btn-group">
-				<a class="nav-item nav-link messageChartPipeTemps" href="#">Chart Pipe Temp</a>
-				<a class="nav-item nav-link messageChartOtherTemps" href="#">Chart All Temps</a>
-				<a class="nav-item nav-link messageShowCurrentTemps" href="#">Show Current Temps</a>
-				<a class="nav-item nav-link messageTurnPumpOn" href="#">Start Recirculator</a>
-				<a class="nav-item nav-link messageStartFurnace" href="#">Start Furnace</a>
-				<a class="nav-item nav-link messageRedChange" href="#" name="changeRed">Red</a>
-
-<!--
-					  <div class="form-group row my-form-group">
-					    <label for="whichSensor" class="col-sm-6 col-form-label my-col-form-label">Which Sensor Turns Furnace Off</label>
-					    <div class="col-sm-4 dropdown">
-					    	<button class="btn btn-secondary dropdown-toggle whichSensor" type="button whichSensor" id="whichSensor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder="Bedroom">
-    							Bedroom
-  							</button>
-					    </div>
-					  </div>
-
--->
+		    	<div>
+					<a class="nav-item nav-link messageChartPipeTemps" href="#">Chart Pipe Temp</a>
+				</div>
+				<div>
+					<a class="nav-item nav-link messageChartOtherTemps" href="#">Chart All Temps</a>
+					<a class="nav-item nav-link messageChartOtherTemps" href="#">Update in:</a>
+					<a class="timeToSaveStatus"></a>
+				</div>
+				<div>
+					<a class="nav-item nav-link messageShowCurrentTemps" href="#">Show Current Temps</a>
+				</div>
+				<div>
+					<a class="nav-item nav-link messageTurnPumpOn" href="#">Start Recirculator</a>
+					<a class="nav-item nav-link" href="#"> Recirculator Pump Is </a>
+					<a class="pumpStatus"></a>
+				</div>
+				<div>
+					<a class="nav-item nav-link messageStartFurnace" href="#">Start Furnace</a>
+					<a class="nav-item nav-link showTemp" href="#"> Furnace Is </a>
+					<a class="furnaceStatus"></a>
+				</div>
+				<div>
+					<a class="nav-item nav-link messageShowURL" href="#" name="changeRed">URL</a>
+				</div>
+				<div>
+					<a class="nav-item nav-link showURL" href="#"> Furnace Is </a>
+					<a class="currentURL"></a>
+				</div>
 
 			    <div class="dropdown">
-				<a class="nav-item nav-link dropdown-toggle" data-toggle="dropdown">Mode</a>
+					<a class="nav-item nav-link dropdown-toggle" data-toggle="dropdown">Mode</a>
 
-				  <ul class="dropdown-menu" id="stateList">
-				    <li><a class="dropdown-item changeStateHome" href="#">Home</a></li>
-				    <li><a class="dropdown-item changeStateAlone" href="#">Home Alone</a></li>
-				    <li><a class="dropdown-item changeStateGuests" href="#">Guests</a></li>
-				    <li><a class="dropdown-item changeStateAway" href="#">Away</a></li>
-				    <li><a class="dropdown-item changeStateFurnForWater" href="#">Run Furnace For Hot Water 30</a></li>
-				    <li><a class="dropdown-item changeStateFurnForWater" href="#">Run Furnace For Hot Water 60</a></li>
-				  </ul>
+					  <ul class="dropdown-menu" id="stateList">
+					    <li><a class="dropdown-item changeStateHome" href="#">Home</a></li>
+					    <li><a class="dropdown-item changeStateAlone" href="#">Home Alone</a></li>
+					    <li><a class="dropdown-item changeStateGuests" href="#">Guests</a></li>
+					    <li><a class="dropdown-item changeStateAway" href="#">Away</a></li>
+				    	<li><a class="dropdown-item changeStateFurnForWater" href="#">Run Furnace For Hot Water 30</a></li>
+					    <li><a class="dropdown-item changeStateFurnForWater" href="#">Run Furnace For Hot Water 60</a></li>
+					  </ul>
 <!--
 				  <ul class="dropdown-menu">
 				    <li><a class="dropdown-item changeStateHome" href="#">Home</a></li>
@@ -73,11 +83,19 @@
 				    <li><a class="dropdown-item changeStateFurnForWater" href="#">Run Furnace For Hot Water</a></li>
 				  </ul>
 -->				</div>
-				<a class="nav-item nav-link" href="#">About</a>
+				<div>
+					<a class="nav-item nav-link getRecircSettings" href="#">Arduino Max Temp</a>
+					<a class="arduinoMaxHouseTemp"></a>
+				</div>
+
+				<div>
+					<a class="nav-item nav-link" href="#">About</a>
+				</div>
 		    </div>
 		  </div>
 		</nav>
 
+<!--
 		<nav class="navbar navbar-expand-lg navbar-light bg-light align-left">
 		  <div class="collapse navbar-collapse align-left" id="navbarSupportedContent">
 		    <div class="navbar-nav">
@@ -92,12 +110,8 @@
 					<a class="nav-item nav-link messageShowCurrentTemps" href="#">x    x. Update   x x</a>
 				</div>
 				<div>
-					<a class="nav-item nav-link" href="#"> Recirculator Pump Is </a>
-					<a class="pumpStatus"></a>
 				</div>
 				<div>
-					<a class="nav-item nav-link showTemp" href="#"> Furnace Is </a>
-					<a class="furnaceStatus"></a>
 				</div>
 				<div>
 					<a class="nav-item nav-link getRecircSettings" href="#">Arduino Max Temp</a>
@@ -112,7 +126,7 @@
 		    </div>
 		  </div>
 		</nav>
-
+-->
 
 		<!-- Div for the real time status Line -->
 		<table class = "table cur-temp-labels">

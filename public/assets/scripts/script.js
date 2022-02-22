@@ -2,6 +2,10 @@
 
 $(document).ready(function() {
 
+var currentLocation = window.location.href;
+console.log("curent URL - " + currentLocation);
+
+
 var serverIPAddress = "";
 
 var time = 2;
@@ -65,25 +69,9 @@ $(".messageShowCurrentTemps").on("click", function(){
 	};
 
 	$.get('currentTemps', (temps) => {
-		console.log(temps);
+		//console.log(temps);
 		writeTemperatures(temps);
-
-		//		intervalId = setInterval(count(temps), 1000);
-		//    	function count (temps) {
-		//	   	    time--;
-	       	// update the screen to the new converted time
-		//			writeTemperatures(temps);
-		//	       	if (time <= 0){
-		//	       		clearInterval(intervalId);
-		//				$.get('currentTemps', (temps) => {
-		//					console.log(temps);
-		//					writeTemperatures(temps);
-		//			    });
-		//       		}
-		//    	};
-
 	});
-
 });
 
 
@@ -484,6 +472,7 @@ $(".messageChartOtherTemps").on("click", function(event){
 
 // NOT USED
 // handling the show temperature click
+/*
 $(".showTemp").on("click", function(event){
 	event.preventDefault();
 	console.log("got the show click");
@@ -502,7 +491,7 @@ $(".showTemp").on("click", function(event){
 						 "</td><td>" + temps[0].tempPipe + "</td>");
 	});
 });
-
+*/
 
 
 
@@ -510,7 +499,7 @@ $(".showTemp").on("click", function(event){
 $(".messageStartFurnace").on("click", function(event){
 	console.log("got the furnace click");
     $.ajax({
-    	url: "http://localhost:2000/sendMessage",
+    	url: currentLocation + "sendMessage",
         type: "POST",
         data: {message: "changeFurnace"},
         success: function(returnState) {
@@ -530,12 +519,17 @@ $(".messageStartFurnace").on("click", function(event){
 
 })
 
+
+/*******************************************************************/
+
 // manually turn the pump on   or run recirc
 $(".messageTurnPumpOn").on("click", function(event){
+	event.preventDefault();
+
 	//$(this).text('Turn Pump Off');
 	console.log("got the pump on message click");
     $.ajax({
-    	url: "http://localhost:2000/sendMessage",
+    	url: currentLocation + "sendMessage",
         type: "POST",
         data: {message: "ManualPumpChange"},
         success: function(returnState) {
@@ -550,6 +544,22 @@ $(".messageTurnPumpOn").on("click", function(event){
     });
 });
 
+// manually turn the pump off
+// delete this - make the pump change toggle
+/*
+$(".messageTurnPumpOff").on("click", function(event){
+	console.log("got the pump off message click");
+    $.ajax({
+    	url: currentLocation + "sendMessage",
+        type: "POST",
+        data: {message: "turnPumpOff"},
+        success: function(d) {
+        	console.log("SUCCESS in the pump off");
+            alert("successs "+ JSON.stringify(d));
+        }
+    });
+});
+*/
 
 
 // get the recirculator settings from the database
@@ -591,7 +601,7 @@ $(".upDateRecircSettings").on("click", function(event){
 	console.log(newSettings);
 
 //	var serverURL = "'http://" + serverIPAddress + ":2000/upDateRecircSettings'";
-	var serverURL =	"http://localhost:2000/upDateRecircSettings";
+	var serverURL =	currentLocation + "upDateRecircSettings";
 	$.ajax({
 		url: serverURL,
 		type: "POST",
@@ -644,7 +654,7 @@ $(".upDateFurnaceSettings").on("click", function(event){
 	console.log(newSettings);
 
 //	var serverURL = "'http://" + serverIPAddress + ":2000/upDateRecircSettings'";
-	var serverURL =	"http://localhost:2000/upDateRecircSettings";
+	var serverURL =	currentLocation + "upDateRecircSettings";
 	$.ajax({
 		url: serverURL,
 		type: "POST",
@@ -700,10 +710,9 @@ $(".upDateGeneralSettings").on("click", function(event){
 	console.log(newGenSettings);
 	$(".generalSettingsForm")[0].reset();
 //	var serverURL = "'http://" + serverIPAddress + ":2000/upDateGeneralSettings'";
-	var serverURL = "http://localhost:2000/upDateGeneralSettings"
 
 	$.ajax({
-		url: serverURL,
+		url: currentLocation + "upDateGeneralSettings",
 		type: "POST",
 		data: newGenSettings,
 		success: function(d) {
@@ -716,7 +725,7 @@ $(".upDateGeneralSettings").on("click", function(event){
 $(".changeFurnTurnOffBedroom").on("click", function(event){
 	$("#whichSensor").text("Bedroom");
 	$.ajax({
-		url: "http://localhost:2000/changeFurnaceOnOff",
+		url: currentLocation + "changeFurnaceOnOff",
 		type: "POST",
 		data: {message: "bedroom"},
 		success: function(d) {
@@ -728,7 +737,7 @@ $(".changeFurnTurnOffBedroom").on("click", function(event){
 $(".changeFurnTurnOffFamilyroom").on("click", function(event){
 	$("#whichSensor").text("Familyroom");
 	$.ajax({
-		url: "http://localhost:2000/changeFurnaceOnOff",
+		url: currentLocation + "changeFurnaceOnOff",
 		type: "POST",
 		data: {message: "familyroom"},
 		success: function(d) {
@@ -740,7 +749,7 @@ $(".changeFurnTurnOffFamilyroom").on("click", function(event){
 $(".changeFurnTurnOffDesk").on("click", function(event){
 	$("#whichSensor").text("Desk");
 	$.ajax({
-		url: "http://localhost:2000/changeFurnaceOnOff",
+		url: currentLocation + "changeFurnaceOnOff",
 		type: "POST",
 		data: {message: "desk"},
 		success: function(d) {
@@ -752,7 +761,7 @@ $(".changeFurnTurnOffDesk").on("click", function(event){
 $(".changeFurnTurnOffNone").on("click", function(event){
 	$("#whichSensor").text("None");
 	$.ajax({
-		url: "http://localhost:2000/changeFurnaceOnOff",
+		url: currentLocation + "changeFurnaceOnOff",
 		type: "POST",
 		data: {message: "none"},
 		success: function(d) {
@@ -761,26 +770,23 @@ $(".changeFurnTurnOffNone").on("click", function(event){
 	})	
 });
 
-// Handle the change red button
-$(".messageRedChange").on("click", function(){
-	console.log("got the send Red Change message click");
-    $.ajax({
-    	url: "http://localhost:2000/sendMessage",
-        type: "POST",
-        data: {message: "redChange"},
-        success: function(d) {
-        	console.log("SUCCESS in the change state - " + d);
-            alert("successs "+ JSON.stringify(d));
-        }
-    });
+// Handle the show current URL click
+$(".messageShowURL").on("click", function(){
+	console.log("got the show URL message click");
+
+	var currentLocation = window.location.href;
+	console.log("curent URL - " + currentLocation);
+	$("showURL").text(currentLocation);
+
 });
+
 
 // Handle the change home/away button
 // Don;t thing this is used
 $(".changeHomeAway").on("click", function(event){
 	console.log("got the send change home/away click");
     $.ajax({
-    	url: "http://localhost:2000/sendMessage",
+    	url: currentLocation + "sendMessage",
         type: "POST",
         data: {message: "changeHome-Away"},
         success: function(returnState) {
@@ -795,7 +801,7 @@ $('#stateList li a').on('click', function(){
     var newState = ($(this).text());
     console.log("got the dropdown click value - " + newState);
     $.ajax({
-    	url: "http://localhost:2000/changeFurnState",
+    	url: currentLocation + "changeFurnState",
         type: "POST",
         data: {message: newState},
         success: function(returnState) {
@@ -812,41 +818,6 @@ $('#stateList li a').on('click', function(){
 
 
 }); 
-
-// manually turn the pump on   or run recirc
-$(".messageTurnPumpOn").on("click", function(event){
-	//$(this).text('Turn Pump Off');
-	console.log("got the pump on message click");
-    $.ajax({
-    	url: "http://localhost:2000/sendMessage",
-        type: "POST",
-        data: {message: "ManualPumpChange"},
-        success: function(returnState) {
-        	console.log("Back from the server - " + returnState);
-        	if (returnState == "on"){
-        		$(".messageTurnPumpOn").text("Stop Recirculator");
-			} else if (returnState == "off"){
-				$(".messageTurnPumpOn").text("Run Recirculator");
-			}
-        	console.log("SUCCESS in the change start/stop Recirc state");
-        }
-    });
-});
-
-// manually turn the pump off
-// delete this - make the pump change toggle
-$(".messageTurnPumpOff").on("click", function(event){
-	console.log("got the pump off message click");
-    $.ajax({
-    	url: "http://localhost:2000/sendMessage",
-        type: "POST",
-        data: {message: "turnPumpOff"},
-        success: function(d) {
-        	console.log("SUCCESS in the pump off");
-            alert("successs "+ JSON.stringify(d));
-        }
-    });
-});
 
 
 // handling the about page click

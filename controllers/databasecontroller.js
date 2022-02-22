@@ -235,7 +235,7 @@ connection.connect((err) => {
 
     //        comController.returnFlags = function(flags){
     //          console.log("Flags in db controller - " +  flags)
-/*
+
               console.log("Saving Temp Data");
               connection.query("delete from temperatures ORDER BY id limit 1", (err) => {
                 if (err) {
@@ -244,7 +244,7 @@ connection.connect((err) => {
                 };
                 return;
               });
-*/              // NOTE:  assignment of temps to locations
+              // NOTE:  assignment of temps to locations
               connection.query("INSERT INTO temperatures SET ?",
                 {
                   tempOutDoorsSun: avgTemp7,
