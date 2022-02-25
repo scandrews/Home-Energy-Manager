@@ -51,7 +51,6 @@ $(".messageShowCurrentTemps").on("click", function(){
 			localFurnStatus = 'off'
 		}
 
-		
 		$(".curTempBlock1").html("<td>" + localTempArray[5][6] +  //outdoor sun
 							"</td><td>" + localTempArray[5][7] +  //outdoor shade
 							"</td><td>" + localTempArray[5][2] +  //Bedroom
@@ -66,6 +65,7 @@ $(".messageShowCurrentTemps").on("click", function(){
 		$(".pumpStatus").html("<td>" + localPumpStatus + "</td>");
 		$(".furnaceStatus").html("<td>" + localFurnStatus + "</td>");
 		$(".arduinoMaxHouseTemp").html("<td>" + localTempArray[4] + "</td>");
+		$(".mode").html("<td>" + localTempArray[7].stateHomeAway + "</td>");
 	};
 
 	$.get('currentTemps', (temps) => {
@@ -621,17 +621,16 @@ $(".getFurnaceSettings").on("click", function(event){
 	console.log("got the get furnace settings click");
 	$.get('furnaceSettings', (stuff) => {
 		console.log(stuff);
-		console.log(stuff[0].weekDayOn1 + stuff[0].pipeTempOn);
-		$("#onFurnTemperature").attr("placeholder", stuff[0].pipeTempOn);
-		$("#offFurnTemperature").attr("placeholder", stuff[0].pipeTempOff);
-		$("#weekdayFurnStartTime1").attr("placeholder", stuff[0].weekDayOn1);
-		$("#weekdayFurnOffTime1").attr("placeholder", stuff[0].weekDayOff1);
-		$("#weekdayFurnStartTime2").attr("placeholder", stuff[0].weekDayOn2);
-		$("#weekdayFurnOffTime2").attr("placeholder", stuff[0].weekDayOff2);
-		$("#weekendFurnStartTime1").attr("placeholder", stuff[0].weekEndOn1);
-		$("#weekendFurnOffTime1").attr("placeholder", stuff[0].weekEndOff1);
-		$("#weekendFurnStartTime2").attr("placeholder", stuff[0].weekEndOn2);
-		$("#weekendFurnOffTime2").attr("placeholder", stuff[0].weekEndOff2);
+		$("#morningOnTime").attr("placeholder", stuff.weekDayMorningOn);
+		$("#morningTemperture").attr("placeholder", stuff.morningMinTempWeekDaySet);
+		$("#dayOnTime").attr("placeholder", stuff.weekDayDayOn);
+		$("#dayTemperature").attr("placeholder", stuff.middayMinTempWeekDaySet);
+		$("#eveningOnTime").attr("placeholder", stuff.weekDayEveningOn);
+		$("#eveningTemperature").attr("placeholder", stuff.eveningMinTempWeekDaySet);
+		$("#nightOnTime").attr("placeholder", stuff.weekDayNightOn);
+		$("#nightTemperature").attr("placeholder", stuff.nightMinTempWeekDaySet);
+		$("#whichSensor").attr("placeholder", stuff.currentSensorSet);
+		$("#currentMode").attr("placeholder", stuff.runModeSet);
     });
 });
 

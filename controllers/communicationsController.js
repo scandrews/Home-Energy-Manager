@@ -108,12 +108,12 @@ exports.changeState = function (whichState, toWhatState){
 			switch (toWhatState){
 				case "Run Furnace For Hot Water 30":
 					oldState = allStates.stateHomeAway;
-					allStates.stateHomeAway = "RunFurnForWtr30";
+					allStates.stateHomeAway = "RunForWtr30";
 					furnaceController.changeFurnState(30);
 					break;
 				case "Run Furnace For Hot Water 60":
 					oldState = allStates.stateHomeAway;
-					allStates.stateHomeAway = "RunFurnForWtr60";
+					allStates.stateHomeAway = "RunForWtr60";
 					furnaceController.changeFurnState(60);
 					break;
 				case "Home":
@@ -129,6 +129,7 @@ exports.changeState = function (whichState, toWhatState){
 					console.log("in case Away");
 					break;
 				case "back":
+					console.log("in com cntrl change state - BACK");
 					allStates.stateHomeAway = oldState;
 					break;
 				default:

@@ -38,8 +38,10 @@ app.get('/currentTemps', (req, res) => {
 	dataPackage = comControler.returnFlags();   // gets the flags as last updated by the Arduino
 	temporyTemps = dbaccess.getCurentAvgTemps();
 	temporyTimes = dbaccess.getCurrentTimes();  // add curent save time here
+	allStates = comControler.getState();
 	dataPackage.push(temporyTemps);
 	dataPackage.push(temporyTimes);
+	dataPackage.push(allStates);
 	console.log("still in get current temps route data - " + dataPackage);
 	res.send(dataPackage);	
 });
@@ -65,7 +67,8 @@ app.get('/recircSettings', (req, res) => {
 
 app.get('/furnaceSettings',(req, res) => {
 	console.log("in Route Controller get furnace settings");
-	furnaceController.getFurnaceSettings(req, res);
+	furnaceController.getAllFurnSettings(req, res);
+	console.log(currentFurnSettings);
 });
 
 app.get('/pipeTemp', (req, res) => {
@@ -208,5 +211,22 @@ app.post('/changeFurnaceOnOff', function (req, res){
 	var didGetBack = furnaceController.changeOnOff(whoChangesFurnace)
 	return (didGetBack);
 })
+
+
+/*
+var getCurrentFurnaceSettings = function (){
+	var allFurnSettings = furnaceController.getAllFurnSettings();
+	console.log("got all the furnace settings");
+	console.log(allFurnSettings)
+	return (allFurnSettings)
+};
+*/
+app.get('/furnaceSettings', (req, res) => {
+	console.log("in route controler get general settings");
+	var allFurnSettings = furnaceController.getAllFurnSettings();
+	res.send (allFurnSettings)
+});
+
+
 
 module.exports = app;

@@ -20,10 +20,10 @@ var minHouseTemp = 66;
 var maxHouseTemp = 70;
 var currentTime = "";
 //var currentTime = "00:00";
-var morningStartTime = "05:00";
-var morningEndTime = "10:00";
-var afternoonStartTime = "16:00";
-var afternoonEndTime = "21:30";
+//var morningStartTime = "05:00";
+//var morningEndTime = "10:00";
+//var afternoonStartTime = "16:00";
+//var afternoonEndTime = "21:30";
 
 var currentTime = "";
 var dayAndTime = {
@@ -80,15 +80,16 @@ function secondsToHms(d) {
 
 
 function endRunForWater(){
+	communicationController.sendMessageToArdunio("whichSensor", keepOldSensor);
 	console.log("In End RFW Delay, KEEP OLD - " + keepOldSensor);
 	whichTemp = keepOldSensor;
-	communicationController.sendMessageToArdunio("whichSensor", keepOldSensor);
-	communicationController.sendMessageToArdunio("furnaceChange", 69);
-	communicationController.changeState("changeHome-Away", "back");
-	dbController.setFurnaceChange("FurnOffForWater");
 	stateFurnace = "off";
+	communicationController.changeState("changeHome-Away", "back");
+	communicationController.sendMessageToArdunio("furnaceChange", 69);
+	dbController.setFurnaceChange("FurnOffForWater");
 };
 
+/*
 function runDelayer (delayTime){
 	console.log("IN FUCKIN FURN CNTRL whichTemp - " + whichTemp);
 	keepOldSensor = whichTemp;
@@ -99,10 +100,21 @@ function runDelayer (delayTime){
 	// set timer
 	setTimeout(endRunForWater, delayTime);
 };
+*/
 
 // called from the communitcations controller
 exports.changeFurnState = function (howLong){
 	console.log("Furnace CNTRL run for hot water for  - " + howLong);
+	communicationController.sendMessageToArdunio("whichSensor", "none");
+	keepOldSensor = whichTemp;
+	delayTime = howlong * 60000;
+	console.log("Delay Time - " + delayTime);
+	communicationController.sendMessageToArdunio("furnaceChange", 69);
+	dbController.setFurnaceChange("FurnOnForWater");
+	stateFurnace = "on";
+	// set timer
+	setTimeout(endRunForWater, delayTime);
+/*
 	switch (howLong){
 		case 30:
 			console.log ("in furn cntrl run furn for hot water 30");
@@ -112,14 +124,45 @@ exports.changeFurnState = function (howLong){
 			console.log ("in furn cntrl run furn for hot water 60");
 			runDelayer(3600000);
 			break;
-		};
+		}; */
 };
 
+//  called from the route controller get general settings
 exports.getFurnaceSettings = function (req, res){
 	FurnaceSettings.minHouseTemp = minHouseTemp;
 	FurnaceSettings.maxHouseTemp = maxHouseTemp;
 	FurnaceSettings.currentSensor = whichTemp;
 	return (FurnaceSettings);
+};
+
+// called from the route controller get current furnace settings
+exports.getAllFurnSettings = function (req, res){
+
+	var allFurnaceSettings = {
+		currentSensor: whichTemp,
+		morningMinTempWeekDaySet: morningMinTempWeekDay,
+		morningMaxTempWeekDaySet: morningMaxTempWeekDay,
+		middayMinTempWeekDaySet: middayMinTempWeekDay,
+		middayMaxTempWeekDaySet: middayMaxTempWeekDay,
+		eveningMinTempWeekDaySet: eveningMinTempWeekDay,
+		eveningMaxTempWeekDaySet: eveningMaxTempWeekDay,
+		nightMinTempWeekDaySet: nightMinTempWeekDay,
+		nightMaxTempWeekDaySet: nightMaxTempWeekDay,
+
+	    weekDayMorningOn: FurnaceSettings.weekDayOn1,
+	    weekDayDayOn: FurnaceSettings.weekDayOff1,
+	    weekDayEveningOn: FurnaceSettings.weekDayOn2,
+	    weekDayNightOn: FurnaceSettings.weekDayOff2,
+	    weekEndOn1Set: FurnaceSettings.weekEndOn1,
+	    weekEndOff1Set: FurnaceSettings.weekEndOff1,
+	    weekEndOn2Set: FurnaceSettings.weekEndOn2,
+	    weekEndOff2Set: FurnaceSettings.weekEndOff2,
+	    runModeSet: FurnaceSettings.runMode,
+	    currentSensorSet: FurnaceSettings.currentSensor
+	};
+	console.log("furn cntrl all furnace settings - ");
+	console.log(allFurnaceSettings);
+	res.send (allFurnaceSettings);
 };
 
 // within furnace run time, check if we should start the furnace

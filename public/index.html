@@ -58,10 +58,6 @@
 				<div>
 					<a class="nav-item nav-link messageShowURL" href="#" name="changeRed">URL</a>
 				</div>
-				<div>
-					<a class="nav-item nav-link showURL" href="#"> Furnace Is </a>
-					<a class="currentURL"></a>
-				</div>
 
 			    <div class="dropdown">
 					<a class="nav-item nav-link dropdown-toggle" data-toggle="dropdown">Mode</a>
@@ -74,6 +70,10 @@
 				    	<li><a class="dropdown-item changeStateFurnForWater" href="#">Run Furnace For Hot Water 30</a></li>
 					    <li><a class="dropdown-item changeStateFurnForWater" href="#">Run Furnace For Hot Water 60</a></li>
 					  </ul>
+
+					<a class="nav-item nav-link showTemp" href="#"></a>
+					<a class="mode"></a>
+
 <!--
 				  <ul class="dropdown-menu">
 				    <li><a class="dropdown-item changeStateHome" href="#">Home</a></li>
@@ -257,65 +257,55 @@
 				    <form>
 
 					  <div class="form-group row my-form-group">
-					    <label for="onFurnTemperature" class="col-sm-6 col-form-label my-col-form-label" type="search">On Temperature</label>
+					    <label for="morningOnTime" class="col-sm-6 col-form-label my-col-form-label" type="search">Morning On Time</label>
 					    <div class="col-sm-4">
-					      <input type="onFurnTemperature" class="form-control my-col-form-label" id="onFurnTemperature" placeholder="On Temperature">
+					      <input type="morningOnTime" class="form-control my-col-form-label" id="morningOnTime" placeholder="On Time">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="offFurnTemperature" class="col-sm-6 col-form-label my-col-form-label">Off Temperature</label>
+					    <label for="morningTemperture" class="col-sm-6 col-form-label my-col-form-label">Morning Temperature</label>
 					    <div class="col-sm-4">
-					      <input type="offFurnTemperature" class="form-control my-col-form-label" id="offFurnTemperature" placeholder="Off Temperature">
+					      <input type="morningTemperture" class="form-control my-col-form-label" id="morningTemperture" placeholder="Morning Temperature">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="weekdayFurnStartTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekday Start Time</label>
+					    <label for="dayOnTime" class="col-sm-6 col-form-label my-col-form-label">Day On Time</label>
 					    <div class="col-sm-4">
-					      <input type="weekdayFurnStartTime1" class="form-control my-col-form-label" id="weekdayFurnStartTime1" placeholder="First Weekday On Time">
+					      <input type="dayOnTime" class="form-control my-col-form-label" id="dayOnTime" placeholder="Day On Time">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="weekdayFurnOffTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekday End Time</label>
+					    <label for="dayTemperature" class="col-sm-6 col-form-label my-col-form-label">Day Temperature</label>
 					    <div class="col-sm-4">
-					      <input type="weekdayFurnOffTime1" class="form-control my-col-form-label" id="weekdayFurnOffTime1" placeholder="First Weekday Off Time">
+					      <input type="dayTemperature" class="form-control my-col-form-label" id="dayTemperature" placeholder="Day Temperature">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="weekdayFurnStartTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekday Start Time</label>
+					    <label for="eveningOnTime" class="col-sm-6 col-form-label my-col-form-label">Evening On Time</label>
 					    <div class="col-sm-4">
-					      <input type="weekdayFurnStartTime2" class="form-control my-col-form-label" id="weekdayFurnStartTime2" placeholder="Second Weekday On Time">
+					      <input type="eveningOnTime" class="form-control my-col-form-label" id="eveningOnTime" placeholder="Evening On Time">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="weekdayFurnOffTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekday End Time</label>
+					    <label for="eveningTemperature" class="col-sm-6 col-form-label my-col-form-label">Evening Temperature</label>
 					    <div class="col-sm-4">
-					      <input type="weekdayFurnOffTime2" class="form-control my-col-form-label" id="weekdayFurnOffTime2" placeholder="Second Weekday Off Time">
+					      <input type="eveningTemperature" class="form-control my-col-form-label" id="eveningTemperature" placeholder="Evening Temperature">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="weekendFurnStartTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekend Start Time</label>
+					    <label for="nightOnTime" class="col-sm-6 col-form-label my-col-form-label">Night On Time</label>
 					    <div class="col-sm-4">
-					      <input type="weekendFurnStartTime1" class="form-control my-col-form-label" id="weekendFurnStartTime1" placeholder="First Weekday On Time">
+					      <input type="nightOnTime" class="form-control my-col-form-label" id="nightOnTime" placeholder="Night On Time">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="weekendFurnOffTime1" class="col-sm-6 col-form-label my-col-form-label">First Weekend End Time</label>
+					    <label for="nightTemperature" class="col-sm-6 col-form-label my-col-form-label">Night Temperature</label>
 					    <div class="col-sm-4">
-					      <input type="weekendFurnOffTime1" class="form-control my-col-form-label" id="weekendFurnOffTime1" placeholder="First Weekend Off Time">
+					      <input type="nightTemperature" class="form-control my-col-form-label" id="nightTemperature" placeholder="Night Temperature">
 					    </div>
 					  </div>
-					  <div class="form-group row my-form-group">
-					    <label for="weekendFurnStartTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekend Start Time</label>
-					    <div class="col-sm-4">
-					      <input type="weekendFurnStartTime2" class="form-control my-col-form-label" id="weekendFurnStartTime2" placeholder="Second Weekend On Time">
-					    </div>
-					  </div>
-					  <div class="form-group row my-form-group">
-					    <label for="weekendFurnOffTime2" class="col-sm-6 col-form-label my-col-form-label">Second Weekend End Time</label>
-					    <div class="col-sm-4">
-					      <input type="weekendFurnOffTime2" class="form-control my-col-form-label" id="weekendFurnOffTime2" placeholder="Second Weekend Off Time">
-					    </div>
-					  </div>
+
+
 					</form>
 				</div>
 			</div>
