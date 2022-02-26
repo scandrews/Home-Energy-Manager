@@ -85,7 +85,7 @@ function endRunForWater(){
 	whichTemp = keepOldSensor;
 	stateFurnace = "off";
 	communicationController.changeState("changeHome-Away", "back");
-	communicationController.sendMessageToArdunio("furnaceChange", 69);
+	communicationController.sendMessageToArdunio("furnaceTurnOff", 69);
 	dbController.setFurnaceChange("FurnOffForWater");
 };
 
@@ -107,9 +107,10 @@ exports.changeFurnState = function (howLong){
 	console.log("Furnace CNTRL run for hot water for  - " + howLong);
 	communicationController.sendMessageToArdunio("whichSensor", "none");
 	keepOldSensor = whichTemp;
-	delayTime = howlong * 60000;
+	delayTime = howLong * 60000;
+	//delayTime = howLong * 10000;
 	console.log("Delay Time - " + delayTime);
-	communicationController.sendMessageToArdunio("furnaceChange", 69);
+	communicationController.sendMessageToArdunio("furnaceTurnOn", 69);
 	dbController.setFurnaceChange("FurnOnForWater");
 	stateFurnace = "on";
 	// set timer

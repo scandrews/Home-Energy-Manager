@@ -68,7 +68,7 @@ app.get('/recircSettings', (req, res) => {
 app.get('/furnaceSettings',(req, res) => {
 	console.log("in Route Controller get furnace settings");
 	furnaceController.getAllFurnSettings(req, res);
-	console.log(currentFurnSettings);
+	//console.log(currentFurnSettings);
 });
 
 app.get('/pipeTemp', (req, res) => {

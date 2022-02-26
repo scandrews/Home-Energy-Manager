@@ -10,7 +10,7 @@ const furnaceController = require('./furnaceController');
 // Status flags - from the Arduino
 var whichSensor = 0;
 var recircMotorState = 0;
-var flag4 = 0;
+var arduinoFurnaceState = 0;
 
 var tempF1 = 0.0; // Wood Stove
 var tempF2 = 0.0; // bread Board
@@ -258,13 +258,13 @@ server.on("message", function (StuffIn, remote) {
 		whichSensorToSet = StuffIn.toString("utf-8", 1, 2);
 		redState = StuffIn.toString("utf-8", 3, 4);
 		recircMotorState = StuffIn.toString("utf-8", 5, 6);
-		flag4 = StuffIn.toString("utf-8", 7, 8);
+		arduinoFurnaceState = StuffIn.toString("utf-8", 7, 8);
 		maxHouseTempArduino = StuffIn.toString("utf-8", 12, 16);
 
 		console.log("whichSensor - " + whichSensorToSet);
 		console.log("redState - " + redState);
 		console.log("recircMotorState, motor - " + recircMotorState);  // motor state
-		console.log("flag4, furnace - " + flag4);  // furnace state
+		console.log("arduino State, furnace - " + arduinoFurnaceState);  // furnace state
 		console.log("Arduino Max House Temp - " + maxHouseTempArduino);
 		// update allstates with the Arduino recirc state
 		if(recircMotorState == 1){
@@ -273,11 +273,11 @@ server.on("message", function (StuffIn, remote) {
 			allStates.stateRecircPump = "off";
 		};
 		//  check if furnace just changed state
-		if (flag4 != allStates.stateFurnace){
-			if (flag4 == 1){   //  furnace was just turned on
+		if (arduinoFurnaceState != allStates.stateFurnace){
+			if (arduinoFurnaceState == 1){   //  furnace was just turned on
 				furnaceText = "FurnaceOn";
 				allStates.stateFurnace = "on";
-			} else if (flag4 == 0){     // furnace was just turned off
+			} else if (arduinoFurnaceState == 0){     // furnace was just turned off
 				furnaceText = "FurnaceOff";
 				allStates.stateFurnace = "off";
 			};
@@ -363,7 +363,7 @@ exports.sendMessageToArdunio = function (whatToDo, data){
 		//	console.log("in CASE send message turn pump on - from front end");
 		//	server.send(whichSensor, 0, 1, arduinoPort, arduinoAddress);
 		//	break;
-		case "turnPumpOff":     // don't think this is used
+		case "turnPumpOff":     //  this is used at server start
 			console.log("in CASE send message stop recirculator - from front end");
 			server.send(stopRecirculator, 0, 1, arduinoPort, arduinoAddress);
 			break;
@@ -398,8 +398,14 @@ exports.sendMessageToArdunio = function (whatToDo, data){
 			//return allStates
 			break;
 			//var furnaceTurnOff = '7';
+		case "furnaceTurnOn":
+			console.log ("in case turn furnace ***  ON   ***");
+			server.send(furnaceTurnOn, 0, 1, arduinoPort, arduinoAddress);
+			allStates.stateFurnace = "on";
+			//var furnaceTurnOff = '06';
+			break;
 		case "furnaceTurnOff":
-			console.log ("in case turn furnace off");
+			console.log ("in case turn furnace ***   off   ***");
 			server.send(furnaceTurnOff, 0, 1, arduinoPort, arduinoAddress);
 			allStates.stateFurnace = "off";
 			//var furnaceTurnOff = '08';
@@ -431,7 +437,7 @@ exports.sendMessageToArdunio = function (whatToDo, data){
 
 exports.returnFlags = function (){
 	//					  Pump on              
-	var dataPac = [whichSensorToSet, whichSensor, recircMotorState, flag4, maxHouseTempArduino];
+	var dataPac = [whichSensorToSet, whichSensor, recircMotorState, arduinoFurnaceState, maxHouseTempArduino];
 // Status flags - from the Arduino
 	// 0 -  flag1
 	// 1 -  whichSensor

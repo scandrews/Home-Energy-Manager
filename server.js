@@ -43,6 +43,12 @@ models.sequelize
 // kick off serial listener
 comControler.serialComStuff();
 
+// reset the arduino states
+comControler.sendMessageToArdunio("turnPumpOff");
+comControler.sendMessageToArdunio("furnaceTurnOff");
+comControler.sendMessageToArdunio("whichSensor", "familyroom");
+console.log("DOES THIS FUCKER RUN EVERY TIME???");
+
 // Listener
 app.listen(PORT, function() {
   console.log("App listening on PORT: " + PORT);

@@ -43,7 +43,8 @@ var currentSaveDelayCount = saveDelayIntervalSeconds;
 var currentDelayCountMin = 0; // only used to display the count
 //var saveDelay = currentSaveDelayCount;
 //var delayCount = 0;
-var numDataPointsRead = 300;
+var numDataPointsReadGen = 300;
+var numDataPointsReadPipe = 100;
 var temporaryTimes = [];
 var test = "Test";
 
@@ -87,7 +88,7 @@ exports.upDateTempSaveIterval = function(newDelay) {
 };
 
 exports.updateNumDataPointsToChart = function(newDataPoints) {
-  numDataPointsRead = newDataPoints;
+  numDataPointsReadGen = newDataPoints;
   return ("sucessfuly updated num data points to chart");
 };
 
@@ -131,7 +132,7 @@ connection.connect((err) => {
   exports.getTempData = function (req, res) {
     console.log("in get temp data  yyyoooo");
     var temp = "SELECT * FROM temperatures ORDER By id DESC LIMIT ";
-    var oursql = temp.concat(numDataPointsRead);
+    var oursql = temp.concat(numDataPointsReadGen);
     //console.log(oursql);
     connection.query( oursql, (err, result) => {
         //console.log(result);
@@ -147,7 +148,7 @@ connection.connect((err) => {
   exports.getPipeTempData = function (req, res) {
     console.log("in dbcontroler get pipe data");
     var temp = "SELECT * FROM recirculatorHistory ORDER By id DESC LIMIT ";
-    var oursql = temp.concat(numDataPointsRead);
+    var oursql = temp.concat(numDataPointsReadPipe);
     console.log(oursql);
     connection.query( oursql, (err, result) => {
         console.log(result);
@@ -162,7 +163,7 @@ connection.connect((err) => {
 
   exports.getdbSettings = function (){
     console.log("in db controller get db settings");
-    var dbSettings = [saveDelayIntervalMinutes, numDataPointsRead];
+    var dbSettings = [saveDelayIntervalMinutes, numDataPointsReadGen];
     console.log(dbSettings);
     return dbSettings;
   };
