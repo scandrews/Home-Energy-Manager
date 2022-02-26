@@ -109,18 +109,20 @@ exports.changeState = function (whichState, toWhatState){
 				case "Run Furnace For Hot Water 30":
 					oldState = allStates.stateHomeAway;
 					allStates.stateHomeAway = "RunForWtr30";
-					furnaceController.changeFurnState(30);
+					furnaceController.runFurnForWater(30);
 					break;
 				case "Run Furnace For Hot Water 60":
 					oldState = allStates.stateHomeAway;
 					allStates.stateHomeAway = "RunForWtr60";
-					furnaceController.changeFurnState(60);
+					furnaceController.runFurnForWater(60);
 					break;
 				case "Home":
 					console.log("in case Home");
+					allStates.stateHomeAway = "Home";
 					break
 				case "Home Alone":
 					console.log("in case Home Alone");
+					allStates.stateHomeAway = "Home Alone";
 					break;
 				case "Guests":
 					console.log("in case Guests");
@@ -282,7 +284,7 @@ server.on("message", function (StuffIn, remote) {
 				allStates.stateFurnace = "off";
 			};
 		};
-		furnaceController.setFurnOnOffSensor(whichSensorToSet);
+		furnaceController.setFurnFlagPacket(whichSensorToSet, maxHouseTempArduino);
 	};
 
 });
@@ -399,14 +401,22 @@ exports.sendMessageToArdunio = function (whatToDo, data){
 			break;
 			//var furnaceTurnOff = '7';
 		case "furnaceTurnOn":
+			// NOTE: the Arduino ingors the data (temerature) that is sent in this packet
 			console.log ("in case turn furnace ***  ON   ***");
-			server.send(furnaceTurnOn, 0, 1, arduinoPort, arduinoAddress);
+			var dataToSend = furnaceTurnOn + " " + data;  // furnaceTurnOn - '07'
+			charsToSend = dataToSend.length;
+			console.log(dataToSend + " - " + charsToSend);
+			server.send(dataToSend, 0, charsToSend, arduinoPort, arduinoAddress);
 			allStates.stateFurnace = "on";
 			//var furnaceTurnOff = '06';
 			break;
 		case "furnaceTurnOff":
+			// NOTE: the Arduino ingors the data (temerature) that is sent in this packet
 			console.log ("in case turn furnace ***   off   ***");
-			server.send(furnaceTurnOff, 0, 1, arduinoPort, arduinoAddress);
+			var dataToSend = furnaceTurnOff + " " + data;  // furnaceTurnOff - '7'
+			charsToSend = dataToSend.length;
+			console.log(dataToSend + " - " + charsToSend);
+			server.send(dataToSend, 0, charsToSend, arduinoPort, arduinoAddress);
 			allStates.stateFurnace = "off";
 			//var furnaceTurnOff = '08';
 			break;

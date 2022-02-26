@@ -19,6 +19,7 @@ app.use(express.static('public'));
 
 const routes = require('./controllers/routeController');
 const comControler = require ('./controllers/communicationsController');
+const furnController = require ('./controllers/furnaceController');
 app.use("/", routes);
 
 
@@ -44,9 +45,12 @@ models.sequelize
 comControler.serialComStuff();
 
 // reset the arduino states
-comControler.sendMessageToArdunio("turnPumpOff");
-comControler.sendMessageToArdunio("furnaceTurnOff");
+comControler.sendMessageToArdunio("turnPumpOff", 70);
+comControler.sendMessageToArdunio("furnaceTurnOff", 70);
 comControler.sendMessageToArdunio("whichSensor", "familyroom");
+//comControler.sendMessageToArdunio("changeHouseMinTemp", 66);
+comControler.sendMessageToArdunio("changeHouseMaxTemp", 70);
+furnController.changeFurnState("off");
 console.log("DOES THIS FUCKER RUN EVERY TIME???");
 
 // Listener

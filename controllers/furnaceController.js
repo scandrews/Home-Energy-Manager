@@ -31,7 +31,7 @@ var dayAndTime = {
 	day: 0
 };
 
-var whichTemp = "desk"; // default family room
+var currentArduinoOffSensor = "desk"; // default family room
 var keepOldSensor = "desk";  // keep current sensor while on manual run
 	// 1 - bedroom
 	// 3 - desk
@@ -45,7 +45,7 @@ var eveningMaxTempWeekDay = 70;
 var nightMinTempWeekDay = 65;
 var nightMaxTempWeekDay = 69;
 
-var FurnaceSettings = {
+var furnaceSettings = {
 	id: 0,
     minHouseTemp: 0,
     maxHouseTemp: 0,
@@ -61,14 +61,14 @@ var FurnaceSettings = {
     weekEndOff1: '0',
     weekEndOn2: '0',
     weekEndOff2: '0',
-    runMode: whichTemp,
-    currentSensor: whichTemp
+    runMode: currentArduinoOffSensor,
+    currentSensor: currentArduinoOffSensor
 };
 
 
 // states
 var stateFurnace = "off";
-var currentSaveDelayCount = 0;
+//var currentSaveDelayCount = 0;
 
 
 function secondsToHms(d) {
@@ -80,9 +80,9 @@ function secondsToHms(d) {
 
 
 function endRunForWater(){
-	communicationController.sendMessageToArdunio("whichSensor", keepOldSensor);
+	currentArduinoOffSensor = keepOldSensor;
 	console.log("In End RFW Delay, KEEP OLD - " + keepOldSensor);
-	whichTemp = keepOldSensor;
+	communicationController.sendMessageToArdunio("whichSensor", keepOldSensor);
 	stateFurnace = "off";
 	communicationController.changeState("changeHome-Away", "back");
 	communicationController.sendMessageToArdunio("furnaceTurnOff", 69);
@@ -91,8 +91,8 @@ function endRunForWater(){
 
 /*
 function runDelayer (delayTime){
-	console.log("IN FUCKIN FURN CNTRL whichTemp - " + whichTemp);
-	keepOldSensor = whichTemp;
+	console.log("IN FUCKIN FURN CNTRL currentArduinoOffSensor - " + currentArduinoOffSensor);
+	keepOldSensor = currentArduinoOffSensor;
 	communicationController.sendMessageToArdunio("whichSensor", "none");
 	communicationController.sendMessageToArdunio("furnaceChange", 69);
 	dbController.setFurnaceChange("FurnOnForWater");
@@ -102,11 +102,11 @@ function runDelayer (delayTime){
 };
 */
 
-// called from the communitcations controller
-exports.changeFurnState = function (howLong){
+// called from the communitcations controller 
+exports.runFurnForWater = function (howLong){
+	keepOldSensor = currentArduinoOffSensor;
 	console.log("Furnace CNTRL run for hot water for  - " + howLong);
 	communicationController.sendMessageToArdunio("whichSensor", "none");
-	keepOldSensor = whichTemp;
 	delayTime = howLong * 60000;
 	//delayTime = howLong * 10000;
 	console.log("Delay Time - " + delayTime);
@@ -128,19 +128,23 @@ exports.changeFurnState = function (howLong){
 		}; */
 };
 
+exports.changeFurnState = function (newState){
+	stateFurnace = newState;
+};
+
 //  called from the route controller get general settings
 exports.getFurnaceSettings = function (req, res){
-	FurnaceSettings.minHouseTemp = minHouseTemp;
-	FurnaceSettings.maxHouseTemp = maxHouseTemp;
-	FurnaceSettings.currentSensor = whichTemp;
-	return (FurnaceSettings);
+	furnaceSettings.minHouseTemp = minHouseTemp;
+	furnaceSettings.maxHouseTemp = maxHouseTemp;
+	furnaceSettings.currentSensor = currentArduinoOffSensor;
+	return (furnaceSettings);
 };
 
 // called from the route controller get current furnace settings
 exports.getAllFurnSettings = function (req, res){
 
 	var allFurnaceSettings = {
-		currentSensor: whichTemp,
+		currentSensor: currentArduinoOffSensor,
 		morningMinTempWeekDaySet: morningMinTempWeekDay,
 		morningMaxTempWeekDaySet: morningMaxTempWeekDay,
 		middayMinTempWeekDaySet: middayMinTempWeekDay,
@@ -150,16 +154,16 @@ exports.getAllFurnSettings = function (req, res){
 		nightMinTempWeekDaySet: nightMinTempWeekDay,
 		nightMaxTempWeekDaySet: nightMaxTempWeekDay,
 
-	    weekDayMorningOn: FurnaceSettings.weekDayOn1,
-	    weekDayDayOn: FurnaceSettings.weekDayOff1,
-	    weekDayEveningOn: FurnaceSettings.weekDayOn2,
-	    weekDayNightOn: FurnaceSettings.weekDayOff2,
-	    weekEndOn1Set: FurnaceSettings.weekEndOn1,
-	    weekEndOff1Set: FurnaceSettings.weekEndOff1,
-	    weekEndOn2Set: FurnaceSettings.weekEndOn2,
-	    weekEndOff2Set: FurnaceSettings.weekEndOff2,
-	    runModeSet: FurnaceSettings.runMode,
-	    currentSensorSet: FurnaceSettings.currentSensor
+	    weekDayMorningOn: furnaceSettings.weekDayOn1,
+	    weekDayDayOn: furnaceSettings.weekDayOff1,
+	    weekDayEveningOn: furnaceSettings.weekDayOn2,
+	    weekDayNightOn: furnaceSettings.weekDayOff2,
+	    weekEndOn1Set: furnaceSettings.weekEndOn1,
+	    weekEndOff1Set: furnaceSettings.weekEndOff1,
+	    weekEndOn2Set: furnaceSettings.weekEndOn2,
+	    weekEndOff2Set: furnaceSettings.weekEndOff2,
+	    runModeSet: furnaceSettings.runMode,
+	    currentSensorSet: furnaceSettings.currentSensor
 	};
 	console.log("furn cntrl all furnace settings - ");
 	console.log(allFurnaceSettings);
@@ -224,31 +228,31 @@ var FurnaceSettings = [{
 	// Make temperature adjustments if required
 	console.log("NOT a weekend");
 	// at 6 AM we'll up the temps
-	console.log(FurnaceSettings.weekDayOn1);
-	if (currentTime > FurnaceSettings.weekDayOn1 && currentTime < FurnaceSettings.weekDayOn1_2){
+	console.log(furnaceSettings.weekDayOn1);
+	if (currentTime > furnaceSettings.weekDayOn1 && currentTime < furnaceSettings.weekDayOn1_2){
 		console.log("just adjusted temps for morning");
 		minHouseTemp = morningMinTempWeekDay;
 		maxHouseTemp = morningMaxTempWeekDay;
 	};
 	// at 9 AM we'll set temps back down
-	console.log(FurnaceSettings.weekDayOff1);
-	if (currentTime > FurnaceSettings.weekDayOff1 && currentTime < FurnaceSettings.weekDayOff1_2){
+	console.log(furnaceSettings.weekDayOff1);
+	if (currentTime > furnaceSettings.weekDayOff1 && currentTime < furnaceSettings.weekDayOff1_2){
 	// && currentTime < FurnaceSettings.weekDayOn2){
 		console.log("just adjusted temps for mid day");
 		minHouseTemp = middayMinTempWeekDay;
 		maxHouseTemp = middayMaxTempWeekDay;
 	};
 	// at 4:30 PM we'll up the temps
-	console.log(FurnaceSettings.weekDayOn2);
-	if (currentTime > FurnaceSettings.weekDayOn2 && currentTime < FurnaceSettings.weekDayOn2_2){
+	console.log(furnaceSettings.weekDayOn2);
+	if (currentTime > furnaceSettings.weekDayOn2 && currentTime < furnaceSettings.weekDayOn2_2){
 		console.log("just adjusted furn temps for evening");
 		minHouseTemp = eveningMinTempWeekDay;
 		maxHouseTemp = eveningMaxTempWeekDay;
 	};
 
 	// at 11:30 PM we'll set the temps down for night
-	console.log(FurnaceSettings.weekDayOff2);
-	if (currentTime > FurnaceSettings.weekDayOff2 && currentTime < FurnaceSettings.weekDayOff2_2){
+	console.log(furnaceSettings.weekDayOff2);
+	if (currentTime > furnaceSettings.weekDayOff2 && currentTime < furnaceSettings.weekDayOff2_2){
 		console.log("just adjusted furn temps for night");
 		minHouseTemp = nightMinTempWeekDay;
 		maxHouseTemp = nightMaxTempWeekDay;
@@ -292,8 +296,8 @@ var FurnaceSettings = [{
 		console.log("Furnace is off so check if turn on **********");
 
 		// sets which temp to the last reported temp from the dbcontroller who averaged the readings
-		console.log("whichTemp - " + whichTemp);
-		switch (whichTemp){
+		console.log("currentArduinoOffSensor - " + currentArduinoOffSensor);
+		switch (currentArduinoOffSensor){
 			case "bedroom":
 				console.log("In CASE 1 ** bedroomTemp - " + bedroomTemp);
 				houseTemp = bedroomTemp;
@@ -368,32 +372,33 @@ exports.setFurnaceTemps = function (whichLTemp, newTemp){
 // called from the route controller
 exports.changeOnOff = function (toWhoChangesFurn){
 			console.log ("in Furn controller setting to - " + toWhoChangesFurn);
-			//whichTemp = toWhoChangesFurn;
+			//currentArduinoOffSensor = toWhoChangesFurn;
 			communicationController.sendMessageToArdunio ("whichSensor", toWhoChangesFurn);
 //			console.log("return from change whichh sensor - " + returnStatus);
 	return (toWhoChangesFurn);
 };
 
 // called fromt the com controller reflecting Arduino 
-exports.setFurnOnOffSensor = function (toWhichSensor){
+exports.setFurnFlagPacket = function (toWhichSensor, currentMaxHouseTemp){
 	console.log("in furn cntrl stting the WhichSensor to Arduino - " + toWhichSensor);
 	switch (toWhichSensor){
 		case '0':
-			whichTemp = "none";
+			currentArduinoOffSensor = "none";
 			break;
 		case '1':
-			whichTemp = "bedroom";
+			currentArduinoOffSensor = "bedroom";
 			break;
 		case '2':
-			whichTemp = "familyroom";
+			currentArduinoOffSensor = "familyroom";
 			break;
 		case '3':
-			whichTemp = "desk";
+			currentArduinoOffSensor = "desk";
 			break;
 		default:
 			console.log ("ERROR in set furn on off - in furnace controller");
 	};
-	console.log("in Furn CNTRL, just set the furn state to the arduino state - " + whichTemp);
+	console.log("in Furn CNTRL, just set the furn state to the arduino state - " + currentArduinoOffSensor);
+	maxHouseTemp = currentMaxHouseTemp;
 };
 
 // day time
