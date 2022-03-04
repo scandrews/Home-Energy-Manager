@@ -342,7 +342,7 @@ exports.sendMessageToArdunio = function (whatToDo, data){
 				var dataToSend = 1 + " " + flag + " " + 9;
 				charsToSend = dataToSend.length;
 				console.log(dataToSend + " - " + charsToSend);
-				var res = server.send(dataToSend, 0, charsToSend, arduinoPort, arduinoAddress);
+				server.send(dataToSend, 0, charsToSend, arduinoPort, arduinoAddress);
 				// var whichSensor = '1';
 				}
 			break;

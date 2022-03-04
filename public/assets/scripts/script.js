@@ -66,6 +66,7 @@ $(".messageShowCurrentTemps").on("click", function(){
 		$(".furnaceStatus").html("<td>" + localFurnStatus + "</td>");
 		$(".arduinoMaxHouseTemp").html("<td>" + localTempArray[4] + "</td>");
 		$(".mode").html("<td>" + localTempArray[7].stateHomeAway + "</td>");
+		$(".runForWaterTime").html("<td>" + localTempArray[8] + "</td>");
 	};
 
 	$.get('currentTemps', (temps) => {
@@ -813,9 +814,6 @@ $('#stateList li a').on('click', function(){
         	console.log("SUCCESS in the change start/stop Recirc state");
         }
     });
-
-
-
 }); 
 
 

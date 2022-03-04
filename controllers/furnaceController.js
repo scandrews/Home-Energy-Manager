@@ -31,6 +31,8 @@ var dayAndTime = {
 	day: 0
 };
 
+var countRunForWater = 0;
+var runForWaterInterval;
 var currentArduinoOffSensor = "desk"; // default family room
 var keepOldSensor = "desk";  // keep current sensor while on manual run
 	// 1 - bedroom
@@ -78,11 +80,37 @@ function secondsToHms(d) {
     return m + ":" + s; 
 };
 
+/*
+// timer
+var myVar = setInterval(myTimer, 1000);
+
+function myTimer(){
+  currentFurnaceDelayCount--;
+  currentDelayCountMin = secondsToHms(currentSaveDelayCount);
+  console.log("current delay count - " + currentSaveDelayCount);
+  console.log("current delay count - " + currentDelayCountMin);
+};
+*/
+
+exports.runFurnForWater = function(howLong){
+	keepOldSensor = currentArduinoOffSensor;
+	communicationController.sendMessageToArdunio("whichSensor", "none");
+	console.log("Furnace CNTRL run for hot water for  - " + howLong);
+	countRunForWater = howLong * 10;
+	dbController.setFurnaceChange("FurnOnForWater");
+	communicationController.sendMessageToArdunio("furnaceTurnOn", 69);
+	stateFurnace = "on";
+	runForWaterInterval = setInterval(checkForEnd, 1000);
+	//let myVar = setInterval(checkForEnd, 1000);
+
+};
 
 function endRunForWater(){
-	currentArduinoOffSensor = keepOldSensor;
-	console.log("In End RFW Delay, KEEP OLD - " + keepOldSensor);
+	//clearInterval(myVar);
+	clearInterval(runForWaterInterval);
 	communicationController.sendMessageToArdunio("whichSensor", keepOldSensor);
+	//currentArduinoOffSensor = keepOldSensor;  let's wait for it to come back from Arduino
+	console.log("In End RFW Delay, KEEP OLD - " + keepOldSensor);
 	stateFurnace = "off";
 	communicationController.changeState("changeHome-Away", "back");
 	communicationController.sendMessageToArdunio("furnaceTurnOff", 69);
@@ -90,42 +118,50 @@ function endRunForWater(){
 };
 
 /*
-function runDelayer (delayTime){
-	console.log("IN FUCKIN FURN CNTRL currentArduinoOffSensor - " + currentArduinoOffSensor);
+// called from the communications controller 
+exports.runFurnForWater = function (howLong){
 	keepOldSensor = currentArduinoOffSensor;
 	communicationController.sendMessageToArdunio("whichSensor", "none");
-	communicationController.sendMessageToArdunio("furnaceChange", 69);
+	console.log("Furnace CNTRL run for hot water for  - " + howLong);
+	delayTime = howLong * 60000;
+	//delayTime = howLong * 10000;
+	console.log("Delay Time - " + delayTime);
 	dbController.setFurnaceChange("FurnOnForWater");
+	communicationController.sendMessageToArdunio("furnaceTurnOn", 69);
 	stateFurnace = "on";
+//	communicationController.changeState("changeHome-Away", "back");
 	// set timer
 	setTimeout(endRunForWater, delayTime);
 };
 */
 
-// called from the communitcations controller 
-exports.runFurnForWater = function (howLong){
-	keepOldSensor = currentArduinoOffSensor;
-	console.log("Furnace CNTRL run for hot water for  - " + howLong);
-	communicationController.sendMessageToArdunio("whichSensor", "none");
-	delayTime = howLong * 60000;
-	//delayTime = howLong * 10000;
-	console.log("Delay Time - " + delayTime);
-	communicationController.sendMessageToArdunio("furnaceTurnOn", 69);
-	dbController.setFurnaceChange("FurnOnForWater");
-	stateFurnace = "on";
-	// set timer
-	setTimeout(endRunForWater, delayTime);
-/*
-	switch (howLong){
-		case 30:
-			console.log ("in furn cntrl run furn for hot water 30");
-			runDelayer(1800000);
-			break;
-		case 60:
-			console.log ("in furn cntrl run furn for hot water 60");
-			runDelayer(3600000);
-			break;
-		}; */
+function checkForEnd(){
+	if (countRunForWater <= 0){
+		console.log("In Run For Water, count - " + countRunForWater);
+		endRunForWater();
+	} else {
+		countRunForWater --;
+		console.log("In Run For Water, count - " + countRunForWater);
+	}
+}
+
+/*    FROM THE DB CNTRL
+// timer
+var myVar = setInterval(myTimer, 1000);
+
+function myTimer(){
+  currentSaveDelayCount--;
+  currentDelayCountMin = secondsToHms(currentSaveDelayCount);
+  console.log("current delay count - " + currentSaveDelayCount);
+  console.log("current delay count - " + currentDelayCountMin);
+};
+*/
+
+
+
+exports.getRunForWaterCount = function(){
+	var countInMin = secondsToHms(countRunForWater)
+	return (countInMin);
 };
 
 exports.changeFurnState = function (newState){
@@ -267,18 +303,18 @@ var FurnaceSettings = [{
 		console.log("looks like the arduino just turned the furnace off");
 		stateFurnace = "off";
 		dbController.setFurnaceChange("turnedFurnaceOff");
-		} else {
+/*		} else {
 			// check if we're in run for hot water and should turn off
 			// check state
 			if (currentArduinoStates.stateHomeAway == "Run Furnace For Hot Water 30" || currentArduinoStates.stateHomeAway == "Run Furnace For Hot Water 60"){
 				console.log("in furn CNTRL furn ON, state - Hot water 30 ~ 60");
 				if (currentRunDelayCount == 0){
-					// we ran for hot wqater to the limit so turn off
+					// we ran for hot water to the limit so turn off
 					communicationController.sendMessageToArdunio("furnaceChange");
 					communicationController.sendMessageToArdunio("whichSensor", "familyroom");
 				};
 			};
-		}
+*/		}
 	/*if (stateFurnace == "on") {
 		console.log("furnace is running - check if we should turn it off");
 		if (furnaceTemp >= furnaceTempMax){
@@ -292,7 +328,7 @@ var FurnaceSettings = [{
 	} 
 */
 
-	}else if (stateFurnace == "off"){ 
+	} else if (stateFurnace == "off"){ 
 		console.log("Furnace is off so check if turn on **********");
 
 		// sets which temp to the last reported temp from the dbcontroller who averaged the readings
@@ -378,7 +414,7 @@ exports.changeOnOff = function (toWhoChangesFurn){
 	return (toWhoChangesFurn);
 };
 
-// called fromt the com controller reflecting Arduino 
+// called from the com controller reflecting Arduino 
 exports.setFurnFlagPacket = function (toWhichSensor, currentMaxHouseTemp){
 	console.log("in furn cntrl stting the WhichSensor to Arduino - " + toWhichSensor);
 	switch (toWhichSensor){

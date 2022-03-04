@@ -39,9 +39,11 @@ app.get('/currentTemps', (req, res) => {
 	temporyTemps = dbaccess.getCurentAvgTemps();
 	temporyTimes = dbaccess.getCurrentTimes();  // add curent save time here
 	allStates = comControler.getState();
+	runForWaterTime = furnaceController.getRunForWaterCount();
 	dataPackage.push(temporyTemps);
 	dataPackage.push(temporyTimes);
 	dataPackage.push(allStates);
+	dataPackage.push(runForWaterTime);
 	console.log("still in get current temps route data - " + dataPackage);
 	res.send(dataPackage);	
 });
