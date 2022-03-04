@@ -70,15 +70,7 @@
 					<a class="nav-item nav-link showMode" href="#">Current Mode</a>
 					<a class="mode"></a>
 
-<!--
-				  <ul class="dropdown-menu">
-				    <li><a class="dropdown-item changeStateHome" href="#">Home</a></li>
-				    <li><a class="dropdown-item changeStateAlone" href="#">Home Alone</a></li>
-				    <li><a class="dropdown-item changeStateGuests" href="#">Guests</a></li>
-				    <li><a class="dropdown-item changeStateAway" href="#">Away</a></li>
-				    <li><a class="dropdown-item changeStateFurnForWater" href="#">Run Furnace For Hot Water</a></li>
-				  </ul>
--->				</div>
+				</div>
 				<div>
 					<a class="nav-item nav-link getRecircSettings" href="#">Arduino Max Temp</a>
 					<a class="nav-item nav-link maxTemp" href="#">Current Max Temp</a>
@@ -94,38 +86,6 @@
 		  </div>
 		</nav>
 
-<!--
-		<nav class="navbar navbar-expand-lg navbar-light bg-light align-left">
-		  <div class="collapse navbar-collapse align-left" id="navbarSupportedContent">
-		    <div class="navbar-nav">
-		    	<div>
-					<a class="nav-item nav-link messageChartPipeTemps" href="#">   x x     x x x x   </a>
-				</div>
-				<div>
-					<a class="nav-item nav-link messageChartOtherTemps" href="#">x  x     x Update in:  x</a>
-					<a class="timeToSaveStatus"></a>
-				</div>
-				<div>
-					<a class="nav-item nav-link messageShowCurrentTemps" href="#">x    x. Update   x x</a>
-				</div>
-				<div>
-				</div>
-				<div>
-				</div>
-				<div>
-					<a class="nav-item nav-link getRecircSettings" href="#">Arduino Max Temp</a>
-					<a class="arduinoMaxHouseTemp">
-				</div>
-				<div>
-					<a class="nav-item nav-link statusHomeAway" href="#">Home</a>
-				</div>
-				<div>
-					<a class="nav-item nav-link" href="#">About</a>
-				</div>
-		    </div>
-		  </div>
-		</nav>
--->
 
 		<!-- Div for the real time status Line -->
 		<table class = "table cur-temp-labels">
@@ -262,9 +222,13 @@
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="morningTemperture" class="col-sm-6 col-form-label my-col-form-label">Morning Temperature</label>
+					    <label for="morningMinTemperture" class="col-sm-6 col-form-label my-col-form-label">Morning Min Temperature</label>
 					    <div class="col-sm-4">
-					      <input type="morningTemperture" class="form-control my-col-form-label" id="morningTemperture" placeholder="Morning Temperature">
+					      <input type="morningMinTemperture" class="form-control my-col-form-label" id="morningMinTemperture" placeholder="Morning Min Temperature">
+					    </div>
+					    <label for="morningMaxTemperture" class="col-sm-6 col-form-label my-col-form-label">Morning Max Temperature</label>
+					    <div class="col-sm-4">
+					      <input type="morningMaxTemperture" class="form-control my-col-form-label" id="morningMaxTemperture" placeholder="Morning Max Temperature">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
@@ -274,9 +238,13 @@
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="dayTemperature" class="col-sm-6 col-form-label my-col-form-label">Day Temperature</label>
+					    <label for="dayMinTemperature" class="col-sm-6 col-form-label my-col-form-label">Day Min Temperature</label>
 					    <div class="col-sm-4">
-					      <input type="dayTemperature" class="form-control my-col-form-label" id="dayTemperature" placeholder="Day Temperature">
+					      <input type="dayMinTemperature" class="form-control my-col-form-label" id="dayMinTemperature" placeholder="Day Min Temperature">
+					    </div>
+					    <label for="dayMaxTemperature" class="col-sm-6 col-form-label my-col-form-label">Day Max Temperature</label>
+					    <div class="col-sm-4">
+					      <input type="dayMaxTemperature" class="form-control my-col-form-label" id="dayMaxTemperature" placeholder="Day Max Temperature">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
@@ -286,9 +254,13 @@
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="eveningTemperature" class="col-sm-6 col-form-label my-col-form-label">Evening Temperature</label>
+					    <label for="eveningMinTemperature" class="col-sm-6 col-form-label my-col-form-label">Evening Min Temperature</label>
 					    <div class="col-sm-4">
-					      <input type="eveningTemperature" class="form-control my-col-form-label" id="eveningTemperature" placeholder="Evening Temperature">
+					      <input type="eveningMinTemperature" class="form-control my-col-form-label" id="eveningMinTemperature" placeholder="Evening Min Temperature">
+					    </div>
+					    <label for="eveningMaxTemperature" class="col-sm-6 col-form-label my-col-form-label">Evening Max Temperature</label>
+					    <div class="col-sm-4">
+					      <input type="eveningMaxTemperature" class="form-control my-col-form-label" id="eveningMaxTemperature" placeholder="Evening Max Temperature">
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
@@ -298,9 +270,13 @@
 					    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="nightTemperature" class="col-sm-6 col-form-label my-col-form-label">Night Temperature</label>
+					    <label for="nightMinTemperature" class="col-sm-6 col-form-label my-col-form-label">Night Min Temperature</label>
 					    <div class="col-sm-4">
-					      <input type="nightTemperature" class="form-control my-col-form-label" id="nightTemperature" placeholder="Night Temperature">
+					      <input type="nightMinTemperature" class="form-control my-col-form-label" id="nightMinTemperature" placeholder="Night Min Temperature">
+					    </div>
+					    <label for="nightMaxTemperature" class="col-sm-6 col-form-label my-col-form-label">Night Max Temperature</label>
+					    <div class="col-sm-4">
+					      <input type="nightMaxTemperature" class="form-control my-col-form-label" id="nightMaxTemperature" placeholder="Night Max Temperature">
 					    </div>
 					  </div>
 

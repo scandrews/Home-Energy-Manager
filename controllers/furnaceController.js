@@ -96,13 +96,26 @@ exports.runFurnForWater = function(howLong){
 	keepOldSensor = currentArduinoOffSensor;
 	communicationController.sendMessageToArdunio("whichSensor", "none");
 	console.log("Furnace CNTRL run for hot water for  - " + howLong);
-	countRunForWater = howLong * 10;
+	countRunForWater = howLong * 60;
+	setTimeout(startRunForWater, 2000);
+};
+
+function startRunForWater(){
 	dbController.setFurnaceChange("FurnOnForWater");
 	communicationController.sendMessageToArdunio("furnaceTurnOn", 69);
 	stateFurnace = "on";
 	runForWaterInterval = setInterval(checkForEnd, 1000);
 	//let myVar = setInterval(checkForEnd, 1000);
+};
 
+function checkForEnd(){
+	if (countRunForWater <= 0){
+		console.log("In Run For Water, count - " + countRunForWater);
+		endRunForWater();
+	} else {
+		countRunForWater --;
+		console.log("In Run For Water, count - " + countRunForWater);
+	};
 };
 
 function endRunForWater(){
@@ -113,10 +126,14 @@ function endRunForWater(){
 	console.log("In End RFW Delay, KEEP OLD - " + keepOldSensor);
 	stateFurnace = "off";
 	communicationController.changeState("changeHome-Away", "back");
+	setTimeout(continueEndRunForWater, 2000);
+};
+
+function continueEndRunForWater(){
 	communicationController.sendMessageToArdunio("furnaceTurnOff", 69);
 	dbController.setFurnaceChange("FurnOffForWater");
 };
-
+	
 /*
 // called from the communications controller 
 exports.runFurnForWater = function (howLong){
@@ -134,16 +151,6 @@ exports.runFurnForWater = function (howLong){
 	setTimeout(endRunForWater, delayTime);
 };
 */
-
-function checkForEnd(){
-	if (countRunForWater <= 0){
-		console.log("In Run For Water, count - " + countRunForWater);
-		endRunForWater();
-	} else {
-		countRunForWater --;
-		console.log("In Run For Water, count - " + countRunForWater);
-	}
-}
 
 /*    FROM THE DB CNTRL
 // timer

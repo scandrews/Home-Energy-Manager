@@ -623,13 +623,17 @@ $(".getFurnaceSettings").on("click", function(event){
 	$.get('furnaceSettings', (stuff) => {
 		console.log(stuff);
 		$("#morningOnTime").attr("placeholder", stuff.weekDayMorningOn);
-		$("#morningTemperture").attr("placeholder", stuff.morningMinTempWeekDaySet);
+		$("#morningMinTemperture").attr("placeholder", stuff.morningMinTempWeekDaySet);
+		$("#morningMaxTemperture").attr("placeholder", stuff.morningMaxTempWeekDaySet);
 		$("#dayOnTime").attr("placeholder", stuff.weekDayDayOn);
-		$("#dayTemperature").attr("placeholder", stuff.middayMinTempWeekDaySet);
+		$("#dayMinTemperature").attr("placeholder", stuff.middayMinTempWeekDaySet);
+		$("#dayMaxTemperature").attr("placeholder", stuff.middayMaxTempWeekDaySet);
 		$("#eveningOnTime").attr("placeholder", stuff.weekDayEveningOn);
-		$("#eveningTemperature").attr("placeholder", stuff.eveningMinTempWeekDaySet);
+		$("#eveningMinTemperature").attr("placeholder", stuff.eveningMinTempWeekDaySet);
+		$("#eveningMaxTemperature").attr("placeholder", stuff.eveningMaxTempWeekDaySet);
 		$("#nightOnTime").attr("placeholder", stuff.weekDayNightOn);
-		$("#nightTemperature").attr("placeholder", stuff.nightMinTempWeekDaySet);
+		$("#nightMinTemperature").attr("placeholder", stuff.nightMinTempWeekDaySet);
+		$("#nightMaxTemperature").attr("placeholder", stuff.nightMaxTempWeekDaySet);
 		$("#whichSensor").attr("placeholder", stuff.currentSensorSet);
 		$("#currentMode").attr("placeholder", stuff.runModeSet);
     });
