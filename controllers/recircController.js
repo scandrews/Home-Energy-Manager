@@ -92,7 +92,7 @@ exports.checkRecirc = function (recircTemp){
 	let hours = date_ob.getHours();
 	// current minutes
 	let minutes = date_ob.getMinutes();
-	let seconds = date_ob.getSeconds();
+//	let seconds = date_ob.getSeconds();
 	if (hours < 10){
 		currentTime = "0" + hours + ":" + minutes + ":00";
 	} else if (minutes < 10){
@@ -103,6 +103,20 @@ exports.checkRecirc = function (recircTemp){
 	dayAndTime.day = date_ob.getDay();
 	dayOfTheWeek = dayAndTime.day;
 	dayAndTime.time = currentTime;
+/*
+try this one instead
+  if (hours < 10){
+    hours = "0" + hours;
+  }
+  if (minutes < 10){
+    var currentTime = hours + ":" + "0" + minutes;
+  } else {
+    var currentTime = hours + ":" + minutes;
+  };
+  dayAndTime.day = date_ob.getDay();
+  dayAndTime.time = currentTime;
+*/
+
 
 		//	console.log("recirc temperature - " + recircTemp);
 		//	console.log("Is Pump On -	

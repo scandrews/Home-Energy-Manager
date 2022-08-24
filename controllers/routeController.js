@@ -196,6 +196,15 @@ app.post('/upDateGeneralSettings', function (req, res) {
 					var returnStatus = comControler.sendMessageToArdunio ("updateServerIPAddress", newSettings[key])
 					console.log("return from change server IP Address - " + returnStatus);
 					break;
+				case "arduinoIPAddress":
+					var returnStatus = comControler.changeArduinoIPAddress (newSettings[key])
+					console.log("return from change Arduino IP Address - " + returnStatus);
+					break;
+				case "keepDataDays":
+					console.log("Route CNTRL change Keep Data to - " + newSettings[key]);
+					var returnStatus = dbaccess.changeKeepDataTime (newSettings[key]);
+					console.log("return from change delete record mode - " + returnStatus);
+					break;
 				default:
 					console.log("ERROR");
 				break;

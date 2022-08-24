@@ -24,19 +24,21 @@ var tempF9 = 0.0; // water tank
 
 
 // setup serial port
-const BaudRate = 9600;
-var comPort = 'Com3';
+//const BaudRate = 9600;
+//const comPort = 'Com3';
 // initialize the serial port
-const SerialPort = require('serialport');
-const Readline = SerialPort.parsers.Readline;
+//const SerialPort = require('serialport');
+const { SerialPort } = require('serialport')
+//const Readline = SerialPort.parser.readline;
+const { ReadlineParser } = require('@serialport/parser-readline')
 
 // setup ethernet server
 var dgram = require("dgram");
 var server = dgram.createSocket('udp4');
 var PORT = 6000;
-var arduinoAddress = '192.168.1.5';
+var arduinoAddress = '192.168.1.4';
 var arduinoPort = '8888';
-var serverAddress = '';
+var serverAddress = {};
 var tempIPs = [];
 
 // codes for arduino function
@@ -82,9 +84,27 @@ console.log(addresses[0]);
 //console.log(addresses[1]);
 //console.log(addresses[2]);
 console.log(interfaces);
-serverIPAddress = addresses[0];
-console.log("Server IP Address - " + serverIPAddress);
+serverAddress.address = addresses[0];
+serverAddress.port = PORT;
+console.log("Server IP Address - " + serverAddress.address);
 console.log("server thinks the Arduino address - " + arduinoAddress);
+
+const find = require('local-devices');
+
+// Find all local network devices.
+find().then(devices => {
+	console.log("Devices on my network")
+	console.log(devices)
+
+   /*
+  [
+    { name: '?', ip: '192.168.0.10', mac: '...' },
+    { name: '...', ip: '192.168.0.17', mac: '...' },
+    { name: '...', ip: '192.168.0.21', mac: '...' },
+    { name: '...', ip: '192.168.0.22', mac: '...' }
+  ]
+  */
+})
 
 
 //  State Machine for the whole application
@@ -93,6 +113,13 @@ var allStates = {
 	stateRecircPump: "off",
 	stateFurnace: "off",
 	stateWoodStove: "off"
+};
+
+
+// called by route controller to change the arduino address that the server listens for
+exports.changeArduinoIPAddress = function (newAddress){
+	console.log("changing Arduino address to - " + newAddress)
+	arduinoAddress = newAddress;
 };
 
 
@@ -172,7 +199,7 @@ exports.getState = function (){
 exports.getIPAddresses = function (){
 //	tempIPs = '';
 	//console.log(serverIPAddress);
-	tempIPs[0] = serverIPAddress;
+	tempIPs[0] = serverAddress.address;
 	//console.log(tempIPs);
 	tempIPs[1] = (arduinoAddress);
 	//console.log("in com cntrlr get IPs " + tempIPs);
@@ -291,7 +318,7 @@ server.on("message", function (StuffIn, remote) {
 
 server.on("listening", function () {
     //serverAddress = server.address();
-    serverAddress = addresses[0];
+    //serverAddress = addresses[0];
     console.log('UDP Server listening on ' + serverAddress.address + " : " + serverAddress.port);
 });
 
@@ -466,22 +493,43 @@ exports.returnFlags = function (){
 };
 
 // this section reads the serial port and console logs it
+
 exports.serialComStuff = function (){
+	console.log("in serial com stuff");
 
 	// open the serial port
-	var port = new SerialPort(comPort, {
-		baudRate: BaudRate,
+//	var port = new SerialPort(comPort, {
+//		baudRate: BaudRate,
+//	});
+//	var port = new SerialPort({
+//		path: comPort,  
+//		baudRate: BaudRate,
+//	});
+/*
+	SerialPort.list().then(function(ports){
+  		ports.forEach(function(port){
+    		console.log("Port: ", port.path);
+  		})
 	});
-	const parser = new Readline('\n');
 
-	port.pipe(parser);
+	var port = new SerialPort({
+		//path: '/dev/port/Com3',
+		path: '/dev/Com3',
+		baudRate: 9600,
+	});
+
+	//const parser = new Readline('\n');
+	const parser = port.pipe(new ReadlineParser({ delimiter: '\r\n' }))
+
+//	port.pipe(parser);
 	parser.on('data', function(inputString){
-		//var newstr = inputString.split(" ");
+		var newstr = inputString.split(" ");
 		console.log ("serialprint - " + inputString);
-		//console.log (newstr);
+		console.log (newstr);
 		
 	// end serial i/o section
 	});
+*/
 }
 
 // end export

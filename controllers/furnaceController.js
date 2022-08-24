@@ -97,7 +97,7 @@ exports.runFurnForWater = function(howLong){
 	communicationController.sendMessageToArdunio("whichSensor", "none");
 	console.log("Furnace CNTRL run for hot water for  - " + howLong);
 	countRunForWater = howLong * 60;
-	setTimeout(startRunForWater, 2000);
+	setTimeout(startRunForWater, 3000);
 };
 
 function startRunForWater(){
@@ -126,7 +126,7 @@ function endRunForWater(){
 	console.log("In End RFW Delay, KEEP OLD - " + keepOldSensor);
 	stateFurnace = "off";
 	communicationController.changeState("changeHome-Away", "back");
-	setTimeout(continueEndRunForWater, 2000);
+	setTimeout(continueEndRunForWater, 3000);
 };
 
 function continueEndRunForWater(){

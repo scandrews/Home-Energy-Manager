@@ -709,7 +709,7 @@ $(".upDateGeneralSettings").on("click", function(event){
 //		whichSensor: $("#whichSensor").val().trim(),
 		serverIPAddress: $("#serverIPAddress").val().trim(),
 		arduinoIPAddress: $("#ArduinoIPAddress").val().trim(),
-		runMode: $("#runMode").val().trim(),
+		keepDataDays: $("#keepDataDays").val().trim(),
 	};
 	console.log(newGenSettings);
 	$(".generalSettingsForm")[0].reset();

@@ -50,18 +50,13 @@ var test = "Test";
 
 var furnChangeState = 'NULL';
 var localFurnAction = "noChange";
+var keepDataTime = 1;
 
 var connection;
 
 // timer
 var myVar = setInterval(myTimer, 1000);
 
-//function myTimer() {
-//  var saveDelayInterval = saveDelayInterval - 1;
-//  console.log( saveDelayInterval);
-//};
-
-//var saveDelayInSec = currentSaveDelayCount * 60;
 function myTimer(){
   currentSaveDelayCount--;
   currentDelayCountMin = secondsToHms(currentSaveDelayCount);
@@ -77,6 +72,33 @@ function secondsToHms(d) {
     return m + ":" + s; 
 };
 
+function getCurrentTime(){
+    // get the current time
+    let date_ob = new Date();
+    let hours = date_ob.getHours();
+    // current minutes
+    let minutes = date_ob.getMinutes();
+    let seconds = date_ob.getSeconds();
+    if (hours < 10){
+      hours = "0" + hours
+    };
+    if (minutes < 10){
+      minutes = "0" + minutes;
+    };
+    if (seconds < 10){
+      seconds = "0" + seconds
+    };
+    currentTime = hours + ":" + minutes + ":" + seconds;
+
+    date = date_ob.getDate();
+    year = date_ob.getFullYear();
+    month = date_ob.getMonth();
+    currentDate = year + "-" + month + "-" + date + " " + currentTime;
+
+    console.log("Current Time in dbcontroller - " + currentDate);
+    return(currentDate);
+};
+
 exports.upDateFurnState = function (newState){
   furnChangeState = newState;
 }
@@ -84,6 +106,7 @@ exports.upDateFurnState = function (newState){
 exports.upDateTempSaveIterval = function(newDelay) {
   saveDelayIntervalMinutes = newDelay;
   saveDelayIntervalSeconds = saveDelayIntervalMinutes * 60;
+  currentSaveDelayCount = saveDelayIntervalSeconds
   return ("Saved New Temp Save Interval");
 };
 
@@ -95,6 +118,10 @@ exports.updateNumDataPointsToChart = function(newDataPoints) {
 exports.getCurrentTimes = function(){
   temporaryTimes = [currentSaveDelayCount, tempcount, currentDelayCountMin];
   return(temporaryTimes);
+};
+
+exports.changeKeepDataTime = function(newTime){
+  keepDataTime = newTime;
 };
 
 if (process.env.JAWSDB_URL) {
@@ -188,76 +215,95 @@ connection.connect((err) => {
   exports.saveTempData = function (temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, furnAction) {
     console.log("in save temperature data");
     console.log(temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, furnAction);
-    //testSaveDelayInterval = testSaveDelayInterval - 2;
     currentSaveDelayCount--;
     console.log(currentSaveDelayCount + " - current save delay Count");
 
-    //console.log( "tempcount - " + tempcount + " Current Save Delay Count - " + currentSaveDelayCount);
-    //if (currentSaveDelayCount < 23){
+    // average temperature readings to numOfReadingsToAvg
+    tempSum1 = tempSum1 + temp1;
+    tempFamSum = tempFamSum + temp2;
+    tempSum3 = tempSum3 + temp3;
+    tempSum4 = tempSum4 + temp4;
+    tempSum5 = tempSum5 + temp5;
+    tempSum6 = tempSum6 + temp6;
+    tempSum7 = tempSum7 + temp7;
+    tempSum8 = tempSum8 + temp8;
+    tempSum9 = tempSum9 + temp9;
+    tempcount++;
 
-        // average temperature readings to numOfReadingsToAvg
-        tempSum1 = tempSum1 + temp1;
-        tempFamSum = tempFamSum + temp2;
-        tempSum3 = tempSum3 + temp3;
-        tempSum4 = tempSum4 + temp4;
-        tempSum5 = tempSum5 + temp5;
-        tempSum6 = tempSum6 + temp6;
-        tempSum7 = tempSum7 + temp7;
-        tempSum8 = tempSum8 + temp8;
-        tempSum9 = tempSum9 + temp9;
-        tempcount++;
+    if (tempcount == numOfReadingsToAvg) {
+      avgTemp1 = parseFloat((tempSum1/tempcount).toFixed(1));
+      avgFamTemp = parseFloat((tempFamSum/tempcount).toFixed(1));
+      avgTemp3 = parseFloat((tempSum3/tempcount).toFixed(1));
+      avgTemp4 = parseFloat((tempSum4/tempcount).toFixed(1));
+      avgTemp5 = parseFloat((tempSum5/tempcount).toFixed(1));
+      avgTemp6 = parseFloat((tempSum6/tempcount).toFixed(1));
+      avgTemp7 = parseFloat((tempSum7/tempcount).toFixed(1));
+      avgTemp8 = parseFloat((tempSum8/tempcount).toFixed(1));
+      avgTemp9 = parseFloat((tempSum9/tempcount).toFixed(1));
+      tempSum1 = 0;
+      tempFamSum = 0;
+      tempSum3 = 0;
+      tempSum4 = 0;
+      tempSum5 = 0;
+      tempSum6 = 0;
+      tempSum7 = 0;
+      tempSum8 = 0;
+      tempSum9 = 0;
+      tempcount = 0;
+      console.log("averages - " + avgTemp1, avgFamTemp, avgTemp3, avgTemp4, avgTemp5, avgTemp6, avgTemp7, avgTemp8, avgTemp9);
 
-        if (tempcount == numOfReadingsToAvg) {
-          avgTemp1 = parseFloat((tempSum1/tempcount).toFixed(1));
-          avgFamTemp = parseFloat((tempFamSum/tempcount).toFixed(1));
-          avgTemp3 = parseFloat((tempSum3/tempcount).toFixed(1));
-          avgTemp4 = parseFloat((tempSum4/tempcount).toFixed(1));
-          avgTemp5 = parseFloat((tempSum5/tempcount).toFixed(1));
-          avgTemp6 = parseFloat((tempSum6/tempcount).toFixed(1));
-          avgTemp7 = parseFloat((tempSum7/tempcount).toFixed(1));
-          avgTemp8 = parseFloat((tempSum8/tempcount).toFixed(1));
-          avgTemp9 = parseFloat((tempSum9/tempcount).toFixed(1));
-          tempSum1 = 0;
-          tempFamSum = 0;
-          tempSum3 = 0;
-          tempSum4 = 0;
-          tempSum5 = 0;
-          tempSum6 = 0;
-          tempSum7 = 0;
-          tempSum8 = 0;
-          tempSum9 = 0;
-          tempcount = 0;
-          console.log("averages - " + avgTemp1, avgFamTemp, avgTemp3, avgTemp4, avgTemp5, avgTemp6, avgTemp7, avgTemp8, avgTemp9);
-
-          furnaceController.checkFurnace(avgTemp5, avgFamTemp, avgTemp3, avgTemp6, avgTemp7);
+      furnaceController.checkFurnace(avgTemp5, avgFamTemp, avgTemp3, avgTemp6, avgTemp7);
+    };
 
     //      console.log("Current Save Delay Count - " + currentSaveDelayCount);
-          if (currentSaveDelayCount <= 0){
+    if (currentSaveDelayCount <= 0){
 
-    //        comController.returnFlags = function(flags){
-    //          console.log("Flags in db controller - " +  flags)
+        console.log("Saving Temp Data");
+        var oldestRecordTime = '';
 
-              console.log("Saving Temp Data");
-              connection.query("delete from temperatures ORDER BY id limit 1", (err) => {
-                if (err) {
-                  console.log("Got a DB error in delete PipeTemp");
-                  console.log (err);
-                };
-                return;
-              });
+        // remove the oldest record if older than keep time
+        tempSQL = "SELECT createdAt FROM temperatures order by id LIMIT 1";
+        connection.query( tempSQL, (err, result) => {
+            //console.log("Result - ");
+            //console.log(result);
+            if (err) {
+              console.log("Got a DB error in get oldest created at");
+              console.log (err);
+              };
+//              console.log(result[0]);
+            oldestRecordTime = result[0];
+            console.log ("oldest record created at - " + oldestRecordTime);
+            currentTimeHere = getCurrentTime();
+/*              console.log ("current time - " + currentTimeHere);
+            console.log ("current keep data time - " + keepDataTime);
+            let timeDifference = currentTimeHere - keepDataTime;
+            console.log("Time Difference - " + timeDifference);
+*/              
+            var temp = "DELETE FROM temperatures WHERE createdAt < now() - interval ";
+            var oursql = temp.concat(keepDataTime);
+            var finalSQL = oursql.concat(" day");
+            console.log(finalSQL);
+            // delete the oldest record if < keepDataTime
+            connection.query( finalSQL, (err, result) => {
+              console.log(result);
+              if (err) {
+                console.log("Got a DB error in delete old record");
+                console.log (err);
+              };
+
               // NOTE:  assignment of temps to locations
               connection.query("INSERT INTO temperatures SET ?",
                 {
-                  tempOutDoorsSun: avgTemp7,
+                  tempOutDoorsSun:   avgTemp7,
                   tempOutDoorsShade: avgTemp8,
-                  tempWaterTank: avgTemp9,
-                  tempFamilyRoom: avgFamTemp,
-                  tempBedRoom: avgTemp3,
-                  tempDesk: avgTemp6,
-                  tempPipe: avgTemp4,
-                  tempWoodStove: avgTemp1,
-                  tempFurnace: avgTemp5,
-                  furnaceOnOff: localFurnAction
+                  tempWaterTank:     avgTemp9,
+                  tempFamilyRoom:    avgFamTemp,
+                  tempBedRoom:       avgTemp3,
+                  tempDesk:          avgTemp6,
+                  tempPipe:          avgTemp4,
+                  tempWoodStove:     avgTemp1,
+                  tempFurnace:       avgTemp5,
+                  furnaceOnOff:      localFurnAction
                 }, (err, result) => {
                   if (err) {
                       console.log("Got a DB error in savePipeTemp");
@@ -267,16 +313,13 @@ connection.connect((err) => {
                 }
               );
               // end write temperatures to the database
-          currentSaveDelayCount = saveDelayIntervalSeconds;
-          localFurnAction = "noChange";
-          };
-
-//          };
-//          delayCount++;
-        };
-    // end if save delay < 21
-    //}
-//          currentSaveDelayCount = currentSaveDelayCount - 2;
+            localFurnAction = "noChange";
+            });
+        });
+      currentSaveDelayCount = saveDelayIntervalSeconds;
+    // end the if save delay count
+    };
+  // end save temp data
   };
 
   exports.savePipeTemp = function (action, pipeTemp){

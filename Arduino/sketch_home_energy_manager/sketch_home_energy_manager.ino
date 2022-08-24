@@ -14,7 +14,7 @@
   byte arduinoMac[] = { 0xA8, 0x61, 0x0A, 0xAE, 0x41, 0x66 };
   unsigned int arduinoPort = 8888;      // port of Arduino
   // config for the server side
-  IPAddress receiverIP(192, 168, 1, 3); // IP of udp packets receiver - server
+  IPAddress receiverIP(192, 168, 1, 8); // IP of udp packets receiver - server
   unsigned int receiverPort = 6000;      // port to listen on the server
   // An EthernetUDP instance to let us send and receive packets over UDP
   EthernetUDP Udp;
