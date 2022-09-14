@@ -3,8 +3,8 @@
 var comController = require ('./communicationsController');
 var dbController = require ('./databasecontroller');
 
-var recircOn = 04;
-var recircOff = 05;
+//var recircOn = 04;
+//var recircOff = 05;
 var loopCount = 0;
 var getSettingsCount = 0;
 var getSettingsInterval = 100;   // we'll get the recirc settings on this interval
@@ -35,14 +35,14 @@ var recircSettings = [{
 	id: 0,
     pipeTempOn: 95,
     pipeTempOff: 110,
-    weekDayOn1: '7:30:00',
-    weekDayOff1: '9:00:00',
-    weekDayOn2: '4:30:00',
-    weekDayOff2: '9:00:00',
-    weekEndOn1: '8:30:00',
-    weekEndOff1: '10:30:00',
-    weekEndOn2: '3:30:00',
-    weekEndOff2: '11:00:00'
+    weekDayOn1: '7:30',
+    weekDayOff1: '9:00',
+    weekDayOn2: '4:30',
+    weekDayOff2: '9:00',
+    weekEndOn1: '8:30',
+    weekEndOff1: '10:30',
+    weekEndOn2: '3:30',
+    weekEndOff2: '11:00'
 }];
 var allStates = {};
 var pumpState = "off";
