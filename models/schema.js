@@ -148,4 +148,8 @@ create table recirculatorHistory(
 	recircHist TIMESTAMP,
     primary key (id)
 );
+
+insert into recirculatorSettings(pipeTempOn, pipeTempOff, weekDayOn1, weekDayOff1, weekdayOn2, weekDayOff2, weekEndOn1, weekEndOff1, weekEndOn2, weekEndOff2)
+						values(     100,      110,		    "6:30",    "8:30",	    "16:30",    "22:30",		"8:30",		"11:00",	"14:30",	"23:30");
+
 */
