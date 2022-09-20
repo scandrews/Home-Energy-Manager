@@ -103,11 +103,11 @@ module.exports = function(sequelize, Datatypes){
 /*
 use home_control_db;
 
-drop table recirculatorhistory;
+drop table recirculatorHistory;
 
 drop table temperatures;
 
-drop table recirculatorsettings;
+drop table recirculatorSettings;
 
 create table temperatures(
 	id integer(10)auto_increment not null,

@@ -258,7 +258,7 @@ $(".messageChartOtherTemps").on("click", function(event){
 			//var furnStat = temps[i].furnaceOnOff;
 
 			var t = od.split(/[- : T .]/);
-			console.log(t);
+			//console.log(t);
 			if (t[3] < 5){
 				x = t[3] - 5;
 				t[3] = x + 24;
@@ -266,7 +266,7 @@ $(".messageChartOtherTemps").on("click", function(event){
 			// Apply each element to the Date function
 			time = t[3] + ":" + t[4];
 			// + ":" + t[5];  this adds seconds
-			console.log(time);
+			//console.log(time);
 			labels [i] = time;
 			Math.round(oshadet);
 			Math.round(osunt);

@@ -142,7 +142,7 @@ connection.connect((err) => {
   // get the recirculator settings from the data base
   exports.recircSettingsRecirCNTRL = function (what, fn) {
     console.log("dbase controoler get recirc settings from recirs controller");
-    connection.query("SELECT * FROM recirculatorsettings", (err, result) => {
+    connection.query("SELECT * FROM recirculatorSettings", (err, result) => {
       return ( fn ( result ));
     });
   };
@@ -150,7 +150,7 @@ connection.connect((err) => {
   // get the recirculator settings from the data base
   exports.recircSettingsFrontEnd = function (req, res) {
     console.log("dbase controoler get recirc settings from the front end");
-    connection.query("SELECT * FROM recirculatorsettings", (err, result) => {
+    connection.query("SELECT * FROM recirculatorSettings", (err, result) => {
         res.send( result );
     });
   };
@@ -324,7 +324,7 @@ connection.connect((err) => {
 
   exports.savePipeTemp = function (action, pipeTemp){
     console.log("In save pipe temp" + action + " , " + pipeTemp);
-    connection.query("DELETE FROM recirculatorhistory ORDER BY id limit 1", (err) => {
+    connection.query("DELETE FROM recirculatorHistory ORDER BY id limit 1", (err) => {
       if (err) {
         console.log("Got a DB error in savePipeTemp");
         console.log (err);
@@ -346,7 +346,7 @@ connection.connect((err) => {
 
   exports.changeState = function (action){
     if (action == "changeHome-Away"){
-      connection.query ("UPDATE recirculatorsettings SET pipeTempOn = 35  WHERE id=2")
+      connection.query ("UPDATE recirculatorSettings SET pipeTempOn = 35  WHERE id=2")
     }
     else if (action == "changeHome-Away"){
       
@@ -370,7 +370,7 @@ connection.connect((err) => {
         if (typeof newSettings[key] === 'string'){
           y = "'" + y + "'"
         };
-        var firstString = "UPDATE recirculatorsettings SET ";
+        var firstString = "UPDATE recirculatorSettings SET ";
         var secondString = " = ";
         var thirdString = " WHERE id=1";
         NewString = firstString.concat(x, secondString, y, thirdString);
