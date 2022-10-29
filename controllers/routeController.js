@@ -177,7 +177,7 @@ app.post('/upDateGeneralSettings', function (req, res) {
 					break;
 				case "setMaxHouseTemp":
 					var returnStatus = comControler.sendMessageToArdunio ("changeHouseMaxTemp", newSettings[key]);
-					var returnStatus = furnaceController.setFurnaceTemps ("maxHouseTemp", newSettings[key]);
+					//var returnStatus = furnaceController.setFurnaceTemps ("maxHouseTemp", newSettings[key]);
 					console.log("return from change max house temp");
 					break;
 				case "minFurnaceTemp":
@@ -236,6 +236,16 @@ app.get('/furnaceSettings', (req, res) => {
 	console.log("in route controler get general settings");
 	var allFurnSettings = furnaceController.getAllFurnSettings();
 	res.send (allFurnSettings)
+});
+
+
+app.post('/upDateFurnaceSettings', function (req, res) {
+	console.log("in route Controller update furnace settings");
+	newSettings = req.body;
+	furnaceController.upDateFurnaceSettings(newSettings);
+
+
+
 });
 
 

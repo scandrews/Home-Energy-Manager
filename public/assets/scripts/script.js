@@ -67,6 +67,7 @@ $(".messageShowCurrentTemps").on("click", function(){
 		$(".arduinoMaxHouseTemp").html("<td>" + localTempArray[4] + "</td>");
 		$(".mode").html("<td>" + localTempArray[7].stateHomeAway + "</td>");
 		$(".runForWaterTime").html("<td>" + localTempArray[8] + "</td>");
+		$(".CurrentTimeOfDay").html("<td>" + localTempArray[7].stateTimeOfDay + "</td>");
 	};
 
 	$.get('currentTemps', (temps) => {
@@ -386,7 +387,8 @@ $(".messageChartOtherTemps").on("click", function(event){
 					effect: 'ANIMATION_EXPAND_BOTTOM',
 					method: 'ANIMATION_STRONG_EASE_OUT',
 					sequence: 'ANIMATION_BY_NODE',
-					speed: 150,
+					// larger number is slower
+					speed: 50,
 				}
 			},
 
@@ -622,18 +624,35 @@ $(".getFurnaceSettings").on("click", function(event){
 	console.log("got the get furnace settings click");
 	$.get('furnaceSettings', (stuff) => {
 		console.log(stuff);
-		$("#morningOnTime").attr("placeholder", stuff.weekDayMorningOn);
-		$("#morningMinTemperture").attr("placeholder", stuff.morningMinTempWeekDaySet);
-		$("#morningMaxTemperture").attr("placeholder", stuff.morningMaxTempWeekDaySet);
-		$("#dayOnTime").attr("placeholder", stuff.weekDayDayOn);
-		$("#dayMinTemperature").attr("placeholder", stuff.middayMinTempWeekDaySet);
-		$("#dayMaxTemperature").attr("placeholder", stuff.middayMaxTempWeekDaySet);
-		$("#eveningOnTime").attr("placeholder", stuff.weekDayEveningOn);
-		$("#eveningMinTemperature").attr("placeholder", stuff.eveningMinTempWeekDaySet);
-		$("#eveningMaxTemperature").attr("placeholder", stuff.eveningMaxTempWeekDaySet);
-		$("#nightOnTime").attr("placeholder", stuff.weekDayNightOn);
-		$("#nightMinTemperature").attr("placeholder", stuff.nightMinTempWeekDaySet);
-		$("#nightMaxTemperature").attr("placeholder", stuff.nightMaxTempWeekDaySet);
+		$("#weekDayMorningOnTime").attr("placeholder", stuff.weekDayMorningOn);
+		$("#weekDayMorningMinTemperture").attr("placeholder", stuff.morningMinTempWeekDaySet);
+		$("#weekDayMorningMaxTemperture").attr("placeholder", stuff.morningMaxTempWeekDaySet);
+		$("#weekDayMidDayOnTime").attr("placeholder", stuff.weekDayDayOn);
+		$("#weekDayMidDayMinTemperture").attr("placeholder", stuff.middayMinTempWeekDaySet);
+		$("#weekDayMidDayMaxTemperture").attr("placeholder", stuff.middayMaxTempWeekDaySet);
+		$("#weekDayEveningOnTime").attr("placeholder", stuff.weekDayEveningOn);
+		$("#weekDayEveningMinTemperture").attr("placeholder", stuff.eveningMinTempWeekDaySet);
+		$("#weekDayEveningMaxTemperture").attr("placeholder", stuff.eveningMaxTempWeekDaySet);
+		$("#weekDayNightOnTime").attr("placeholder", stuff.weekDayNightOn);
+		$("#weekDayNightMinTemperture").attr("placeholder", stuff.nightMinTempWeekDaySet);
+		$("#weekDayNightMaxTemperture").attr("placeholder", stuff.nightMaxTempWeekDaySet);
+
+		$("#weekEndMorningOnTime").attr("placeholder", stuff.weekEndMorningOn);
+		$("#weekEndMorningMinTemperture").attr("placeholder", stuff.morningMinTempWeekEndSet);
+		$("#weekEndMorningMaxTemperture").attr("placeholder", stuff.morningMaxTempWeekEndSet);
+		$("#weekEndMidDayOnTime").attr("placeholder", stuff.weekEndDayOn);
+		$("#weekEndMidDayMinTemperture").attr("placeholder", stuff.middayMinTempWeekEndSet);
+		$("#weekEndMidDayMaxTemperture").attr("placeholder", stuff.middayMaxTempWeekEndSet);
+		$("#weekEndEveningOnTime").attr("placeholder", stuff.weekEndEveningOn);
+		$("#weekEndEveningMinTemperture").attr("placeholder", stuff.eveningMinTempWeekEndSet);
+		$("#weekEndEveningMaxTemperture").attr("placeholder", stuff.eveningMaxTempWeekEndSet);
+		$("#weekEndNightOnTime").attr("placeholder", stuff.weekEndNightOn);
+		$("#weekEndNightMinTemperture").attr("placeholder", stuff.nightMinTempWeekEndSet);
+		$("#weekEndNightMaxTemperture").attr("placeholder", stuff.nightMaxTempWeekEndSet);
+		
+		$("#awayMinTemperture").attr("placeholder", stuff.awayMinTempSet);
+		$("#awayMaxTemperture").attr("placeholder", stuff.awayMaxTempSet);
+		
 		$("#whichSensor").attr("placeholder", stuff.currentSensorSet);
 		$("#currentMode").attr("placeholder", stuff.runModeSet);
     });
@@ -644,21 +663,37 @@ $(".upDateFurnaceSettings").on("click", function(event){
 	event.preventDefault();
 	console.log("got the update Furnace Settings click");
 	var newSettings = {
-		pipeTempOn: $("#onFurnTemperature").val().trim(),
-		pipeTempOff: $("#offFurnTemperature").val().trim(),
-		weekDayOn1: $("#weekdayFurnStartTime1").val().trim(),
-		weekDayOff1: $("#weekdayFurnOffTime1").val().trim(),
-		weekDayOn2: $("#weekdayFurnStartTime2").val().trim(),
-		weekDayOff2: $("#weekdayFurnOffTime2").val().trim(),
-		weekEndOn1: $("#weekendFurnStartTime1").val().trim(),
-		weekEndOff1: $("#weekendFurnOffTime1").val().trim(),
-		weekEndOn2: $("#weekendFurnStartTime2").val().trim(),
-		weekEndOff2: $("#weekendFurnOffTime2").val().trim(),
+		weekDayMorningOnTime: $("#weekDayMorningOnTime").val().trim(),
+		weekDayMorningMinTemp: $("#weekDayMorningMinTemperture").val().trim(),
+		weekDayMorningMaxTemp: $("#weekDayMorningMaxTemperture").val().trim(),
+		weekDayMidDayOnTime: $("#weekDayMidDayOnTime").val().trim(),
+		weekDayMidDayMinTemp: $("#weekDayMidDayMinTemperture").val().trim(),
+		weekDayMidDayMaxTemp: $("#weekDayMidDayMaxTemperture").val().trim(),
+		weekDayEveningOnTime: $("#weekDayEveningOnTime").val().trim(),
+		weekDayEveningMinTemp: $("#weekDayEveningMinTemperture").val().trim(),
+		weekDayEveningMaxTemp: $("#weekDayEveningMaxTemperture").val().trim(),
+		weekDayNightOnTime: $("#weekDayNightOnTime").val().trim(),
+		weekDayNightMinTemp: $("#weekDayNightMinTemperture").val().trim(),
+		weekDayNightMaxTemp: $("#weekDayNightMaxTemperture").val().trim(),
+		weekEndMorningOnTime: $("#weekEndMorningOnTime").val().trim(),
+		weekEndMorningMinTemp: $("#weekEndMorningMinTemperture").val().trim(),
+		weekEndMorningMaxTemp: $("#weekEndMorningMaxTemperture").val().trim(),
+		weekEndMidDayOnTime: $("#weekEndMidDayOnTime").val().trim(),
+		weekEndMidDayMinTemp: $("#weekEndMidDayMinTemperture").val().trim(),
+		weekEndMidDayMaxTemp: $("#weekEndMidDayMaxTemperture").val().trim(),
+		weekEndEveningOnTime: $("#weekEndEveningOnTime").val().trim(),
+		weekEndEveningMinTemp: $("#weekEndEveningMinTemperture").val().trim(),
+		weekEndEveningMaxTemp: $("#weekEndEveningMaxTemperture").val().trim(),
+		weekEndNightOnTime: $("#weekEndNightOnTime").val().trim(),
+		weekEndNightMinTemp: $("#weekEndNightMinTemperture").val().trim(),
+		weekEndNightMaxTemp: $("#weekEndNightMaxTemperture").val().trim(),
+		awayMinTemp: $("#awayMinTemperture").val().trim(),
+		awayMaxTemp: $("#awayMaxTemperture").val().trim(),
 	};
 	console.log(newSettings);
 
 //	var serverURL = "'http://" + serverIPAddress + ":2000/upDateRecircSettings'";
-	var serverURL =	currentLocation + "upDateRecircSettings";
+	var serverURL =	currentLocation + "upDateFurnaceSettings";
 	$.ajax({
 		url: serverURL,
 		type: "POST",
@@ -682,7 +717,6 @@ $(".getGeneralSettings").on("click", function(event){
 		serverIPAddress = stuff.serverIPAddress;
 		$("#tempSaveInterval").attr("placeholder", stuff.tempSaveInterval);
 		$("#dataPointsInGraph").attr("placeholder", stuff.numDataPointsToGraph);
-		$("#serverIPAddress").attr("placeholder", stuff.serverIPAddress);
 		$("#minHouseTemp").attr("placeholder", stuff.minHouseTemp);
 		$("#maxHouseTemp").attr("placeholder", stuff.maxHouseTemp);
 		$("#minFurnaceTemp").attr("placeholder", stuff.minFurnaceTemp);

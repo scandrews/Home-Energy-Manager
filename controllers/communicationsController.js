@@ -112,14 +112,34 @@ var allStates = {
 	stateHomeAway: "Home",
 	stateRecircPump: "off",
 	stateFurnace: "off",
-	stateWoodStove: "off"
+	stateWoodStove: "off",
+	stateTimeOfDay: "weekDayMorning"
 };
+
+/*   posible Time OF Day States
+	weekDayMorning
+	weekDayDay
+	weekDayEvening
+	weekDayNight
+	WeekEndMorning
+	weekEndDay
+	weekEndEvening
+	weekEndNight
+*/
+
+//  to hold the state during a run for water
+var oldState = "";
 
 
 // called by route controller to change the arduino address that the server listens for
 exports.changeArduinoIPAddress = function (newAddress){
 	console.log("changing Arduino address to - " + newAddress)
 	arduinoAddress = newAddress;
+};
+
+// called from Furnace Controller - sets the time of day state
+exports.changeFurnaceState = function (toState){
+	allStates.stateTimeOfDay = toState;
 };
 
 
@@ -156,9 +176,11 @@ exports.changeState = function (whichState, toWhatState){
 					break;
 				case "Away":
 					console.log("in case Away");
+					allStates.stateHomeAway = "away";
 					break;
 				case "back":
 					console.log("in com cntrl change state - BACK");
+					console.log(oldState);
 					allStates.stateHomeAway = oldState;
 					break;
 				default:
@@ -220,7 +242,7 @@ var CtoF = function (inC){
 server.on("message", function (StuffIn, remote) {
 	console.log("got an ethernet message ");
     console.log(remote);
-    console.log(remote.address);
+    //console.log(remote.address);
 
     arduinoAddress = remote.address;
     arduinoPort = remote.port;
@@ -417,11 +439,14 @@ exports.sendMessageToArdunio = function (whatToDo, data){
 				console.log("in com cntrl case change furn, was off");
 				// var furnaceTurnOn = '06';
 				var dataToSend = furnaceTurnOn + " " + data;  // furnaceTurnOn - '07'
-				server.send(dataToSend, 0, 5, arduinoPort, arduinoAddress);
+				console.log(dataToSend);
+				charsToSend = dataToSend.length;
+				server.send(dataToSend, 0, charsToSend, arduinoPort, arduinoAddress);
 			} else if(allStates.stateFurnace == 'on'){
 				//allStates.stateFurnace = "off"; don't set state - wait for an Arduino update
 				console.log("in com cntrl case change furn, was ON");
 				var dataToSend = furnaceTurnOff + " " + data;  // furnaceTurnOff - '7'
+				console.log(data);
 				server.send(dataToSend, 0, 4, arduinoPort, arduinoAddress);
 			}
 			//return allStates

@@ -9,6 +9,8 @@
 #include <OneWire.h> 
 #include <DallasTemperature.h>
 
+  #define HOST_NAME "Home_Energy_Manager"
+  
   // config for UDP and Ethernet
   // config for the Aduino side
   byte arduinoMac[] = { 0xA8, 0x61, 0x0A, 0xAE, 0x41, 0x66 };

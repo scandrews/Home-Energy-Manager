@@ -207,9 +207,9 @@ try this one instead
 		if (pumpState == "on"){
 			checkIfTurnOff()
 			// Check if in home or away mode
-			} else if (allStates.stateHomeAway != "Away"){
-				// pump in NOT running so check if weekend	
+			} else if (allStates.stateHomeAway != "away"){
 
+				// pump in NOT running so check if weekend	
 				if(date_ob.getDay() == 6 || date_ob.getDay() == 0){
 					console.log("It's a weekend YEA");
 					if (currentTime >= recircSettings[0].weekEndOn1 && currentTime <= recircSettings[0].weekEndOff1){

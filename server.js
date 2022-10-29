@@ -44,12 +44,12 @@ models.sequelize
 // kick off serial listener
 comControler.serialComStuff();
 
-// reset the arduino states
+// Set the arduino states on startup
 comControler.sendMessageToArdunio("turnPumpOff", 70);
-comControler.sendMessageToArdunio("furnaceTurnOff", 70);
+comControler.sendMessageToArdunio("furnaceTurnOff", 69);
 comControler.sendMessageToArdunio("whichSensor", "familyroom");
 //comControler.sendMessageToArdunio("changeHouseMinTemp", 66);
-comControler.sendMessageToArdunio("changeHouseMaxTemp", 70);
+comControler.sendMessageToArdunio("changeHouseMaxTemp", 69);
 furnController.changeFurnState("off");
 console.log("DOES THIS FUCKER RUN EVERY TIME???");
 

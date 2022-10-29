@@ -152,4 +152,103 @@ create table recirculatorHistory(
 insert into recirculatorSettings(pipeTempOn, pipeTempOff, weekDayOn1, weekDayOff1, weekdayOn2, weekDayOff2, weekEndOn1, weekEndOff1, weekEndOn2, weekEndOff2)
 						values(     100,      110,		    "6:30",    "8:30",	    "16:30",    "22:30",		"8:30",		"11:00",	"14:30",	"23:30");
 
+
+create table furnaceSettings(
+	id integer(10)auto_increment not null,
+	weekDayMorningOn time,
+	WeekDayMorningMinTemp FLOAT,
+	WeekDayMorningMaxTemp FLOAT,
+	weekDayMiddayOn time,
+	WeekDayMiddayMinTemp FLOAT,
+	WeekDayMiddayMaxTemp FLOAT,
+	weekdayEveningOn time,
+	WeekDayEveningMinTemp FLOAT,
+	WeekDayEveningMaxTemp FLOAT,
+	weekDayNightOn time,
+	WeekDayNightMinTemp FLOAT,
+	WeekDayNightMaxTemp FLOAT,
+
+	weekEndMorningOn time,
+	WeekEndMorningMinTemp FLOAT,
+	WeekEndMorningMaxTemp FLOAT,
+	weekEndMiddayOn time,
+	WeekEndMiddayMinTemp FLOAT,
+	WeekEndMiddayMaxTemp FLOAT,
+	weekEndEveningOn time,
+	WeekEndEveningMinTemp FLOAT,
+	WeekEndEveningMaxTemp FLOAT,
+	weekEndNightOn time,
+	WeekEndNightMinTemp FLOAT,
+	WeekEndNightMaxTemp FLOAT,
+
+	awayMinTemp FLOAT,
+	awayMaxTemp FLOAT,
+	primary key (id)
+);
+
+drop table furnaceSettings;
+
+insert into furnaceSettings(
+
+	weekDayMorningOnTime,
+	WeekDayMorningMinTemp,
+	WeekDayMorningMaxTemp,
+	weekDayMiddayOnTime,
+	WeekDayMiddayMinTemp,
+	WeekDayMiddayMaxTemp,
+	weekdayEveningOnTime,
+	WeekDayEveningMinTemp,
+	WeekDayEveningMaxTemp,
+	weekDayNightOnTime,
+	WeekDayNightMinTemp,
+	WeekDayNightMaxTemp,
+
+	weekEndMorningOnTime,
+	WeekEndMorningMinTemp,
+	WeekEndMorningMaxTemp,
+	weekEndMiddayOnTime,
+	WeekEndMiddayMinTemp,
+	WeekEndMiddayMaxTemp,
+	weekEndEveningOnTime,
+	WeekEndEveningMinTemp,
+	WeekEndEveningMaxTemp,
+	weekEndNightOnTime,
+	WeekEndNightMinTemp,
+	WeekEndNightMaxTemp,
+
+	awayMinTemp,
+	awayMaxTemp,
+	)
+
+	values(
+	"06:00",
+	65,
+	68,
+	"09:30",
+	64,
+	67,
+	"16:30",
+	65,
+	68,
+	"23:30",
+	64,
+	66,
+
+	"07:00",
+	66,
+	69,
+	"11:30",
+	65,
+	68,
+	"16:00",
+	66,
+	69,
+	"23:30",
+	64,
+	66,
+
+	58,
+	62
+);
+
 */

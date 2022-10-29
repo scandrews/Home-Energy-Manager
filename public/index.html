@@ -42,6 +42,8 @@
 				</div>
 				<div>
 					<a class="nav-item nav-link messageShowCurrentTemps" href="#">Show Current Temps</a>
+					<a class="nav-item nav-link messageShowCurrentTimeOfDay" href="#">Time of Day</a>
+					<a class="CurrentTimeOfDay"></a>
 				</div>
 				<div>
 					<a class="nav-item nav-link messageTurnPumpOn" href="#">Start Recirculator</a>
@@ -215,68 +217,163 @@
 				    <form>
 
 					  <div class="form-group row my-form-group">
-					    <label for="morningOnTime" class="col-sm-6 col-form-label my-col-form-label" type="search">Morning On Time</label>
-					    <div class="col-sm-4">
-					      <input type="morningOnTime" class="form-control my-col-form-label" id="morningOnTime" placeholder="On Time">
-					    </div>
+						    <label for="weekDayMorningOnTime" class="col-sm-6 col-form-label my-col-form-label" type="search">Weekday Morning On Time</label>
+						    <div class="col-sm-4">
+						      <input type="weekDayMorningOnTime" class="form-control my-col-form-label" id="weekDayMorningOnTime" placeholder="On Time">
+						    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="morningMinTemperture" class="col-sm-6 col-form-label my-col-form-label">Morning Min Temperature</label>
-					    <div class="col-sm-4">
-					      <input type="morningMinTemperture" class="form-control my-col-form-label" id="morningMinTemperture" placeholder="Morning Min Temperature">
-					    </div>
-					    <label for="morningMaxTemperture" class="col-sm-6 col-form-label my-col-form-label">Morning Max Temperature</label>
-					    <div class="col-sm-4">
-					      <input type="morningMaxTemperture" class="form-control my-col-form-label" id="morningMaxTemperture" placeholder="Morning Max Temperature">
-					    </div>
+						    <label for="weekDayMorningMinTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekday Morning Min Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekDayMorningMinTemperture" class="form-control my-col-form-label" id="weekDayMorningMinTemperture" placeholder="Morning Min Temperature">
+						    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="dayOnTime" class="col-sm-6 col-form-label my-col-form-label">Day On Time</label>
-					    <div class="col-sm-4">
-					      <input type="dayOnTime" class="form-control my-col-form-label" id="dayOnTime" placeholder="Day On Time">
-					    </div>
+						    <label for="weekDayMorningMaxTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekday Morning Max Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekDayMorningMaxTemperture" class="form-control my-col-form-label" id="weekDayMorningMaxTemperture" placeholder="Morning Max Temp">
+						    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="dayMinTemperature" class="col-sm-6 col-form-label my-col-form-label">Day Min Temperature</label>
-					    <div class="col-sm-4">
-					      <input type="dayMinTemperature" class="form-control my-col-form-label" id="dayMinTemperature" placeholder="Day Min Temperature">
-					    </div>
-					    <label for="dayMaxTemperature" class="col-sm-6 col-form-label my-col-form-label">Day Max Temperature</label>
-					    <div class="col-sm-4">
-					      <input type="dayMaxTemperature" class="form-control my-col-form-label" id="dayMaxTemperature" placeholder="Day Max Temperature">
-					    </div>
+						    <label for="weekDayMidDayOnTime" class="col-sm-6 col-form-label my-col-form-label">Weekday Day On Time</label>
+						    <div class="col-sm-4">
+						      <input type="weekDayMidDayOnTime" class="form-control my-col-form-label" id="weekDayMidDayOnTime" placeholder="Day On Time">
+						    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="eveningOnTime" class="col-sm-6 col-form-label my-col-form-label">Evening On Time</label>
-					    <div class="col-sm-4">
-					      <input type="eveningOnTime" class="form-control my-col-form-label" id="eveningOnTime" placeholder="Evening On Time">
-					    </div>
+						    <label for="weekDayMidDayMinTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekday Day Min Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekDayMidDayMinTemperture" class="form-control my-col-form-label" id="weekDayMidDayMinTemperture" placeholder="Day Min Temperature">
+						    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="eveningMinTemperature" class="col-sm-6 col-form-label my-col-form-label">Evening Min Temperature</label>
-					    <div class="col-sm-4">
-					      <input type="eveningMinTemperature" class="form-control my-col-form-label" id="eveningMinTemperature" placeholder="Evening Min Temperature">
-					    </div>
-					    <label for="eveningMaxTemperature" class="col-sm-6 col-form-label my-col-form-label">Evening Max Temperature</label>
-					    <div class="col-sm-4">
-					      <input type="eveningMaxTemperature" class="form-control my-col-form-label" id="eveningMaxTemperature" placeholder="Evening Max Temperature">
-					    </div>
+						    <label for="weekDayMidDayMaxTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekday Day Max Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekDayMidDayMaxTemperture" class="form-control my-col-form-label" id="weekDayMidDayMaxTemperture" placeholder="Day Max Temperature">
+						    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="nightOnTime" class="col-sm-6 col-form-label my-col-form-label">Night On Time</label>
-					    <div class="col-sm-4">
-					      <input type="nightOnTime" class="form-control my-col-form-label" id="nightOnTime" placeholder="Night On Time">
-					    </div>
+						    <label for="weekDayEveningOnTime" class="col-sm-6 col-form-label my-col-form-label">Weekday Evening On Time</label>
+						    <div class="col-sm-4">
+						      <input type="weekDayEveningOnTime" class="form-control my-col-form-label" id="weekDayEveningOnTime" placeholder="Evening On Time">
+						    </div>
 					  </div>
 					  <div class="form-group row my-form-group">
-					    <label for="nightMinTemperature" class="col-sm-6 col-form-label my-col-form-label">Night Min Temperature</label>
-					    <div class="col-sm-4">
-					      <input type="nightMinTemperature" class="form-control my-col-form-label" id="nightMinTemperature" placeholder="Night Min Temperature">
-					    </div>
-					    <label for="nightMaxTemperature" class="col-sm-6 col-form-label my-col-form-label">Night Max Temperature</label>
-					    <div class="col-sm-4">
-					      <input type="nightMaxTemperature" class="form-control my-col-form-label" id="nightMaxTemperature" placeholder="Night Max Temperature">
-					    </div>
+						    <label for="weekDayEveningMinTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekday Evening Min Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekDayEveningMinTemperture" class="form-control my-col-form-label" id="weekDayEveningMinTemperture" placeholder="Evening Min Temperature">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="weekDayEveningMaxTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekday Evening Max Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekDayEveningMaxTemperture" class="form-control my-col-form-label" id="weekDayEveningMaxTemperture" placeholder="Evening Max Temperature">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="weekDayNightOnTime" class="col-sm-6 col-form-label my-col-form-label">Weekday Night On Time</label>
+						    <div class="col-sm-4">
+						      <input type="weekDayNightOnTime" class="form-control my-col-form-label" id="weekDayNightOnTime" placeholder="Night On Time">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="weekDayNightMinTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekday Night Min Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekDayNightMinTemperture" class="form-control my-col-form-label" id="weekDayNightMinTemperture" placeholder="Night Min Temperature">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="weekDayNightMaxTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekday Night Max Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekDayNightMaxTemperture" class="form-control my-col-form-label" id="weekDayNightMaxTemperture" placeholder="Night Max Temperature">
+						    </div>
+					  </div>
+
+
+					  <div class="form-group row my-form-group">
+						    <label for="weekEndMorningOnTime" class="col-sm-6 col-form-label my-col-form-label" type="search">Weekend Morning On Time</label>
+						    <div class="col-sm-4">
+						      <input type="weekEndMorningOnTime" class="form-control my-col-form-label" id="weekEndMorningOnTime" placeholder="On Time">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="weekEndMorningMinTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekend Morning Min Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekEndMorningMinTemperture" class="form-control my-col-form-label" id="weekEndMorningMinTemperture" placeholder="Morning Min Temperature">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="weekEndMorningMaxTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekend Morning Max Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekEndMorningMaxTemperture" class="form-control my-col-form-label" id="weekEndMorningMaxTemperture" placeholder="Morning Max Temp">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="weekEndMidDayOnTime" class="col-sm-6 col-form-label my-col-form-label">Weekend Day On Time</label>
+						    <div class="col-sm-4">
+						      <input type="weekEndMidDayOnTime" class="form-control my-col-form-label" id="weekEndMidDayOnTime" placeholder="Day On Time">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="weekEndMidDayMinTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekend Day Min Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekEndMidDayMinTemperture" class="form-control my-col-form-label" id="weekEndMidDayMinTemperture" placeholder="Day Min Temperature">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="weekEndMidDayMaxTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekend Day Max Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekEndMidDayMaxTemperture" class="form-control my-col-form-label" id="weekEndMidDayMaxTemperture" placeholder="Day Max Temperature">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="weekEndEveningOnTime" class="col-sm-6 col-form-label my-col-form-label">Weekend Evening On Time</label>
+						    <div class="col-sm-4">
+						      <input type="weekEndEveningOnTime" class="form-control my-col-form-label" id="weekEndEveningOnTime" placeholder="Evening On Time">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="weekEndEveningMinTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekend Evening Min Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekEndEveningMinTemperture" class="form-control my-col-form-label" id="weekEndEveningMinTemperture" placeholder="Evening Min Temperature">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="weekEndEveningMaxTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekend Evening Max Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekEndEveningMaxTemperture" class="form-control my-col-form-label" id="weekEndEveningMaxTemperture" placeholder="Evening Max Temperature">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="weekEndNightOnTime" class="col-sm-6 col-form-label my-col-form-label">Weekend Night On Time</label>
+						    <div class="col-sm-4">
+						      <input type="weekEndNightOnTime" class="form-control my-col-form-label" id="weekEndNightOnTime" placeholder="Night On Time">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="weekEndNightMinTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekend Night Min Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekEndNightMinTemperture" class="form-control my-col-form-label" id="weekEndNightMinTemperture" placeholder="Night Min Temperature">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="weekEndNightMaxTemperture" class="col-sm-6 col-form-label my-col-form-label">Weekend Night Max Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="weekEndNightMaxTemperture" class="form-control my-col-form-label" id="weekEndNightMaxTemperture" placeholder="Night Max Temperature">
+						    </div>
+					  </div>
+
+					  <div class="form-group row my-form-group">
+						    <label for="awayMinTemperture" class="col-sm-6 col-form-label my-col-form-label">Away Min Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="awayMinTemperture" class="form-control my-col-form-label" id="awayMinTemperture" placeholder="Away Min Temperature">
+						    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+						    <label for="awayMaxTemperture" class="col-sm-6 col-form-label my-col-form-label">Away Max Temperature</label>
+						    <div class="col-sm-4">
+						      <input type="awayMaxTemperture" class="form-control my-col-form-label" id="awayMaxTemperture" placeholder="Away Max Temperature">
+						    </div>
 					  </div>
 
 

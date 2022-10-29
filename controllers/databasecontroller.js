@@ -324,6 +324,21 @@ connection.connect((err) => {
 
   exports.savePipeTemp = function (action, pipeTemp){
     console.log("In save pipe temp" + action + " , " + pipeTemp);
+
+    var temp = "DELETE FROM recirculatorHistory WHERE createdAt < now() - interval ";
+    var oursql = temp.concat(keepDataTime);
+    var finalSQL = oursql.concat(" day");
+    console.log(finalSQL);
+    // delete the oldest record if < keepDataTime
+    connection.query( finalSQL, (err, result) => {
+        console.log(result);
+        if (err) {
+            console.log("Got a DB error in delete old record");
+            console.log (err);
+        };
+    });
+
+/*
     connection.query("DELETE FROM recirculatorHistory ORDER BY id limit 1", (err) => {
       if (err) {
         console.log("Got a DB error in savePipeTemp");
@@ -331,6 +346,8 @@ connection.connect((err) => {
       };
       return;
     });
+*/
+
     connection.query("INSERT INTO recirculatorHistory SET ?",
     {
       pipetemperatures: pipeTemp,
@@ -392,9 +409,43 @@ connection.connect((err) => {
   exports.upDateGeneralSettings = function (newSettings){
     console.log("in db controler update general settings");
     console.log(newSettings);
-
+    console.log(" ** BTW This Was Not Implemented **");
 
   };
+
+
+  exports.getFurnaceSettings = function (){
+    console.log("in dbcontroller get furnace settings");
+
+    connection.query("SELECT * FROM furnaceSettings", (err, result) => {
+      if(err){
+        console.log(" ** ERROR RETRIEVING FURNACE SETTINGS **");
+        console.log(err)
+      };
+      return (result);
+    });
+  };
+
+  exports.updateFurnaceSettings = function(changeField, newValue){
+    console.log("in dbcontroller update furnace settings");
+    console.log(changeField, newValue);
+    console.log(" ** BTW This Was Not Implemented **");
+
+    var firstString = "UPDATE furnaceSettings SET ";
+    var secondString = " = '";
+    var thirdString = "' WHERE id=1";
+    NewString = firstString.concat(changeField, secondString, newValue, thirdString);
+    console.log (NewString);
+
+    connection.query( NewString, (err, result) => {
+      console.log(result);
+      if (err) {
+        console.log("Got a DB error in update reg setting");
+        console.log (err);
+      }
+    })
+  };
+
 
 // end connection
 });
