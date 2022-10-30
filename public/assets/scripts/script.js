@@ -388,7 +388,7 @@ $(".messageChartOtherTemps").on("click", function(event){
 					method: 'ANIMATION_STRONG_EASE_OUT',
 					sequence: 'ANIMATION_BY_NODE',
 					// larger number is slower
-					speed: 50,
+					speed: 25,
 				}
 			},
 

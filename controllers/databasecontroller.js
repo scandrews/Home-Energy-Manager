@@ -325,8 +325,9 @@ connection.connect((err) => {
   exports.savePipeTemp = function (action, pipeTemp){
     console.log("In save pipe temp" + action + " , " + pipeTemp);
 
-    var temp = "DELETE FROM recirculatorHistory WHERE createdAt < now() - interval ";
-    var oursql = temp.concat(keepDataTime);
+    var temp = "DELETE FROM recirculatorHistory WHERE recircHist < now() - interval ";
+    let delayDays = keepDataTime + .5;
+    var oursql = temp.concat(delayDays);
     var finalSQL = oursql.concat(" day");
     console.log(finalSQL);
     // delete the oldest record if < keepDataTime
