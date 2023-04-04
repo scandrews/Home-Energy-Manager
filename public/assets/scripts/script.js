@@ -5,6 +5,8 @@ $(document).ready(function() {
 var currentLocation = window.location.href;
 console.log("curent URL - " + currentLocation);
 
+//$('.pipeTempsChartcontainer').addClass("style=display:none;");
+//$('.otherTempsChartcontainer').addClass("style=display:none;");
 
 var serverIPAddress = "";
 
@@ -86,6 +88,31 @@ $(".messageChartPipeTemps").on("click", function(event){
 	const pipeTempArray = [];     // pipe temp array will hopd the temps for display
 	var time = [];
 	console.log("got the Chart Pipe Temps click");
+
+	document.getElementById("div1").removeAttribute("display:none");
+	document.getElementById("div1").setAttribute("style", "display:block");
+
+//	var $this = $(".pipeTempsChartcontainer");
+	//if ($this.hasStyle("display:none")) {
+//		console.log("in the has class hidden");
+//		$this.removeAttribute("style", "display:none");
+//		$this.setAttribute("style", "display:block;");
+//		removeStyle("display:none").addStyle("display:block");
+	//};
+
+//		$(".pipeTempsChartcontainer").setAttribute("style", "display:block;");
+//
+
+
+	//var myDiv = document.getElementsByClassName(".pipeTempsChartcontainer");
+	//console.log("myDiv - " + myDiv[0]);
+	//console.log("myDiv - " + myDiv[1]);
+//	if ((".pipeTempsChartcontainer").classList.contains("hidden")) {
+//			$(".pipeTempsChartcontainer").removeClass("hidden").addClass("visible");
+
+//		} else {
+//			$(".pipeTempsChartcontainer").removeClass("visible").addClass("hidden");
+//		};
 
 	// to convert mysql timestamp
 	// https://stackoverflow.com/questions/3075577/convert-mysql-datetime-stamp-into-javascripts-date-format
@@ -234,6 +261,17 @@ $(".messageChartOtherTemps").on("click", function(event){
 	const furnaceTempArray = [];
 	var time = [];
 	console.log("got the Chart Other Temps click");
+
+	document.getElementById("div2").removeAttribute("display:none");
+	document.getElementById("div2").setAttribute("style", "display:block");
+
+//	var $this = $(".otherTempsChartcontainer");
+//	if ($this.hasClass("hidden")) {
+//		console.log("in the has class hidden");
+//		$this.removeClass("hidden").addClass("visible");
+//	};
+
+
 
 	// to convert mysql timestamp
 	// https://stackoverflow.com/questions/3075577/convert-mysql-datetime-stamp-into-javascripts-date-format

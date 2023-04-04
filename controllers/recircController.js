@@ -18,9 +18,9 @@ var dayAndTime = {
 	day: 0
 };
 
-var recircSettings = [{
+var recircSettings = {
 	id: 0,
-    pipeTempOn: 0,
+    pipeTempOn: 85,
     pipeTempOff: 0,
     weekDayOn1: '0',
     weekDayOff1: '0',
@@ -30,20 +30,7 @@ var recircSettings = [{
     weekEndOff1: '0',
     weekEndOn2: '0',
     weekEndOff2: '0'
-},
-{
-	id: 0,
-    pipeTempOn: 95,
-    pipeTempOff: 110,
-    weekDayOn1: '7:30',
-    weekDayOff1: '9:00',
-    weekDayOn2: '4:30',
-    weekDayOff2: '9:00',
-    weekEndOn1: '8:30',
-    weekEndOff1: '10:30',
-    weekEndOn2: '3:30',
-    weekEndOff2: '11:00'
-}];
+};
 var allStates = {};
 var pumpState = "off";
 var recirculatorTemp = 0.0;
@@ -139,7 +126,11 @@ try this one instead
 
 	// if NOT the first time through or if we've been through test count times, do
 	// normal processing otherwise get the recirc settings
-	if (recircSettings[0].id == 1 && getSettingsCount < getSettingsInterval) {
+	console.log("recircSetting at 0 dot id - " + recircSettings.id);
+	console.log("get settings count - " + getSettingsCount);
+	console.log("get settings interval - " + getSettingsInterval);
+
+	if (recircSettings.id == 1 && getSettingsCount < getSettingsInterval) {
 		//console.log("have the settings");
 		getSettingsCount++;
 
@@ -157,7 +148,7 @@ try this one instead
 			console.log(allStates.stateRecircPump);
 			// if the state has changed - allstates comes from Arduino, pumpstate in local
 			if (pumpState != allStates.stateRecircPump){
-					if (recircTemp > recircSettings[0].pipeTempOff){
+					if (recircTemp > recircSettings.pipeTempOff){
 						// console.log("pump is on and temp is greater than target");
 						// pump is on, but reached temp so turn off
 						console.log("Detected a turn Recirc pump off");
@@ -178,7 +169,7 @@ try this one instead
 		function inTimeCheckTemps(){
 			console.log("within time parameters - loopCount = " + loopCount +" of " + savePipeDataInterval);
 			loopCount ++;
-			if (recircTemp < recircSettings[0].pipeTempOn){
+			if (recircTemp < recircSettings.pipeTempOn){
 				// temp is below trigger
 				console.log("Recirc Pump is off and temp is less than should be");
 				loopCount = 0;
@@ -212,10 +203,10 @@ try this one instead
 				// pump in NOT running so check if weekend	
 				if(date_ob.getDay() == 6 || date_ob.getDay() == 0){
 					console.log("It's a weekend YEA");
-					if (currentTime >= recircSettings[0].weekEndOn1 && currentTime <= recircSettings[0].weekEndOff1){
+					if (currentTime >= recircSettings.weekEndOn1 && currentTime <= recircSettings.weekEndOff1){
 						// we are within the time parameters
 						inTimeCheckTemps();
-					} else if (currentTime >= recircSettings[0].weekEndOn2 && currentTime <= recircSettings[0].weekEndOff2){
+					} else if (currentTime >= recircSettings.weekEndOn2 && currentTime <= recircSettings.weekEndOff2){
 						inTimeCheckTemps();
 						}
 					}
@@ -223,23 +214,38 @@ try this one instead
 					console.log("NOT a weekend");
 					if (allStates.stateHomeAway != "HomeAlone"){
 						// if home alone don't run in the morning, so check morning times
-						if (currentTime >= recircSettings[0].weekDayOn1 && currentTime <= recircSettings[0].weekDayOff1){
+						if (currentTime >= recircSettings.weekDayOn1 && currentTime <= recircSettings.weekDayOff1){
 							// we are within the time parameters
 							inTimeCheckTemps();
 							};
 					};
 					// we must be home or home alone so check afternoon times
-					if (currentTime >= recircSettings[0].weekDayOn2 && currentTime <= recircSettings[0].weekDayOff2){
+					if (currentTime >= recircSettings.weekDayOn2 && currentTime <= recircSettings.weekDayOff2){
 						inTimeCheckTemps();
 					};
 				};
 			};
 		// end check if home/away			
 	} else {
-		// either the first time through or exceeded the loop count so update recirc settings
+		console.log(" either the first time through or exceeded the loop count so update recirc settings");
 		dbController.recircSettingsRecirCNTRL("somethign", function (tempRecircSettings) {
-			console.log(tempRecircSettings);
-			recircSettings = tempRecircSettings;
+			console.log("**  in recirc controller, just back from getting recirc settings from db");
+			console.log(tempRecircSettings[0].pipeTempOn);
+
+    recircSettings.id = 1;
+    recircSettings.pipeTempOn = tempRecircSettings[0].pipeTempOn;
+    recircSettings.pipeTempOff = tempRecircSettings[0].pipeTempOff;
+    recircSettings.weekDayOn1 = tempRecircSettings[0].weekDayOn1;
+    recircSettings.weekDayOff1 = tempRecircSettings[0].weekDayOff1;
+    recircSettings.weekDayOn2 = tempRecircSettings[0].weekDayOn2
+    recircSettings.weekDayOff2 = tempRecircSettings[0].weekDayOff2
+    recircSettings.weekEndOn1 = tempRecircSettings[0].weekEndOn1;
+    recircSettings.weekEndOff1 = tempRecircSettings[0].weekEndOff1;
+    recircSettings.weekEndOn2 = tempRecircSettings[0].weekEndOn2;
+    recircSettings.weekEndOff2 = tempRecircSettings[0].weekEndOff2;
+
+
+			console.log(recircSettings.pipeTempOff);
 			getSettingsCount = 0;
 		});
 	};

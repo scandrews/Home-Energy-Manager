@@ -1,38 +1,47 @@
 
 
-module.exports = function(sequelize, Datatypes){
-	var recirculatorSettings = sequelize.define("recirculatorSettings", {
+module.exports = (sequelize, Datatypes) => {
+
+	const recirculatorSettings = sequelize.define("recirculatorSettings", {
 		pipeTempOn: {
 			type: Datatypes.FLOAT,
-			allowNull: false
+			defaultValue: 100
 		},
 		pipeTempOff: {
 			type: Datatypes.FLOAT,
-			allowNull: false
+			defaultValue: 110
 		},
 		weekDayOn1: {
-			type: Datatypes.TIME
+			type: Datatypes.STRING,
+			defaultValue: "6:30"
 		},
 		weekDayOff1: {
-			type: Datatypes.TIME
+			type: Datatypes.STRING,
+			defaultValue: "6:35"
 		},
 		weekDayOn2: {
-			type: Datatypes.TIME
+			type: Datatypes.STRING,
+			defaultValue: "16:30"
 		},
 		weekDayOff2: {
-			type: Datatypes.TIME
+			type: Datatypes.STRING,
+			defaultValue: "6:35"
 		},
 		weekEndOn1: {
-			type: Datatypes.TIME
+			type: Datatypes.STRING,
+			defaultValue: "7:30"
 		},
 		weekEndOff1: {
-			type: Datatypes.TIME
+			type: Datatypes.STRING,
+			defaultValue: "7:35"
 		},
 		weekEndOn2: {
-			type: Datatypes.TIME
+			type: Datatypes.STRING,
+			defaultValue: "16:30"
 		},
 		weekEndOff2: {
-			type: Datatypes.TIME
+			type: Datatypes.STRING,
+			defaultValue: "6:35"
 		}
 	});
 	return recirculatorSettings;
@@ -98,9 +107,124 @@ module.exports = function(sequelize, Datatypes){
 	});
 	return recirculatorHistory;
 	
+	var furnaceSettings = sequelize.define("furnaceSettings", {
+
+		weekDayMorningOn: {
+			type: Datatypes.TIME,
+			defaultValue: "6:00"
+		},
+		WeekDayMorningMinTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 65
+		},
+		WeekDayMorningMaxTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 68
+		},
+		weekDayMiddayOn: {
+			type: Datatypes.TIME,
+			defaultValue: "9:30"
+		},
+		WeekDayMiddayMinTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 60
+		},
+		WeekDayMiddayMaxTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 63
+		},
+		weekdayEveningOn: {
+			type: Datatypes.TIME,
+			defaultValue: "16:30"
+		},
+		WeekDayEveningMinTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 65
+		},
+		WeekDayEveningMaxTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 68
+		},
+		weekDayNightOn: {
+			type: Datatypes.TIME,
+			defaultValue: "23:30"
+		},
+		WeekDayNightMinTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 60
+		},
+		WeekDayNightMaxTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 63
+		},
+
+		weekEndMorningOn: {
+			type: Datatypes.TIME,
+			defaultValue: "7:00"
+		},
+		WeekEndMorningMinTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 65
+		},
+		WeekEndMorningMaxTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 68
+		},
+		weekEndMiddayOn: {
+			type: Datatypes.TIME,
+			defaultValue: "11:30"
+		},
+		WeekEndMiddayMinTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 62
+		},
+		WeekEndMiddayMaxTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 65
+		},
+		weekEndEveningOn: {
+			type: Datatypes.TIME,
+			defaultValue: "16:00"
+		},
+		WeekEndEveningMinTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 65
+		},
+		WeekEndEveningMaxTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 68
+		},
+		weekEndNightOn: {
+			type: Datatypes.TIME,
+			defaultValue: "23:30"
+		},
+		WeekEndNightMinTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 60
+		},
+		WeekEndNightMaxTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 63
+		},
+
+		awayMinTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 58
+		},
+		awayMaxTemp: {
+			type: Datatypes.FLOAT,
+			defaultValue: 61
+		}
+	})
+	return furnaceSettings
+
 };
 
+
 /*
+insert into recirculatorSettings(pipeTempOn, pipeTempOff, weekDayOn1, weekDayOff1, weekdayOn2, weekDayOff2, weekEndOn1, weekEndOff1, weekEndOn2, weekEndOff2)
+						values(     100,      110,		    "6:30",    "8:30",	    "16:30",    "22:30",		"8:30",		"11:00",	"14:30",	"23:30");
+
 use home_control_db;
 
 drop table recirculatorHistory;
@@ -149,8 +273,6 @@ create table recirculatorHistory(
     primary key (id)
 );
 
-insert into recirculatorSettings(pipeTempOn, pipeTempOff, weekDayOn1, weekDayOff1, weekdayOn2, weekDayOff2, weekEndOn1, weekEndOff1, weekEndOn2, weekEndOff2)
-						values(     100,      110,		    "6:30",    "8:30",	    "16:30",    "22:30",		"8:30",		"11:00",	"14:30",	"23:30");
 
 
 create table furnaceSettings(
@@ -225,14 +347,14 @@ insert into furnaceSettings(
 	65,
 	68,
 	"09:30",
-	64,
-	67,
+	62,
+	65,
 	"16:30",
 	65,
 	68,
 	"23:30",
-	64,
-	66,
+	62,
+	65,
 
 	"07:00",
 	66,
@@ -244,8 +366,8 @@ insert into furnaceSettings(
 	66,
 	69,
 	"23:30",
-	64,
-	66,
+	62,
+	65,
 
 	58,
 	62

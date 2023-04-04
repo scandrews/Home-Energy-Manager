@@ -52,8 +52,6 @@ var furnChangeState = 'NULL';
 var localFurnAction = "noChange";
 var keepDataTime = 1;
 
-var connection;
-
 // timer
 var myVar = setInterval(myTimer, 1000);
 
@@ -99,6 +97,12 @@ function getCurrentTime(){
     return(currentDate);
 };
 
+exports.initRecircSettings = function(){
+  console.log("* * * in db cntrlr init recirc settings");
+  connection.query("insert into recirculatorSettings set ?",{pipeTempOn: 100, pipeTempOff: 110, weekDayOn1: "6:30", weekDayOff1: "8:30", weekdayOn2: "16:30", weekDayOff2: "22:30", weekEndOn1: "8:30", weekEndOff1: "11:00", weekEndOn2: "14:30", weekEndOff2: "23:30", createdAt: "2021-05-14T22:00:00", updatedAt: "2021-05-14T22:00:00"})
+};
+
+
 exports.upDateFurnState = function (newState){
   furnChangeState = newState;
 }
@@ -123,6 +127,8 @@ exports.getCurrentTimes = function(){
 exports.changeKeepDataTime = function(newTime){
   keepDataTime = newTime;
 };
+
+var connection;
 
 if (process.env.JAWSDB_URL) {
   connection = mysql.createConnection(process.env.JAWSDB_URL);
