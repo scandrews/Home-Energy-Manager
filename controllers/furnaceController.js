@@ -4,19 +4,19 @@ var recircController = require ('./recircController');
 var communicationController = require ('./communicationsController');
 
 // inputs
-var furnaceTemp = 0;
-var furnaceTempMin = 90;
-var furnaceTempMax = 180;
-var outsideTemp = 0;
-var outsideTempMin = 60;
-var outsideTempMax = 80;
-var familyRmTemp = 0;
-var stoveTemp = 0;
+// var furnaceTemp = 0;
+// var furnaceTempMin = 90;
+// var furnaceTempMax = 180;
+// var outsideTemp = 0;
+// var outsideTempMin = 60;
+// var outsideTempMax = 80;
+// var familyRmTemp = 0;
+// var stoveTemp = 0;
 var bedroomTemp = 0;
 var bedroomTempMin = 69;
 var houseTemp = 68;
-var minHouseTemp = 66;
-var maxHouseTemp = 69;
+//var minHouseTemp = 66;
+//var maxHouseTemp = 69;
 var currentTime = "";
 var mornOnWDFlag = true;
 var midDayOnWDFlag = true;
@@ -24,51 +24,56 @@ var eveningOnWDFlag = true;
 var nightOnWDFlag = true;
 
 var currentTime = "";
-var dayAndTime = {
+var dayOfTheWeek = 0;
+/*var dayAndTime = {
 	time: "",
 	day: 0
-};
+};*/
+
+var getSettingsCount = 0;
+var getSettingsInterval = 100;
 
 var countRunForWater = 0;
 var runForWaterInterval;
-var currentArduinoOffSensor = "familyroom"; // default family room
-var keepOldSensor = "familyroom";  // keep current sensor while on manual run
+var currentArduinoOffSensor = "bedroom"; // default family room
+var keepOldSensor = "test";  // keep current sensor while on manual run
 	// 1 - bedroom
 	// 3 - desk
 
-var morningMinTempWeekDay = 66;
-var morningMaxTempWeekDay = 69;
-var middayMinTempWeekDay = 65;
-var middayMaxTempWeekDay = 68;
-var eveningMinTempWeekDay = 66;
-var eveningMaxTempWeekDay = 69;
-var nightMinTempWeekDay = 65;
-var nightMaxTempWeekDay = 67;
-
-var morningMinTempWeekEnd = 66;
-var morningMaxTempWeekEnd = 69;
-var middayMinTempWeekEnd = 66;
-var middayMaxTempWeekEnd = 69;
-var eveningMinTempWeekEnd = 66;
-var eveningMaxTempWeekEnd = 69;
-var nightMinTempWeekEnd = 65;
-var nightMaxTempWeekEnd = 67;
-var awayMinTemp = 58;
-var awayMaxTemp = 62;
-
 var furnaceSettings = {
 	id: 0,
-    minHouseTemp: 0,
-    maxHouseTemp: 0,
-    morningOnweekDay: "06:00",
-    midDayOnWeekday: "09:30",
-    eveningOnWeekday: "16:30",
-    nightOnWeekday: "23:30",
-    morningOnWeekEnd: "07:00",
-    midDayOnWeekEnd: "12:00",
-    eveningOnWeekEnd: "16:00",
-    nightOnWeekEnd: "23:30",
-    runMode: currentArduinoOffSensor,      //  ****** this needs to be implemented  ******
+	WeekDayMorningMinTemp: 65,
+	WeekDayMorningMaxTemp: 68,
+	WeekDayMiddayMinTemp: 62,
+	WeekDayMiddayMaxTemp: 65,
+	WeekDayEveningMinTemp: 66,
+	WeekDayEveningMaxTemp: 69,
+	WeekDayNightMinTemp: 61,
+	WeekDayNightMaxTemp: 64,
+
+	WeekEndMorningMinTemp: 66,
+	WeekEndMorningMaxTemp:69,
+	WeekEndMiddayMinTemp: 64,
+	WeekEndMiddayMaxTemp: 67,
+	WeekEndEveningMinTemp: 66,
+	WeekEndEveningMaxTemp: 69,
+	WeekEndNightMinTemp: 61,
+	WeekEndNightMaxTemp: 66,
+	awayMinTemp: 58,
+	awayMaxTemp: 61,
+
+	minHouseTemp: 60,
+	maxHouseTemp: 64,
+
+    weekDayMorningOnTime: "06:00",
+    weekDayMiddayOnTime: "09:30",
+    weekDayEveningOnTime: "16:30",
+    weekDayNightOnTime: "23:30",
+    weekEndMorningOnTime: "07:00",
+    weekEndMiddayOnTime: "12:00",
+    weekEndEveningOnTime: "16:00",
+    weekEndNightOnTime: "23:30",
+    state: "Home",      //  ****** this needs to be implemented  ******
     currentSensor: currentArduinoOffSensor
 };
 
@@ -89,11 +94,8 @@ exports.runFurnForWater = function(howLong){
 	keepOldSensor = currentArduinoOffSensor;
 	communicationController.sendMessageToArdunio("whichSensor", "none");
 	console.log("Furnace CNTRL run for hot water for  - " + howLong);
-	countRunForWater = howLong * 60;
-	setTimeout(startRunForWater, 3000);
-};
-
-function startRunForWater(){
+	countRunForWater = howLong * 1;
+	console.log("In start Run For Water");
 	dbController.setFurnaceChange("FurnOnForWater");
 	communicationController.sendMessageToArdunio("furnaceTurnOn", 69);
 	stateFurnace = "on";
@@ -103,8 +105,12 @@ function startRunForWater(){
 
 function checkForEnd(){
 	if (countRunForWater <= 0){
-		console.log("In Run For Water, count - " + countRunForWater);
-		endRunForWater();
+		clearInterval(runForWaterInterval);
+		console.log("In End RFW Delay, KEEP OLD - " + keepOldSensor);
+		communicationController.sendMessageToArdunio("whichSensor", keepOldSensor);
+		currentArduinoOffSensor = keepOldSensor;
+		console.log("ENDING Run For Water, count - " + countRunForWater);
+		secondTimeout = setTimeout(endRunForWater, 500);
 	} else {
 		countRunForWater --;
 		console.log("In Run For Water, count - " + countRunForWater);
@@ -112,87 +118,78 @@ function checkForEnd(){
 };
 
 function endRunForWater(){
-	//clearInterval(myVar);
-	clearInterval(runForWaterInterval);
-	communicationController.sendMessageToArdunio("whichSensor", keepOldSensor);
-	//currentArduinoOffSensor = keepOldSensor;  let's wait for it to come back from Arduino
-	console.log("In End RFW Delay, KEEP OLD - " + keepOldSensor);
+	clearTimeout(secondTimeout);
+	console.log("in end run for water");
 	stateFurnace = "off";
+	communicationController.sendMessageToArdunio("furnaceTurnOff", 69);
 	communicationController.changeState("changeHome-Away", "back");
-	setTimeout(continueEndRunForWater, 3000);
+	dbController.setFurnaceChange("FurnOffForWater");
+	//setTimeout(continueEndRunForWater, 3000);
 };
 
-function continueEndRunForWater(){
-	communicationController.sendMessageToArdunio("furnaceTurnOff", 69);
-	dbController.setFurnaceChange("FurnOffForWater");
-};
+//function continueEndRunForWater(){
+//};
 
 exports.getRunForWaterCount = function(){
 	var countInMin = secondsToHms(countRunForWater)
 	return (countInMin);
 };
 
+//  Called from the communications controller changeState
+exports.changeHomeState = function (newHomeState){
+	furnaceSettings.state = newHomeState;
+	furnaceSettings.id = 0   // forces it to get new settings from the db
+	console.log("in furnace controller just got the new state from the com controller");
+	console.log(furnaceSettings);
+	// set the appropriate flag to force temps to update
+	if (currentTime > furnaceSettings.weekDayMorningOnTime && currentTime < furnaceSettings.weekDayMiddayOnTime){
+		console.log("just set flag for morning");
+		mornOnWDFlag = true;
+	} else
+	// at midday time we'll set the flag
+	if (currentTime > furnaceSettings.weekDayMiddayOnTime && currentTime < furnaceSettings.weekDayEveningOnTime){
+		console.log("just set flag for mid day");
+		midDayOnWDFlag = true;
+	} else
+	// at evening time we'll set the flag
+	if (currentTime > furnaceSettings.weekDayEveningOnTime && currentTime < furnaceSettings.weekDayNightOnTime){
+		console.log("just set flag for evening");
+		eveningOnWDFlag = true;
+	} else
+	// at night we'll set the flag
+	if (currentTime > furnaceSettings.weekDayNightOnTime && nightOnWDFlag){
+		console.log("just set flag for night");
+		nightOnWDFlag = true;
+	};
+};
+
+// called by the server upon startup
 exports.changeFurnState = function (newState){
 	stateFurnace = newState;
 };
 
 //  called from the route controller get general settings
 exports.getFurnaceSettings = function (req, res){
-	furnaceSettings.minHouseTemp = minHouseTemp;
-	furnaceSettings.maxHouseTemp = maxHouseTemp;
 	furnaceSettings.currentSensor = currentArduinoOffSensor;
+	//furnaceSettings.minHouseTemp = minHouseTemp;
+	//furnaceSettings.maxHouseTemp = maxHouseTemp;
 	return (furnaceSettings);
 };
 
 // called from the route controller get current furnace settings
 exports.getAllFurnSettings = function (req, res){
-
-	var allFurnaceSettings = {
-
-	    weekDayMorningOn: furnaceSettings.morningOnweekDay,
-		morningMinTempWeekDaySet: morningMinTempWeekDay,
-		morningMaxTempWeekDaySet: morningMaxTempWeekDay,
-	    weekDayDayOn: furnaceSettings.midDayOnWeekday,
-		middayMinTempWeekDaySet: middayMinTempWeekDay,
-		middayMaxTempWeekDaySet: middayMaxTempWeekDay,
-	    weekDayEveningOn: furnaceSettings.eveningOnWeekday,
-		eveningMinTempWeekDaySet: eveningMinTempWeekDay,
-		eveningMaxTempWeekDaySet: eveningMaxTempWeekDay,
-	    weekDayNightOn: furnaceSettings.nightOnWeekday,
-		nightMinTempWeekDaySet: nightMinTempWeekDay,
-		nightMaxTempWeekDaySet: nightMaxTempWeekDay,
-
-	    weekEndMorningOn: furnaceSettings.morningOnWeekEnd,
-		morningMinTempWeekEndSet: morningMinTempWeekEnd,
-		morningMaxTempWeekEndSet: morningMaxTempWeekEnd,
-	    weekEndDayOn: furnaceSettings.midDayOnWeekEnd,
-		middayMinTempWeekEndSet: middayMinTempWeekEnd,
-		middayMaxTempWeekEndSet: middayMaxTempWeekEnd,
-	    weekEndEveningOn: furnaceSettings.eveningOnWeekEnd,
-		eveningMinTempWeekEndSet: eveningMinTempWeekEnd,
-		eveningMaxTempWeekEndSet: eveningMaxTempWeekEnd,
-	    weekEndNightOn: furnaceSettings.nightOnWeekEnd,
-		nightMinTempWeekEndSet: nightMinTempWeekEnd,
-		nightMaxTempWeekEndSet: nightMaxTempWeekEnd,
-
-		awayMinTempSet: awayMinTemp,
-		awayMaxTempSet: awayMaxTemp,
-
-	    runModeSet: furnaceSettings.runMode,
-	    currentSensorSet: currentArduinoOffSensor
-	};
 	console.log("furn cntrl get all furnace settings - ");
-	console.log(allFurnaceSettings);
-	res.send (allFurnaceSettings);
+	console.log(furnaceSettings);
+	res.send (furnaceSettings);
 };
 
 // within furnace run time, check if we should start the furnace
 inTimeCheckTemps = function (){
 	console.log("In Time, Check if we should Turn Furnace on");
-	console.log("houseTemp - " + houseTemp);
-	console.log("minHouseTemp - " + minHouseTemp);
+	console.log("Current house Temp - " + houseTemp);
+	console.log("Minimum House Temp - " + furnaceSettings.minHouseTemp);
 	
-	if (houseTemp < minHouseTemp){
+	if (houseTemp < furnaceSettings.minHouseTemp){
 		communicationController.sendMessageToArdunio("furnaceChange", "on");
 		console.log("In Furnace Controller - Check Temps, Turning Furnace ON");
 		stateFurnace = "on";
@@ -200,183 +197,262 @@ inTimeCheckTemps = function (){
 	}
 };
 
+		checkIfFurnaceAdjust = function(furnaceTemp, familyTemp, bedroomTemp, deskTemp, outsideTemp, currentState){
+
+			//console.log("have the settings");
+			getSettingsCount++;
+
+			// get the current time
+			let date_ob = new Date();
+			let hours = date_ob.getHours();
+			// current minutes
+			let minutes = date_ob.getMinutes();
+			//let seconds = date_ob.getSeconds();
+			if (hours < 10){
+				currentTime = "0" + hours + ":" + minutes;
+			} else if (minutes < 10){
+				currentTime = hours + ":" + "0" + minutes;
+			} else {
+				currentTime = hours + ":" + minutes;
+			};
+			//dayAndTime.day = date_ob.getDay();
+			dayOfTheWeek = date_ob.getDay();
+			//dayAndTime.time = currentTime;
+			console.log("Current Time in FURN cntrl- " + currentTime + ", on - " + dayOfTheWeek);
+
+			//var currentState = communicationController.getState();
+			if (currentState.stateHomeAway == "Away"){
+				console.log("We're Away");
+				furnaceSettings.minHouseTemp = awayMinTemp;
+				furnaceSettings.maxHouseTemp = awayMaxTemp;
+				communicationController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
+			} else {
+
+				// Make temperature adjustments if required
+				if (dayOfTheWeek == 6 || dayOfTheWeek == 0){
+					console.log("It's a weekend YEA");
+
+					// at 6 AM we'll up the temps
+					console.log(furnaceSettings.weekEndMorningOnTime);
+					if (currentTime > furnaceSettings.weekEndMorningOnTime && currentTime < furnaceSettings.weekEndMiddayOnTime && mornOnWDFlag){
+						communicationController.changeFurnaceState("weekEndMorning");
+						mornOnWDFlag = false;
+						nightOnWDFlag = true;
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekEndMorningMinTemp;
+						furnaceSettings.maxHouseTemp = furnaceSettings.WeekEndMorningMaxTemp;
+						console.log("just adjusted temps for morning");
+						communicationController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
+					} else
+					// at 9 AM we'll set temps back down
+					console.log(furnaceSettings.weekEndMiddayOnTime);
+					if (currentTime > furnaceSettings.weekEndMiddayOnTime && currentTime < furnaceSettings.weekEndEveningOnTime && midDayOnWDFlag){
+						communicationController.changeFurnaceState("weekEndDay");
+						midDayOnWDFlag = false;
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekEndMiddayMinTemp;
+						furnaceSettings.maxHouseTemp = furnaceSettings.WeekEndMiddayMaxTemp;
+						console.log("just adjusted temps for mid day");
+						communicationController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
+					} else
+					// at 4:30 PM we'll up the temps
+					console.log(furnaceSettings.weekEndEveningOnTime);
+					if (currentTime > furnaceSettings.weekEndEveningOnTime && currentTime < furnaceSettings.weekEndNightOnTime && eveningOnWDFlag){
+						communicationController.changeFurnaceState("weekEndEvening");
+						console.log("just adjusted furn temps for evening");
+						eveningOnWDFlag = false;
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekEndEveningMinTemp;
+						furnaceSettings.maxHouseTemp = furnaceSettings.WeekEndEveningMaxTemp;
+						communicationController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
+					} else
+
+					// at 11:30 PM we'll set the temps down for night
+					console.log(furnaceSettings.weekEndNightOnTime);
+					if (currentTime > furnaceSettings.weekEndNightOnTime && nightOnWDFlag){
+						communicationController.changeFurnaceState("weekEndNight");
+						console.log("just adjusted furn temps for night");
+						nightOnWDFlag = false;
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekEndNightMinTemp;
+						furnaceSettings.maxHouseTemp = furnaceSettings.WeekEndNightMaxTemp;
+					};
+
+					// after midnight reset all flags
+					if (currentTime < "00:05" && mornOnWDFlag == false){
+						mornOnWDFlag = true;
+						midDayOnWDFlag = true;
+						eveningOnWDFlag = true;
+					}
+
+				}
+				else {
+					console.log("NOT a weekend");
+					// Make temperature adjustments if required
+					// at 6 AM we'll up the temps
+					console.log(furnaceSettings.weekDayMorningOnTime);
+					if (currentTime > furnaceSettings.weekDayMorningOnTime && currentTime < furnaceSettings.weekDayMiddayOnTime && mornOnWDFlag){
+						communicationController.changeFurnaceState("weekDayMorning");
+						console.log("just adjusted temps for morning");
+						mornOnWDFlag = false;
+						nightOnWDFlag = true;
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekDayMorningMinTemp;
+						furnaceSettings.maxHouseTemp = furnaceSettings.WeekDayMorningMaxTemp;
+						communicationController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
+					} else
+					// at 9 AM we'll set temps back down
+					console.log(furnaceSettings.weekDayMiddayOnTime);
+					if (currentTime > furnaceSettings.weekDayMiddayOnTime && currentTime < furnaceSettings.weekDayEveningOnTime && midDayOnWDFlag){
+						communicationController.changeFurnaceState("weekDayDay");
+						console.log("just adjusted temps for mid day");
+						midDayOnWDFlag = false;
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekDayMiddayMinTemp;
+						furnaceSettings.maxHouseTemp = furnaceSettings.WeekDayMiddayMaxTemp;
+						communicationController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
+					} else
+					// at 4:30 PM we'll up the temps
+					console.log(furnaceSettings.weekDayEveningOnTime);
+					if (currentTime > furnaceSettings.weekDayEveningOnTime && currentTime < furnaceSettings.weekDayNightOnTime && eveningOnWDFlag){
+						communicationController.changeFurnaceState("weekDayEvening");
+						console.log("just adjusted furn temps for evening");
+						eveningOnWDFlag = false;
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekDayEveningMinTemp;
+						furnaceSettings.maxHouseTemp = furnaceSettings.WeekDayEveningMaxTemp;
+						communicationController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
+					} else
+
+					// at 11:30 PM we'll set the temps down for night
+					console.log(furnaceSettings.weekDayNightOnTime);
+					if (currentTime > furnaceSettings.weekDayNightOnTime && nightOnWDFlag){
+						communicationController.changeFurnaceState("weekDayNight");
+						console.log("just adjusted furn temps for night");
+						nightOnWDFlag = false;
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekDayNightMinTemp;
+						furnaceSettings.maxHouseTemp = furnaceSettings.WeekDayNightMaxTemp;
+						communicationController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
+					};
+
+					// after midnight reset all flags
+					if (currentTime < "00:05" && mornOnWDFlag == false){
+						mornOnWDFlag = true;
+						midDayOnWDFlag = true;
+						eveningOnWDFlag = true;
+					}
+				// end adjust temperatures
+				};
+			// end check if away else
+			};
+
+			// Arduino sends flag (status) packet right before sending a temperature packet
+			currentArduinoStates = communicationController.getState();
+			if (stateFurnace == "on"){
+				if (currentArduinoStates.stateFurnace == "off" ){
+					// local furnace state ON but state machine is OFF - Arduino just turned it off
+					console.log("looks like the arduino just turned the furnace off");
+					stateFurnace = "off";
+					dbController.setFurnaceChange("turnedFurnaceOff");
+				}
+
+			} else if (stateFurnace == "off"){ 
+				console.log("Furnace is off so check if turn on **********");
+
+				// sets which temp to the last reported temp from the dbcontroller who
+				// averaged the readings
+				console.log("currentArduinoOffSensor - " + currentArduinoOffSensor);
+				switch (currentArduinoOffSensor){
+					case "bedroom":
+						console.log("In CASE 1 ** bedroomTemp - " + bedroomTemp);
+						houseTemp = bedroomTemp;
+						break;
+					case "familyroom":
+						console.log("in CASE 2 ** familyTemp - " + familyTemp);
+						houseTemp = familyTemp;
+						break;
+					case "desk":
+						console.log("in CASE 3 ** deskTemp - " + deskTemp);
+						houseTemp = deskTemp;
+						break;
+					case "none":
+						console.log("in Furnace controller case none ");
+						break;
+					default:
+						console.log("Somthing messed up in the Furnace Controller");
+				};
+
+				inTimeCheckTemps()
+
+			// end furnace temp is below minimum		
+			}
+		// end chek if we should adjust furnace
+		};
+
 // Main Entry Point
 // entry point from the db controller with new avg temperatures
-exports.checkFurnace = function (furnaceTemp, familyTemp, bedroomTemp, deskTemp, outsideTemp){
-	console.log("Entering the Furnace Controller, FURNACE IS - " + stateFurnace);
+exports.checkFurnace = function (furnaceTemp, familyTemp, bedroomTemp, deskTemp, outsideTemp, currentState){
 
-	// get the current time
-	let date_ob = new Date();
-	let hours = date_ob.getHours();
-	// current minutes
-	let minutes = date_ob.getMinutes();
-	//let seconds = date_ob.getSeconds();
-	if (hours < 10){
-		currentTime = "0" + hours + ":" + minutes;
-	} else if (minutes < 10){
-		currentTime = hours + ":" + "0" + minutes;
-	} else {
-		currentTime = hours + ":" + minutes;
-	};
-	dayAndTime.day = date_ob.getDay();
-	dayOfTheWeek = dayAndTime.day;
-	dayAndTime.time = currentTime;
-	console.log("Current Time in FURN cntrl- " + currentTime + ", on - " + dayOfTheWeek);
+	console.log("* * * * * * Entering the Furnace Controller, FURNACE IS - " + stateFurnace + " * * * * * *");
 
 
-	// Make temperature adjustments if required
-	if (dayOfTheWeek == 6 || dayOfTheWeek == 0){
-		console.log("It's a weekend YEA");
+		// don't hit the db for the recirc settings every time through
+		// if NOT the first time through or if we've been through test count times, do
+		// normal processing otherwise get the recirc settings
+		console.log("furnSetting id - " + furnaceSettings.id);
+		console.log("get settings count - " + getSettingsCount);
+		console.log("get settings interval - " + getSettingsInterval);
 
-		// at 6 AM we'll up the temps
-		console.log(furnaceSettings.morningOnWeekEnd);
-		if (currentTime > furnaceSettings.morningOnWeekEnd && currentTime < furnaceSettings.midDayOnWeekEnd && mornOnWDFlag){
-			communicationController.changeFurnaceState("weekEndMorning");
-			console.log("just adjusted temps for morning");
-			mornOnWDFlag = false;
-			nightOnWDFlag = true;
-			minHouseTemp = morningMinTempWeekEnd;
-			maxHouseTemp = morningMaxTempWeekEnd;
-			communicationController.sendMessageToArdunio("changeHouseMaxTemp", maxHouseTemp)
-		} else
-		// at 9 AM we'll set temps back down
-		console.log(furnaceSettings.midDayOnWeekEnd);
-		if (currentTime > furnaceSettings.midDayOnWeekEnd && currentTime < furnaceSettings.eveningOnWeekEnd && midDayOnWDFlag){
-			communicationController.changeFurnaceState("weekEndDay");
-			console.log("just adjusted temps for mid day");
-			midDayOnWDFlag = false;
-			minHouseTemp = middayMinTempWeekEnd;
-			maxHouseTemp = middayMaxTempWeekEnd;
-			communicationController.sendMessageToArdunio("changeHouseMaxTemp", maxHouseTemp)
-		} else
-		// at 4:30 PM we'll up the temps
-		console.log(furnaceSettings.eveningOnWeekEnd);
-		if (currentTime > furnaceSettings.eveningOnWeekEnd && currentTime < furnaceSettings.nightOnWeekEnd && eveningOnWDFlag){
-			communicationController.changeFurnaceState("weekEndEvening");
-			console.log("just adjusted furn temps for evening");
-			eveningOnWDFlag = false;
-			minHouseTemp = eveningMinTempWeekEnd;
-			maxHouseTemp = eveningMaxTempWeekEnd;
-			communicationController.sendMessageToArdunio("changeHouseMaxTemp", maxHouseTemp)
-		} else
 
-		// at 11:30 PM we'll set the temps down for night
-		console.log(furnaceSettings.nightOnWeekEnd);
-		if (currentTime > furnaceSettings.nightOnWeekEnd && nightOnWDFlag){
-			communicationController.changeFurnaceState("weekEndNight");
-			console.log("just adjusted furn temps for night");
-			nightOnWDFlag = false;
-			minHouseTemp = nightMinTempWeekEnd;
-			maxHouseTemp = nightMaxTempWeekEnd;
+		// id is 0 first tile through, or refresh every interval
+		if (furnaceSettings.id == 0 || getSettingsCount >= getSettingsInterval) {
+
+			dbController.getFurnaceSettings(furnaceSettings.state, function (tempFurnaceSettings){
+				console.log("* * * in furnace controller just back from getting settings");
+				console.log(tempFurnaceSettings.state);
+
+				furnaceSettings.id = tempFurnaceSettings.id,
+			    furnaceSettings.minHouseTemp = tempFurnaceSettings.minHouseTemp,
+			    furnaceSettings.maxHouseTemp = tempFurnaceSettings.maxHouseTemp,
+				furnaceSettings.WeekDayMorningMinTemp = tempFurnaceSettings.WeekDayMorningMinTemp,
+				furnaceSettings.WeekDayMorningMaxTemp = tempFurnaceSettings.WeekDayMorningMaxTemp,
+				furnaceSettings.WeekDayMiddayMinTemp = tempFurnaceSettings.WeekDayMiddayMinTemp,
+				furnaceSettings.WeekDayMiddayMaxTemp = tempFurnaceSettings.WeekDayMiddayMaxTemp,
+				furnaceSettings.WeekDayEveningMinTemp = tempFurnaceSettings.WeekDayEveningMinTemp,
+				furnaceSettings.WeekDayEveningMaxTemp = tempFurnaceSettings.WeekDayEveningMaxTemp,
+				furnaceSettings.WeekDayNightMinTemp = tempFurnaceSettings.WeekDayNightMinTemp,
+				furnaceSettings.WeekDayNightMaxTemp = tempFurnaceSettings.WeekDayNightMaxTemp,
+
+				furnaceSettings.WeekEndMorningMinTemp = tempFurnaceSettings.WeekEndMorningMinTemp,
+				furnaceSettings.WeekEndMorningMaxTemp = tempFurnaceSettings.WeekEndMorningMaxTemp,
+				furnaceSettings.WeekEndMiddayMinTemp = tempFurnaceSettings.WeekEndMiddayMinTemp,
+				furnaceSettings.WeekEndMiddayMaxTemp = tempFurnaceSettings.WeekEndMiddayMaxTemp,
+				furnaceSettings.WeekEndEveningMinTemp = tempFurnaceSettings.WeekEndEveningMinTemp,
+				furnaceSettings.WeekEndEveningMaxTemp = tempFurnaceSettings.WeekEndEveningMaxTemp,
+				furnaceSettings.WeekEndNightMinTemp = tempFurnaceSettings.WeekEndNightMinTemp,
+				furnaceSettings.WeekEndNightMaxTemp = tempFurnaceSettings.WeekEndNightMaxTemp,
+				furnaceSettings.awayMinTemp = tempFurnaceSettings.awayMinTemp,
+				furnaceSettings.awayMaxTemp = tempFurnaceSettings.awayMaxTemp,
+
+				//furnaceSettings.minHouseTemp = tempFurnaceSettings.minHouseTemp,
+				//furnaceSettings.maxHouseTemp = tempFurnaceSettings.maxHouseTemp,
+
+			    furnaceSettings.weekDayMorningOnTime = tempFurnaceSettings.weekDayMorningOnTime,
+			    furnaceSettings.weekDayMiddayOnTime = tempFurnaceSettings.weekDayMiddayOnTime,
+			    furnaceSettings.weekDayEveningOnTime = tempFurnaceSettings.weekDayEveningOnTime,
+			    furnaceSettings.weekDayNightOnTime = tempFurnaceSettings.weekDayNightOnTime,
+			    furnaceSettings.weekEndMorningOnTime = tempFurnaceSettings.weekEndMorningOnTime,
+			    furnaceSettings.weekEndMiddayOnTime = tempFurnaceSettings.weekEndMiddayOnTime,
+			    furnaceSettings.weekEndEveningOnTime = tempFurnaceSettings.weekEndEveningOnTime,
+			    furnaceSettings.weekEndNightOnTime = tempFurnaceSettings.weekEndNightOnTime,
+			    furnaceSettings.state = tempFurnaceSettings.state      //  ****** this needs to be implemented  ******
+			    //furnaceSettings.currentSensor = tempFurnaceSettings.
+
+				console.log("just got the new furnace settings, id - " + furnaceSettings.id);
+				console.log("just got the new furnace settings, WeekDayMiddayMinTemp - " + furnaceSettings.WeekDayMiddayMinTemp);
+				console.log("just got the new furnace settings, WeekDayMiddayMaxTemp - " + furnaceSettings.WeekDayMiddayMaxTemp);
+				console.log("just got the new furnace settings, state - " + furnaceSettings.state);
+				checkIfFurnaceAdjust(furnaceTemp, familyTemp, bedroomTemp, deskTemp, outsideTemp, currentState);
+			});
+			getSettingsCount = 0;
+		// end get furnace setting from the db
+		} else {
+			checkIfFurnaceAdjust(furnaceTemp, familyTemp, bedroomTemp, deskTemp, outsideTemp, currentState);
 		};
-
-		// after midnight reset all flags
-		if (currentTime < "00:05" && mornOnWDFlag == false){
-			mornOnWDFlag = true;
-			midDayOnWDFlag = true;
-			eveningOnWDFlag = true;
-		}
-
-	}
-	else {
-		console.log("NOT a weekend");
-		// Make temperature adjustments if required
-		// at 6 AM we'll up the temps
-		console.log(furnaceSettings.morningOnweekDay);
-		if (currentTime > furnaceSettings.morningOnweekDay && currentTime < furnaceSettings.midDayOnWeekday && mornOnWDFlag){
-			communicationController.changeFurnaceState("weekDayMorning");
-			console.log("just adjusted temps for morning");
-			mornOnWDFlag = false;
-			nightOnWDFlag = true;
-			minHouseTemp = morningMinTempWeekDay;
-			maxHouseTemp = morningMaxTempWeekDay;
-			communicationController.sendMessageToArdunio("changeHouseMaxTemp", maxHouseTemp)
-		} else
-		// at 9 AM we'll set temps back down
-		console.log(furnaceSettings.midDayOnWeekday);
-		if (currentTime > furnaceSettings.midDayOnWeekday && currentTime < furnaceSettings.eveningOnWeekday && midDayOnWDFlag){
-			communicationController.changeFurnaceState("weekDayDay");
-			console.log("just adjusted temps for mid day");
-			midDayOnWDFlag = false;
-			minHouseTemp = middayMinTempWeekDay;
-			maxHouseTemp = middayMaxTempWeekDay;
-			communicationController.sendMessageToArdunio("changeHouseMaxTemp", maxHouseTemp)
-		} else
-		// at 4:30 PM we'll up the temps
-		console.log(furnaceSettings.eveningOnWeekday);
-		if (currentTime > furnaceSettings.eveningOnWeekday && currentTime < furnaceSettings.nightOnWeekday && eveningOnWDFlag){
-			communicationController.changeFurnaceState("weekDayEvening");
-			console.log("just adjusted furn temps for evening");
-			eveningOnWDFlag = false;
-			minHouseTemp = eveningMinTempWeekDay;
-			maxHouseTemp = eveningMaxTempWeekDay;
-			communicationController.sendMessageToArdunio("changeHouseMaxTemp", maxHouseTemp)
-		} else
-
-		// at 11:30 PM we'll set the temps down for night
-		console.log(furnaceSettings.nightOnWeekday);
-		if (currentTime > furnaceSettings.nightOnWeekday && nightOnWDFlag){
-			communicationController.changeFurnaceState("weekDayNight");
-			console.log("just adjusted furn temps for night");
-			nightOnWDFlag = false;
-			minHouseTemp = nightMinTempWeekDay;
-			maxHouseTemp = nightMaxTempWeekDay;
-			communicationController.sendMessageToArdunio("changeHouseMaxTemp", maxHouseTemp)
-		};
-
-		// after midnight reset all flags
-		if (currentTime < "00:05" && mornOnWDFlag == false){
-			mornOnWDFlag = true;
-			midDayOnWDFlag = true;
-			eveningOnWDFlag = true;
-		}
-	};
-
-
-	// Arduino sends flag (status) packet right before sending a temperature packet
-	currentArduinoStates = communicationController.getState();
-	if (stateFurnace == "on"){
-		if (currentArduinoStates.stateFurnace == "off" ){
-		// local furnace state ON but state machine is OFF - Arduino just turned it off
-		console.log("looks like the arduino just turned the furnace off");
-		stateFurnace = "off";
-		dbController.setFurnaceChange("turnedFurnaceOff");
-		}
-
-	} else if (stateFurnace == "off"){ 
-		console.log("Furnace is off so check if turn on **********");
-
-		// sets which temp to the last reported temp from the dbcontroller who
-		// averaged the readings
-		console.log("currentArduinoOffSensor - " + currentArduinoOffSensor);
-		switch (currentArduinoOffSensor){
-			case "bedroom":
-				console.log("In CASE 1 ** bedroomTemp - " + bedroomTemp);
-				houseTemp = bedroomTemp;
-				break;
-			case "familyroom":
-				console.log("in CASE 2 ** familyTemp - " + familyTemp);
-				houseTemp = familyTemp;
-				break;
-			case "desk":
-				console.log("in CASE 3 ** deskTemp - " + deskTemp);
-				houseTemp = deskTemp;
-				break;
-			case "none":
-				console.log("in Furnace controller case none ");
-				break;
-			default:
-				console.log("Somthing messed up in the Furnace Controller");
-		};
-
-		inTimeCheckTemps()
-
-	// end furnace temp is below minimum		
-	}
-
-//	if (outsideTemp < 40){
-//		if (familyRmTemp < )
-
+// end main entry
 };
 
 // not used
@@ -411,10 +487,10 @@ exports.setFurnaceTemps = function (whichLTemp, newTemp){
 			furnaceTempMax = newTemp;
 			break;
 		case "maxHouseTemp":
-			maxHouseTemp = newTemp;
+			furnaceSettings.maxHouseTemp = newTemp;
 			break;
 		case "minHouseTemp":
-			minHouseTemp = newTemp;
+			furnaceSettings.minHouseTemp = newTemp;
 			break;
 		default:
 			console.log ("ERROR in furn cntrl set temps");
@@ -450,7 +526,7 @@ exports.setFurnFlagPacket = function (toWhichSensor, currentMaxHouseTemp){
 			console.log ("ERROR in set furn on off - in furnace controller");
 	};
 	console.log("in Furn CNTRL, just set the furn state to the arduino state - " + currentArduinoOffSensor);
-	maxHouseTemp = currentMaxHouseTemp;
+	furnaceSettings.maxHouseTemp = currentMaxHouseTemp;
 };
 
 // called from router controller to update furnace settings
@@ -462,94 +538,94 @@ exports.upDateFurnaceSettings = function (newSettings){
 			console.log("nothing at - " + key)
 		} else {
 			console.log("At - " + key + " got - " + newSettings[key]);
-			var returnStatus = dbController.updateFurnaceSettings(key, newSettings[key]);
+			//var returnStatus = dbController.updateFurnaceSettings(key, newSettings[key]);
 			switch (key){
 				case "weekDayMorningOnTime":
-					morningOnweekDay = newSettings[key];
+					furnaceSettings.weekDayMorningOnTime = newSettings[key];
 					break;
 				case "weekDayMorningMinTemp":
-					morningMinTempWeekDay = newSettings[key];
+					furnaceSettings.WeekDayMorningMinTemp = newSettings[key];
 					break;
 				case "weekDayMorningMaxTemp":
-					morningMaxTempWeekDay = newSettings[key];
+					furnaceSettings.WeekDayMorningMaxTemp = newSettings[key];
 					break;
 				case "weekDayMidDayOnTime":
-					midDayOnWeekday = newSettings[key];
+					furnaceSettings.weekDayMiddayOnTime = newSettings[key];
 					break;
 				case "weekDayMidDayMinTemp":
-					middayMinTempWeekDay = newSettings[key];
+					furnaceSettings.WeekDayMiddayMinTemp = newSettings[key];
 					break;
 				case "weekDayMidDayMaxTemp":
-					middayMaxTempWeekDay = newSettings[key];
+					furnaceSettings.WeekDayMiddayMaxTemp = newSettings[key];
 					break;
 				case "weekDayEveningOnTime":
-					eveningOnWeekday = newSettings[key];
+					furnaceSettings.eveningOnWeekday = newSettings[key];
 					break;
 				case "weekDayEveningMinTemp":
-					eveningMinTempWeekDay = newSettings[key];
+					furnaceSettings.WeekDayEveningMinTemp = newSettings[key];
 					break;
 				case "weekDayEveningMaxTemp":
-					eveningMaxTempWeekDay = newSettings[key];
+					furnaceSettings.WeekDayEveningMaxTemp = newSettings[key];
 					break;
 				case "weekDayNightOnTime":
-					nightOnWeekday = newSettings[key];
+					furnaceSettings.nightOnWeekday = newSettings[key];
 					break;
 				case "weekDayNightMinTemp":
-					nightMinTempWeekDay = newSettings[key];
+					furnaceSettings.WeekDayNightMinTemp = newSettings[key];
 					break;
 				case "weekDayNightMaxTemp":
-					nightMaxTempWeekDay = newSettings[key];
+					furnaceSettings.WeekDayNightMaxTemp = newSettings[key];
 					break;
 				case "weekEndMorningOnTime":
-					morningOnWeekEnd = newSettings[key];
+					furnaceSettings.morningOnWeekEnd = newSettings[key];
 					break;
 				case "weekEndMorningMinTemp":
-					morningMinTempWeekEnd = newSettings[key];
+					furnaceSettings.WeekEndMorningMinTemp = newSettings[key];
 					break;
 				case "weekEndMorningMaxTemp":
-					morningMaxTempWeekEnd = newSettings[key];
+					furnaceSettings.WeekEndMorningMaxTemp = newSettings[key];
 					break;
 				case "weekEndMidDayOnTime":
-					midDayOnWeekEnd = newSettings[key];
+					furnaceSettings.midDayOnWeekEnd = newSettings[key];
 					break;
 				case "weekEndMidDayMinTemp":
-					middayMinTempWeekEnd = newSettings[key];
+					furnaceSettings.WeekEndMiddayMinTemp = newSettings[key];
 					break;
 				case "weekEndMidDayMaxTemp":
-					middayMaxTempWeekEnd = newSettings[key];
+					furnaceSettings.WeekEndMiddayMaxTemp = newSettings[key];
 					break;
 				case "weekEndEveningOnTime":
-					eveningOnWeekEnd = newSettings[key];
+					furnaceSettings.eveningOnWeekEnd = newSettings[key];
 					break;
 				case "weekEndEveningMinTemp":
-					eveningMinTempWeekEnd = newSettings[key];
+					furnaceSettings.WeekEndEveningMinTemp = newSettings[key];
 					break;
 				case "weekEndEveningMaxTemp":
-					eveningMaxTempWeekEnd = newSettings[key];
+					furnaceSettings.WeekEndEveningMaxTemp = newSettings[key];
 					break;
 				case "weekEndNightOnTime":
-					nightOnWeekEnd = newSettings[key];
+					furnaceSettings.nightOnWeekEnd = newSettings[key];
 					break;
 				case "weekEndNightMinTemp":
-					nightMinTempWeekEnd = newSettings[key];
+					furnaceSettings.WeekEndNightMinTemp = newSettings[key];
 					break;
 				case "weekEndNightMaxTemp":
-					nightMaxTempWeekEnd = newSettings[key];
+					furnaceSettings.WeekEndNightMaxTemp = newSettings[key];
 					break;
 
 				case "awayMinTemp":
-					awayMinTemp = newSettings[key];
+					furnaceSettings.awayMinTemp = newSettings[key];
 					break;
 				case "awayMaxTemp":
-					awayMaxTemp = newSettings[key];
+					furnaceSettings.awayMaxTemp = newSettings[key];
 					break;
 
 				default:
 					console.log("ERROR");
 					break;
 			}
-			console.log("return from update Furnsettings - " + returnStatus);
 		}
+	// end update furnace settings
 	};
 
 }

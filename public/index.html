@@ -51,6 +51,7 @@
 					    <li><a class="dropdown-item changeStateAlone" href="#">Home Alone</a></li>
 					    <li><a class="dropdown-item changeStateGuests" href="#">Guests</a></li>
 					    <li><a class="dropdown-item changeStateAway" href="#">Away</a></li>
+					    <li><a class="dropdown-item changeStateAway" href="#">Working From Home</a></li>
 				    	<li><a class="dropdown-item changeStateFurnForWater" href="#">Run Furnace For Hot Water 30</a></li>
 					    <li><a class="dropdown-item changeStateFurnForWater" href="#">Run Furnace For Hot Water 60</a></li>
 					  </ul>
@@ -198,8 +199,15 @@
 				    <h5 class="card-header my-card-header">Furnace Settings</h5>
 				    <button type="button" class="btn btn-outline-dark getFurnaceSettings" href="#">Show Setting</button>
 				    <button type="button" class="btn btn-outline-dark upDateFurnaceSettings" href="#">Update Settings</button>
+				    <button type="button" class="btn btn-outline-dark saveFurnaceSettings" href="#">Save Settings</button>
 				    <form>
 
+					  <div class="form-group row my-form-group">
+						    <label for="furnaceState" class="col-sm-6 col-form-label my-col-form-label" type="search">Furnace State</label>
+						    <div class="col-sm-4">
+						      <input type="furnaceState" class="form-control my-col-form-label" id="furnaceState" placeholder="furnace state">
+						    </div>
+					  </div>
 					  <div class="form-group row my-form-group">
 						    <label for="weekDayMorningOnTime" class="col-sm-6 col-form-label my-col-form-label" type="search">Weekday Morning On Time</label>
 						    <div class="col-sm-4">
@@ -450,6 +458,12 @@
 					    <label for="keepDataDays" class="col-sm-6 col-form-label my-col-form-label">Keep Data - Days</label>
 					    <div class="col-sm-4">
 					      <input type="keepDataDays" class="form-control my-col-form-label" id="keepDataDays" placeholder="1">
+					    </div>
+					  </div>
+					  <div class="form-group row my-form-group">
+					    <label for="runMode" class="col-sm-6 col-form-label my-col-form-label">Run Mode</label>
+					    <div class="col-sm-4">
+					      <input type="runMode" class="form-control my-col-form-label" id="runMode" placeholder="run mode">
 					    </div>
 					  </div>
 					</form>

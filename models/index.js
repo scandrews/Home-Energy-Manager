@@ -17,6 +17,8 @@ if (config.use_env_variable) {
   var sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
+console.log("in db index, passowrd - " + config.password);
+
 fs
   .readdirSync(__dirname)
   .filter(function(file) {

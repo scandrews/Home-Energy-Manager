@@ -146,11 +146,13 @@ exports.changeFurnaceState = function (toState){
 	// called by -	recirc controller manual pump change
 	//			 -  furnace controller
 	//			 - furnace controller for run for hot water
+	//           - route controller from change mode drop down
 exports.changeState = function (whichState, toWhatState){
 	console.log("in com cntrlr change which state - " + whichState);
 	console.log("com controller to what state - " + toWhatState);
 	switch (whichState){
 		case "changeHome-Away":
+			// the front requested a state change
 			console.log("In Com CNTRL change home/away, new state - " + toWhatState);
 			switch (toWhatState){
 				case "Run Furnace For Hot Water 30":
@@ -165,18 +167,27 @@ exports.changeState = function (whichState, toWhatState){
 					break;
 				case "Home":
 					console.log("in case Home");
+					furnaceController.changeHomeState("Home")
 					allStates.stateHomeAway = "Home";
 					break
 				case "Home Alone":
 					console.log("in case Home Alone");
-					allStates.stateHomeAway = "Home Alone";
+					furnaceController.changeHomeState("Home")
+					allStates.stateHomeAway = "Home";
+					break;
+				case "Working From Home":
+					console.log("in case Working From Home");
+					furnaceController.changeHomeState("Working From Home")
+					allStates.stateHomeAway = "Working From Home";
 					break;
 				case "Guests":
 					console.log("in case Guests");
+					furnaceController.changeHomeState("Guests")
 					break;
 				case "Away":
 					console.log("in case Away");
-					allStates.stateHomeAway = "away";
+					furnaceController.changeHomeState("Away")
+					allStates.stateHomeAway = "Away";
 					break;
 				case "back":
 					console.log("in com cntrl change state - BACK");
@@ -300,8 +311,8 @@ server.on("message", function (StuffIn, remote) {
 		tempF9 = CtoF(tempC9);
 	    console.log("Water Tank - 9 C & F - " + tempC9 + " " + tempF9);
 
-        recircContrl.checkRecirc(tempF4);
-	    data_access.saveTempData(tempF1, tempF2, tempF3, tempF4, tempFurnaceF, tempF6, tempF7, tempF8, tempF9, furnaceText);
+        recircContrl.checkRecirc(tempF4, allStates);
+	    data_access.saveTempData(tempF1, tempF2, tempF3, tempF4, tempFurnaceF, tempF6, tempF7, tempF8, tempF9, furnaceText, allStates);
 
     // f designates it as a flag packet
     // we will always get a flag packet before a temerature packet
@@ -312,6 +323,8 @@ server.on("message", function (StuffIn, remote) {
 		arduinoFurnaceState = StuffIn.toString("utf-8", 7, 8);
 		maxHouseTempArduino = StuffIn.toString("utf-8", 12, 16);
 
+//		Math.floor(number * adjust)
+		maxHouseTempArduino = Math.floor(maxHouseTempArduino * 100)/100;
 		console.log("whichSensor - " + whichSensorToSet);
 		console.log("redState - " + redState);
 		console.log("recircMotorState, motor - " + recircMotorState);  // motor state

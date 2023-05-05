@@ -29,6 +29,8 @@ var time = 2;
 var variableH = 6;
 var veriableM = 30;
 var variable = "6:30";
+
+furnaceSettings = {}; // global to keep seeting
 // ------------------------------------------------
 
 
@@ -92,27 +94,6 @@ $(".messageChartPipeTemps").on("click", function(event){
 	document.getElementById("div1").removeAttribute("display:none");
 	document.getElementById("div1").setAttribute("style", "display:block");
 
-//	var $this = $(".pipeTempsChartcontainer");
-	//if ($this.hasStyle("display:none")) {
-//		console.log("in the has class hidden");
-//		$this.removeAttribute("style", "display:none");
-//		$this.setAttribute("style", "display:block;");
-//		removeStyle("display:none").addStyle("display:block");
-	//};
-
-//		$(".pipeTempsChartcontainer").setAttribute("style", "display:block;");
-//
-
-
-	//var myDiv = document.getElementsByClassName(".pipeTempsChartcontainer");
-	//console.log("myDiv - " + myDiv[0]);
-	//console.log("myDiv - " + myDiv[1]);
-//	if ((".pipeTempsChartcontainer").classList.contains("hidden")) {
-//			$(".pipeTempsChartcontainer").removeClass("hidden").addClass("visible");
-
-//		} else {
-//			$(".pipeTempsChartcontainer").removeClass("visible").addClass("hidden");
-//		};
 
 	// to convert mysql timestamp
 	// https://stackoverflow.com/questions/3075577/convert-mysql-datetime-stamp-into-javascripts-date-format
@@ -216,7 +197,7 @@ $(".messageChartPipeTemps").on("click", function(event){
 					effect: 'ANIMATION_EXPAND_BOTTOM',
 					method: 'ANIMATION_STRONG_EASE_OUT',
 					sequence: 'ANIMATION_BY_NODE',
-					speed: 150,
+					speed: 15,
 				}
 			},
 
@@ -276,7 +257,7 @@ $(".messageChartOtherTemps").on("click", function(event){
 	// to convert mysql timestamp
 	// https://stackoverflow.com/questions/3075577/convert-mysql-datetime-stamp-into-javascripts-date-format
 
-	// get the pipe temperature data
+	// get the other temperature data
 	$.get('curTempHistory', (temps) => {
 		console.log("data back from other temperatures - ");
 		console.log(temps);
@@ -426,7 +407,7 @@ $(".messageChartOtherTemps").on("click", function(event){
 					method: 'ANIMATION_STRONG_EASE_OUT',
 					sequence: 'ANIMATION_BY_NODE',
 					// larger number is slower
-					speed: 25,
+					speed: 55,
 				}
 			},
 
@@ -661,46 +642,50 @@ $(".getFurnaceSettings").on("click", function(event){
 	event.preventDefault();
 	console.log("got the get furnace settings click");
 	$.get('furnaceSettings', (stuff) => {
+		console.log("here's the stuff I got back");
 		console.log(stuff);
-		$("#weekDayMorningOnTime").attr("placeholder", stuff.weekDayMorningOn);
-		$("#weekDayMorningMinTemperture").attr("placeholder", stuff.morningMinTempWeekDaySet);
-		$("#weekDayMorningMaxTemperture").attr("placeholder", stuff.morningMaxTempWeekDaySet);
-		$("#weekDayMidDayOnTime").attr("placeholder", stuff.weekDayDayOn);
-		$("#weekDayMidDayMinTemperture").attr("placeholder", stuff.middayMinTempWeekDaySet);
-		$("#weekDayMidDayMaxTemperture").attr("placeholder", stuff.middayMaxTempWeekDaySet);
-		$("#weekDayEveningOnTime").attr("placeholder", stuff.weekDayEveningOn);
-		$("#weekDayEveningMinTemperture").attr("placeholder", stuff.eveningMinTempWeekDaySet);
-		$("#weekDayEveningMaxTemperture").attr("placeholder", stuff.eveningMaxTempWeekDaySet);
-		$("#weekDayNightOnTime").attr("placeholder", stuff.weekDayNightOn);
-		$("#weekDayNightMinTemperture").attr("placeholder", stuff.nightMinTempWeekDaySet);
-		$("#weekDayNightMaxTemperture").attr("placeholder", stuff.nightMaxTempWeekDaySet);
+		var DIW = Object.assign(furnaceSettings, stuff); 
+		$("#furnaceState").attr("placeholder", stuff.state);
+		$("#weekDayMorningOnTime").attr("placeholder", stuff.weekDayMorningOnTime);
+		$("#weekDayMorningMinTemperture").attr("placeholder", stuff.WeekDayMorningMinTemp);
+		$("#weekDayMorningMaxTemperture").attr("placeholder", stuff.WeekDayMorningMaxTemp);
+		$("#weekDayMidDayOnTime").attr("placeholder", stuff.weekDayMiddayOnTime);
+		$("#weekDayMidDayMinTemperture").attr("placeholder", stuff.WeekDayMiddayMinTemp);
+		$("#weekDayMidDayMaxTemperture").attr("placeholder", stuff.WeekDayMiddayMaxTemp);
+		$("#weekDayEveningOnTime").attr("placeholder", stuff.weekDayEveningOnTime);
+		$("#weekDayEveningMinTemperture").attr("placeholder", stuff.WeekDayEveningMinTemp);
+		$("#weekDayEveningMaxTemperture").attr("placeholder", stuff.WeekDayEveningMaxTemp);
+		$("#weekDayNightOnTime").attr("placeholder", stuff.weekDayNightOnTime);
+		$("#weekDayNightMinTemperture").attr("placeholder", stuff.WeekDayNightMinTemp);
+		$("#weekDayNightMaxTemperture").attr("placeholder", stuff.WeekDayNightMaxTemp);
 
-		$("#weekEndMorningOnTime").attr("placeholder", stuff.weekEndMorningOn);
-		$("#weekEndMorningMinTemperture").attr("placeholder", stuff.morningMinTempWeekEndSet);
-		$("#weekEndMorningMaxTemperture").attr("placeholder", stuff.morningMaxTempWeekEndSet);
-		$("#weekEndMidDayOnTime").attr("placeholder", stuff.weekEndDayOn);
-		$("#weekEndMidDayMinTemperture").attr("placeholder", stuff.middayMinTempWeekEndSet);
-		$("#weekEndMidDayMaxTemperture").attr("placeholder", stuff.middayMaxTempWeekEndSet);
-		$("#weekEndEveningOnTime").attr("placeholder", stuff.weekEndEveningOn);
-		$("#weekEndEveningMinTemperture").attr("placeholder", stuff.eveningMinTempWeekEndSet);
-		$("#weekEndEveningMaxTemperture").attr("placeholder", stuff.eveningMaxTempWeekEndSet);
-		$("#weekEndNightOnTime").attr("placeholder", stuff.weekEndNightOn);
-		$("#weekEndNightMinTemperture").attr("placeholder", stuff.nightMinTempWeekEndSet);
-		$("#weekEndNightMaxTemperture").attr("placeholder", stuff.nightMaxTempWeekEndSet);
+		$("#weekEndMorningOnTime").attr("placeholder", stuff.weekEndMorningOnTime);
+		$("#weekEndMorningMinTemperture").attr("placeholder", stuff.WeekEndMorningMinTemp);
+		$("#weekEndMorningMaxTemperture").attr("placeholder", stuff.WeekEndMorningMaxTemp);
+		$("#weekEndMidDayOnTime").attr("placeholder", stuff.weekEndMiddayOnTime);
+		$("#weekEndMidDayMinTemperture").attr("placeholder", stuff.WeekEndMiddayMinTemp);
+		$("#weekEndMidDayMaxTemperture").attr("placeholder", stuff.WeekEndMiddayMaxTemp);
+		$("#weekEndEveningOnTime").attr("placeholder", stuff.weekEndEveningOnTime);
+		$("#weekEndEveningMinTemperture").attr("placeholder", stuff.WeekEndEveningMinTemp);
+		$("#weekEndEveningMaxTemperture").attr("placeholder", stuff.WeekEndEveningMaxTemp);
+		$("#weekEndNightOnTime").attr("placeholder", stuff.weekEndNightOnTime);
+		$("#weekEndNightMinTemperture").attr("placeholder", stuff.WeekEndNightMinTemp);
+		$("#weekEndNightMaxTemperture").attr("placeholder", stuff.WeekEndNightMaxTemp);
 		
-		$("#awayMinTemperture").attr("placeholder", stuff.awayMinTempSet);
-		$("#awayMaxTemperture").attr("placeholder", stuff.awayMaxTempSet);
+		$("#awayMinTemperture").attr("placeholder", stuff.awayMinTemp);
+		$("#awayMaxTemperture").attr("placeholder", stuff.awayMaxTemp);
 		
-		$("#whichSensor").attr("placeholder", stuff.currentSensorSet);
-		$("#currentMode").attr("placeholder", stuff.runModeSet);
+		$("#whichSensor").attr("placeholder", stuff.currentSensor);
+		$("#currentMode").attr("placeholder", stuff.runMode);
     });
 });
 
-// Update the recirculator settings
+// Update the furnace settings
 $(".upDateFurnaceSettings").on("click", function(event){
 	event.preventDefault();
 	console.log("got the update Furnace Settings click");
 	var newSettings = {
+		furnaceState: $("#furnaceState").val().trim(),
 		weekDayMorningOnTime: $("#weekDayMorningOnTime").val().trim(),
 		weekDayMorningMinTemp: $("#weekDayMorningMinTemperture").val().trim(),
 		weekDayMorningMaxTemp: $("#weekDayMorningMaxTemperture").val().trim(),
@@ -728,7 +713,19 @@ $(".upDateFurnaceSettings").on("click", function(event){
 		awayMinTemp: $("#awayMinTemperture").val().trim(),
 		awayMaxTemp: $("#awayMaxTemperture").val().trim(),
 	};
+
+	for (var key in newSettings){
+		if (newSettings[key] == ''){
+			console.log("nothing at - " + key)
+		}else {
+			console.log("At - " + key + " got - " + newSettings[key]);
+			furnaceSettings[key] = newSettings[key];
+		}
+	}
+
 	console.log(newSettings);
+	console.log("new furnace settings -");
+	console.log(furnaceSettings);
 
 //	var serverURL = "'http://" + serverIPAddress + ":2000/upDateRecircSettings'";
 	var serverURL =	currentLocation + "upDateFurnaceSettings";
@@ -736,6 +733,24 @@ $(".upDateFurnaceSettings").on("click", function(event){
 		url: serverURL,
 		type: "POST",
 		data: newSettings,
+		success: function(d) {
+			console.log("the post worked");
+			console.log(d);
+		}
+	})
+});
+
+// Save the furnace settings
+$(".saveFurnaceSettings").on("click", function(event){
+	event.preventDefault();
+	console.log("got the save Furnace Settings click");
+
+//	var serverURL = "'http://" + serverIPAddress + ":2000/upDateRecircSettings'";
+	var serverURL =	currentLocation + "saveFurnaceSettings";
+	$.ajax({
+		url: serverURL,
+		type: "POST",
+		data: furnaceSettings,
 		success: function(d) {
 			console.log("the post worked");
 			console.log(d);
@@ -763,6 +778,7 @@ $(".getGeneralSettings").on("click", function(event){
 		$("#ArduinoIPAddress").attr("placeholder", stuff.arduinoIPAddress);
 		$("#runMode").attr("placeholder", stuff.runMode);
 		$("#whichSensor").text(stuff.currentSensor);
+		$("#keepDataDays").text(stuff.keepDataDays);
     });
 });
 
@@ -778,7 +794,7 @@ $(".upDateGeneralSettings").on("click", function(event){
 		setMaxHouseTemp: $("#maxHouseTemp").val().trim(),
 		minFurnaceTemp: $("#minFurnaceTemp").val().trim(),
 		maxFurnaceTemp: $("#maxFurnaceTemp").val().trim(),
-//		whichSensor: $("#whichSensor").val().trim(),
+		whichSensor: $("#whichSensor").val().trim(),
 		serverIPAddress: $("#serverIPAddress").val().trim(),
 		arduinoIPAddress: $("#ArduinoIPAddress").val().trim(),
 		keepDataDays: $("#keepDataDays").val().trim(),
@@ -859,7 +875,7 @@ $(".messageShowURL").on("click", function(){
 
 // Handle the change home/away button
 // Don;t thing this is used
-$(".changeHomeAway").on("click", function(event){
+/*$(".changeHomeAway").on("click", function(event){
 	console.log("got the send change home/away click");
     $.ajax({
     	url: currentLocation + "sendMessage",
@@ -871,6 +887,7 @@ $(".changeHomeAway").on("click", function(event){
         }
     });
 });
+*/
 
 // Handle the state dropdown click
 $('#stateList li a').on('click', function(){

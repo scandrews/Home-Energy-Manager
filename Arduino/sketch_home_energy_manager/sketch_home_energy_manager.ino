@@ -50,8 +50,8 @@
   float pipeTempUpper = 110;
   int   whatToDo;
   float currentBedRmTemp;
-  float maxHouseTemp = 70;
-  float minHouseTemp = 65;
+  float maxHouseTemp = 68;
+  float minHouseTemp = 63;
   float houseTempF = 0;
   //float minFamilyRmTemp = 64;
   //float maxFamilyRmTemp = 68;

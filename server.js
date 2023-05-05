@@ -29,44 +29,49 @@ var runMode = 'run';
   runMode = process.argv[2];
   console.log("Run Mode - " + runMode);
 
+const routes = require('./controllers/routeController');
+const comControler = require ('./controllers/communicationsController');
+const furnController = require ('./controllers/furnaceController');
+const dbCntrl = require ('./controllers/databasecontroller');
+app.use("/", routes);
+
 // Sync Database
 models.sequelize
-  .sync({force: true})
+  .sync()
   .then(() => {
     // Listener
-
-    const routes = require('./controllers/routeController');
-    const comControler = require ('./controllers/communicationsController');
-    const furnController = require ('./controllers/furnaceController');
-    const dbCntrl = require ('./controllers/databasecontroller');
-
-    app.use("/", routes);
-
-
-    // kick off serial listener
-    comControler.serialComStuff();
-
-
-    // Set the arduino states on startup
-    comControler.sendMessageToArdunio("turnPumpOff", 70);
-    comControler.sendMessageToArdunio("furnaceTurnOff", 69);
-    comControler.sendMessageToArdunio("whichSensor", "familyroom");
-    //comControler.sendMessageToArdunio("changeHouseMinTemp", 66);
-    comControler.sendMessageToArdunio("changeHouseMaxTemp", 69);
-    furnController.changeFurnState("off");
-    console.log("DOES THIS FUCKER RUN EVERY TIME???");
-
     //app.listen(PORT, function() {
     app.listen(PORT, () => {
-    console.log("App listening on PORT: " + PORT);
+      console.log("App listening on PORT: " + PORT);
     });
     console.log('Connected to the Database');
-    dbCntrl.initRecircSettings();
+
+    // set up our default values
+    dbCntrl.initSettings();
+    // kick off serial listener   ** TURN THIS ON WHEN LOADING NEW CODE **
+    //comControler.serialComStuff();
+    console.log("DOES THIS FUCKER RUN EVERY TIME???");
+
   })
   .catch((err) => {
-    console.log(err, 'Something went wrong with the Database Update!');
+    console.log('Something went wrong with the Database Update!');
+    console.log(err);
   });
 
+
+setTimeout(initStuff, 8000);
+
+function initStuff (){
+
+    // Set the arduino states on startup
+    //comControler.sendMessageToArdunio("turnPumpOff", 70);
+    //comControler.sendMessageToArdunio("furnaceTurnOff", 69);
+    comControler.sendMessageToArdunio("whichSensor", "bedroom");
+    //comControler.sendMessageToArdunio("changeHouseMaxTemp", 66);
+    //furnController.changeFurnState("off");
+
+  console.log("* * * * * OK this is really fucked * * * * * *")
+}
 
 
 // Listener for seperate host server
