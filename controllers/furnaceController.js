@@ -94,7 +94,7 @@ exports.runFurnForWater = function(howLong){
 	keepOldSensor = currentArduinoOffSensor;
 	communicationController.sendMessageToArdunio("whichSensor", "none");
 	console.log("Furnace CNTRL run for hot water for  - " + howLong);
-	countRunForWater = howLong * 1;
+	countRunForWater = howLong * 3000;
 	console.log("In start Run For Water");
 	dbController.setFurnaceChange("FurnOnForWater");
 	communicationController.sendMessageToArdunio("furnaceTurnOn", 69);
@@ -168,7 +168,7 @@ exports.changeFurnState = function (newState){
 	stateFurnace = newState;
 };
 
-//  called from the route controller get general settings
+// called from the route controler get general settings
 exports.getFurnaceSettings = function (req, res){
 	furnaceSettings.currentSensor = currentArduinoOffSensor;
 	//furnaceSettings.minHouseTemp = minHouseTemp;
@@ -177,10 +177,10 @@ exports.getFurnaceSettings = function (req, res){
 };
 
 // called from the route controller get current furnace settings
-exports.getAllFurnSettings = function (req, res){
+exports.getAllFurnSettings = function (fn){
 	console.log("furn cntrl get all furnace settings - ");
 	console.log(furnaceSettings);
-	res.send (furnaceSettings);
+	fn (furnaceSettings);
 };
 
 // within furnace run time, check if we should start the furnace

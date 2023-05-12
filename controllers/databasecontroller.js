@@ -457,8 +457,8 @@ connection.connect((err) => {
     tempSum8 = tempSum8 + temp8;
     tempSum9 = tempSum9 + temp9;
     tempcount++;
-    console.log("furn cntrl temp count - " + tempcount);
-    console.log("furn cntrl num readings to average - " + numOfReadingsToAvg);
+    console.log("db cntrl temp count - " + tempcount);
+    console.log("db cntrl num readings to average - " + numOfReadingsToAvg);
 
     if (tempcount == numOfReadingsToAvg) {
       avgTemp1 = parseFloat((tempSum1/tempcount).toFixed(1));
@@ -517,8 +517,8 @@ connection.connect((err) => {
               })
             .then (( result ) => {
               console.log("I think we inserted new temperatures into the db");
-              return (result);
               localFurnAction = "noChange";
+              return (result);
             })
             .catch ((err) =>{
               console.log("ERROR IN THE SAVE TEMPS " + err)

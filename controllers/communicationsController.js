@@ -36,7 +36,7 @@ const { ReadlineParser } = require('@serialport/parser-readline')
 var dgram = require("dgram");
 var server = dgram.createSocket('udp4');
 var PORT = 6000;
-var arduinoAddress = '192.168.1.4';
+var arduinoAddress = '192.168.1.5';
 var arduinoPort = '8888';
 var serverAddress = {};
 var tempIPs = [];
@@ -221,6 +221,7 @@ exports.changeState = function (whichState, toWhatState){
 	}
 };
 
+// Called from where
 exports.getState = function (){
 	console.log("In con controller get state - ");
 	console.log(allStates);

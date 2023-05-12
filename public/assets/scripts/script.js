@@ -765,21 +765,30 @@ $(".saveFurnaceSettings").on("click", function(event){
 $(".getGeneralSettings").on("click", function(event){
 	event.preventDefault();
 	console.log("got the get general settings click");
-	$.get('generalSettings', (stuff) => {
-		console.log(stuff);
-		serverIPAddress = stuff.serverIPAddress;
-		$("#tempSaveInterval").attr("placeholder", stuff.tempSaveInterval);
-		$("#dataPointsInGraph").attr("placeholder", stuff.numDataPointsToGraph);
-		$("#minHouseTemp").attr("placeholder", stuff.minHouseTemp);
-		$("#maxHouseTemp").attr("placeholder", stuff.maxHouseTemp);
-		$("#minFurnaceTemp").attr("placeholder", stuff.minFurnaceTemp);
-		$("#maxFurnaceTemp").attr("placeholder", stuff.maxFurnaceTemp);
-		$("#serverIPAddress").attr("placeholder", stuff.serverIPAddress);
-		$("#ArduinoIPAddress").attr("placeholder", stuff.arduinoIPAddress);
-		$("#runMode").attr("placeholder", stuff.runMode);
-		$("#whichSensor").text(stuff.currentSensor);
-		$("#keepDataDays").text(stuff.keepDataDays);
-    });
+
+	var serverURL =	currentLocation + "generalSettings";
+	$.ajax({
+		url: serverURL,
+		type: "get",
+		success: function(stuff) {
+			console.log("the post worked");
+
+//	$.get('generalSettings', (stuff) => {
+			console.log(stuff);
+			//serverIPAddress = stuff.serverIPAddress;
+			$("#tempSaveInterval").attr("placeholder", stuff.tempSaveInterval);
+			$("#dataPointsInGraph").attr("placeholder", stuff.numDataPointsToGraph);
+			$("#minHouseTemp").attr("placeholder", stuff.minHouseTemp);
+			$("#maxHouseTemp").attr("placeholder", stuff.maxHouseTemp);
+			$("#minFurnaceTemp").attr("placeholder", stuff.minFurnaceTemp);
+			$("#maxFurnaceTemp").attr("placeholder", stuff.maxFurnaceTemp);
+			$("#serverIPAddress").attr("placeholder", stuff.serverIPAddress);
+			$("#ArduinoIPAddress").attr("placeholder", stuff.arduinoIPAddress);
+			$("#runMode").attr("placeholder", stuff.runMode);
+			$("#keepDataDays").attr("placeholder", stuff.keepDataDays);
+			$("#whichSensor").text(stuff.currentSensor);
+		}
+	});
 });
 
 

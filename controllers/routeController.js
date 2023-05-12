@@ -131,12 +131,13 @@ app.post('/upDateRecircSettings', function (req, res) {
 	});
 });
 
-var getCurrentGeneralSettings = function (){
+var getCurrentGeneralSettings = function (req, res){
 	var IPAddresses = comControler.getIPAddresses();
 	//var serverIPAddress = comControler.sendMessageToArdunio("getServerIPAddress", "x")
 	var dbSettings = dbaccess.getdbSettings();
 	var furnSettings = furnaceController.getFurnaceSettings();
 	var states = comControler.getState();
+	console.log("in route controller getCurrentGeneralSettings:")
 	console.log(IPAddresses);
 	console.log(dbSettings);
 		var generalSettings = {
@@ -243,9 +244,10 @@ var getCurrentFurnaceSettings = function (){
 };
 */
 app.get('/furnaceSettings', (req, res) => {
-	console.log("in route controler get general settings");
-	var allFurnSettings = furnaceController.getAllFurnSettings();
-	res.send (allFurnSettings)
+	console.log("in route controler get general settings - if this is really it");
+	furnaceController.getAllFurnSettings(function (allFurnSettings){
+		res.send (allFurnSettings)
+	});
 });
 
 
