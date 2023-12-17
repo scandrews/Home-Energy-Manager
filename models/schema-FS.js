@@ -1,3 +1,4 @@
+/*
 module.exports = (sequelize, Datatypes) => {
 
 	//import { DataTypes } from '@sequelize/core';
@@ -112,12 +113,6 @@ module.exports = (sequelize, Datatypes) => {
 		awayMaxTemp: {
 			type: Datatypes.FLOAT,
 			defaultValue: 61
-		}
-	});
-	return furnaceSettings
-};
-
-/*
 		},
 		createdAt: {
 			type: Datatypes.DATE,
@@ -128,4 +123,9 @@ module.exports = (sequelize, Datatypes) => {
 			type: Datatypes.DATE,
 			allowNull: false,
 			defaultValue: Datatypes.NOW
+		}
+	});
+	return furnaceSettings
+};
+
 */

@@ -1,9 +1,10 @@
 {
   "development": {
-    "username": "root",
+    "user": "root",
     "password": "RutBud17",
     "database": "home_control_db",
     "host": "localhost",
+    "port": 3306,
     "dialect": "mysql"
   },
   "test": {
@@ -14,10 +15,11 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "steve",
-    "password": "b",
+    "user": "steve",
+    "password": "RutBud17",
     "database": "home_control_db",
     "host": "localhost",
+    "port": 3306,
     "dialect": "mysql"
   }
 }

@@ -1,12 +1,12 @@
-//  Database controller all interaction with the database are here
+//  Database controller - all interaction with the database are here
 
 const mysql = require('mysql2');
 var comController = require ('./communicationsController');
 const recircCNTRL = require ('./recircController');
 const furnaceController = require ('./furnaceController');
 
-var db = require("../models");
-const { Op } = require("sequelize");
+//var db = require("../models");
+//const { Op } = require("sequelize");
 
 // for troubleshooting run for water
     var setFurnChngCounter = 0;
@@ -57,7 +57,7 @@ var test = "Test";
 
 var furnChangeState = 'NULL';
 var localFurnAction = "noChange";
-var keepDataTime = 1;  //days
+var keepDataTime = 2;  //days
 
 // timer
 var myVar = setInterval(myTimer, 1000);
@@ -111,11 +111,12 @@ exports.upDateFurnState = function (newState){
 
 exports.upDateTempSaveIterval = function(newDelay) {
   saveDelayIntervalMinutes = newDelay;
-  saveDelayIntervalSeconds = saveDelayIntervalMinutes * 30;
+  saveDelayIntervalSeconds = saveDelayIntervalMinutes * 60;
   currentSaveDelayCount = saveDelayIntervalSeconds
   return ("Saved New Temp Save Interval");
 };
 
+// 
 exports.updateNumDataPointsToChart = function(newDataPoints) {
   numDataPointsReadGen = newDataPoints;
   return ("sucessfuly updated num data points to chart");
@@ -133,230 +134,241 @@ exports.changeKeepDataTime = function(newTime){
   return(keepDataTime)
 };
 
-/*var connection;
+var connection;
 
-if (process.env.JAWSDB_URL) {
-  connection = mysql.createConnection(process.env.JAWSDB_URL);
-  } else {
-    connection = mysql.createConnection({
-      host: 'localhost',
-      port: 3306,
-      user: 'root',
-      password: 'RutBud17',
-      database: 'home_control_db'
-    });
-  };
+connection = mysql.createConnection({
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    password: 'RutBud17',
+    database: 'home_control_db'
+});
 
-connection.connect((err) => {
+connection.connect(function (err) {
   if (err) throw err;
-*/
+  console.log("connected to database");
 
+
+
+/*
   //populate the database
   exports.initSettings = function(){
       console.log("* * * in db cntrlr init ALL settings * * *");
-
-      db.recirculatorSettings.destroy({ truncate: true });
-      db.furnaceSettings.destroy({ truncate: true });
-
-      db.recirculatorSettings.create(
-//    connection.query("INSERT INTO recirculatorSettings SET ?",
-        {
-            pipeTempOn: 100,
-            pipeTempOff: 110,
-            weekDayOn1: "7:30",
-            weekDayOff1: "7:35",
-            weekDayOn2: "18:00",
-            weekDayOff2: "18:30",
-            weekEndOn1: "8:30",
-            weekEndOff1: "8:35",
-            weekEndOn2: "20:00",
-            weekEndOff2: "20:30"
-        })
-        .then ((result) => {
-          console.log("Did the fucker work - " + result)
-        })
-        .catch ((err) => {
-            if (err) {
-              console.log("Got a DB error in init recirc settings FIRST");
-              console.log (err);
-        }
-        })
-
+      var sqlcode = "";
+        //db.recirculatorSettings.destroy({ truncate: true });
+        //db.furnaceSettings.destroy({ truncate: true });
+        //db.recirculatorSettings.create(
+      sqlcode = "INSERT INTO recirculatorSettings (pipeTempOn, pipeTempOff, weekDayOn1, weekDayOff1, weekdayOn2, weekDayOff2, weekEndOn1, weekEndOff1, weekEndOn2, weekEndOff2) values (100, 110, '6:30', '8:30', '16:30', '22:30', '8:30', '11:00', '14:30', '23:30')";
+      connection.query (sqlcode, (err, result) => {
+         if (err) throw (error)
+            console.log("db controller init settings, insert recirculator, result - ");
+            console.log(result);
+      });
       console.log("got through the first init, now on the first furnace init");
-      db.furnaceSettings.create(
-  //        connection.query("insert into furnaceSettings set ?",{
-          {
-            state: "Home",
-            weekDayMorningOnTime: "06:00",
-            WeekDayMorningMinTemp: 65,
-            WeekDayMorningMaxTemp: 68,
-            weekDayMiddayOnTime: "09:30",
-            WeekDayMiddayMinTemp: 60,
-            WeekDayMiddayMaxTemp: 63,
-            weekDayEveningOnTime: "16:30",
-            WeekDayEveningMinTemp: 65,
-            WeekDayEveningMaxTemp: 68,
-            weekDayNightOnTime: "23:30",
-            WeekDayNightMinTemp: 62,
-            WeekDayNightMaxTemp: 65,
-      
-            weekEndMorningOnTime: "07:00",
-            WeekEndMorningMinTemp: 66,
-            WeekEndMorningMaxTemp: 69,
-            weekEndMiddayOnTime: "12:00",
-            WeekEndMiddayMinTemp: 64,
-            WeekEndMiddayMaxTemp: 67,
-            weekEndEveningOnTime: "16:00",
-            WeekEndEveningMinTemp: 66,
-            WeekEndEveningMaxTemp: 69,
-            weekEndNightOnTime: "23:30",
-            WeekEndNightMinTemp: 62,
-            WeekEndNightMaxTemp: 65,
-      
-            awayMinTemp: 58,
-            awayMaxTemp: 61
+
+        //db.furnaceSettings.create(
+      sqlcode = "INSERT into furnaceSettings (state, weekDayMorningOnTime, WeekDayMorningMinTemp, WeekDayMorningMaxTemp, weekDayMiddayOnTime, WeekDayMiddayMinTemp, WeekDayMiddayMaxTemp, weekDayEveningOnTime, WeekDayEveningMinTemp, WeekDayEveningMaxTemp, weekDayNightOnTime, WeekDayNightMinTemp, WeekDayNightMaxTemp, weekEndMorningOnTime, WeekEndMorningMinTemp, WeekEndMorningMaxTemp, weekEndMiddayOnTime, WeekEndMiddayMinTemp, WeekEndMiddayMaxTemp, weekEndEveningOnTime, WeekEndEveningMinTemp, WeekEndEveningMaxTemp, weekEndNightOnTime, WeekEndNightMinTemp, WeekEndNightMaxTemp, awayMinTemp, awayMaxTemp) values('Home', '06:00', 65, 68, '09:30', 60, 63, '16:30', 65, 68, '23:30', 62, 65, '07:00', 66, 69, '12:00', 64, 67, '16:00', 66, 69, '23:30', 62, 65, 58, 61)";
+      connection.query (sqlcode, (err, result) => {
+          if (err) throw (err)
+          console.log("db controller init settings insert into furnacesettings FIRST");
+          console.log (result);
           })
-        .then ((result) => {
-            console.log("got the second then" + result);
-          })
-        .catch ((err) => {
-            console.log("Got a DB error in init furnace settings SECOND");
-            console.log (err);
-        });
-
-        //connection.query("insert into furnaceSettings set ?",{
-        db.furnaceSettings.create(
-        {
-          state: "Guest",
-          weekDayMorningOnTime: "06:00",
-          WeekDayMorningMinTemp: 65,
-          WeekDayMorningMaxTemp: 68,
-          weekDayMiddayOnTime: "10:30",
-          WeekDayMiddayMinTemp: 62,
-          WeekDayMiddayMaxTemp: 65,
-          weekDayEveningOnTime: "16:00",
-          WeekDayEveningMinTemp: 65,
-          WeekDayEveningMaxTemp: 68,
-          weekDayNightOnTime: "23:30",
-          WeekDayNightMinTemp: 62,
-          WeekDayNightMaxTemp: 65,
-
-          weekEndMorningOnTime: "07:00",
-          WeekEndMorningMinTemp: 66,
-          WeekEndMorningMaxTemp: 69,
-          weekEndMiddayOnTime: "12:00",
-          WeekEndMiddayMinTemp: 65,
-          WeekEndMiddayMaxTemp: 68,
-          weekEndEveningOnTime: "16:00",
-          WeekEndEveningMinTemp: 66,
-          WeekEndEveningMaxTemp: 69,
-          weekEndNightOnTime: "23:30",
-          WeekEndNightMinTemp: 64,
-          WeekEndNightMaxTemp: 67,
-
-          awayMinTemp: 58,
-          awayMaxTemp: 61
-          })
-          .then ((result) => {
-              console.log("got the **  WTF **  third then" + result);
-            })
-          .catch ((err) => {
-              console.log("Got a DB error in init furnace settings THIRD");
-              console.log (err);
-          });
-
-        db.furnaceSettings.create(
-        {
-          state: "Working From Home",
-          weekDayMorningOnTime: "06:00",
-          WeekDayMorningMinTemp: 65,
-          WeekDayMorningMaxTemp: 68,
-          weekDayMiddayOnTime: "10:30",
-          WeekDayMiddayMinTemp: 64,
-          WeekDayMiddayMaxTemp: 66,
-          weekDayEveningOnTime: "16:00",
-          WeekDayEveningMinTemp: 65,
-          WeekDayEveningMaxTemp: 68,
-          weekDayNightOnTime: "23:30",
-          WeekDayNightMinTemp: 62,
-          WeekDayNightMaxTemp: 65,
-
-          weekEndMorningOnTime: "07:00",
-          WeekEndMorningMinTemp: 66,
-          WeekEndMorningMaxTemp: 69,
-          weekEndMiddayOnTime: "12:00",
-          WeekEndMiddayMinTemp: 65,
-          WeekEndMiddayMaxTemp: 68,
-          weekEndEveningOnTime: "16:00",
-          WeekEndEveningMinTemp: 66,
-          WeekEndEveningMaxTemp: 69,
-          weekEndNightOnTime: "23:30",
-          WeekEndNightMinTemp: 64,
-          WeekEndNightMaxTemp: 67,
-
-          awayMinTemp: 58,
-          awayMaxTemp: 61
-          })
-          .then ((result) => {
-              console.log("got the **  WTF **  third then" + result);
-            })
-          .catch ((err) => {
-              console.log("Got a DB error in init furnace settings THIRD");
-              console.log (err);
-          });
-
 
   // end init settings
-  };
+  }
+
+
+              //db.furnaceSettings.create(
+        connection.query(insert into furnaceSettings
+          (
+              state,
+              weekDayMorningOnTime,
+              WeekDayMorningMinTemp,
+              WeekDayMorningMaxTemp,
+              weekDayMiddayOnTime,
+              WeekDayMiddayMinTemp,
+              WeekDayMiddayMaxTemp,
+              weekDayEveningOnTime,
+              WeekDayEveningMinTemp,
+              WeekDayEveningMaxTemp,
+              weekDayNightOnTime,
+              WeekDayNightMinTemp,
+              WeekDayNightMaxTemp,
+
+              weekEndMorningOnTime,
+              WeekEndMorningMinTemp,
+              WeekEndMorningMaxTemp,
+              weekEndMiddayOnTime,
+              WeekEndMiddayMinTemp,
+              WeekEndMiddayMaxTemp,
+              weekEndEveningOnTime,
+              WeekEndEveningMinTemp,
+              WeekEndEveningMaxTemp,
+              weekEndNightOnTime,
+              WeekEndNightMinTemp,
+              WeekEndNightMaxTemp,
+
+              awayMinTemp,
+              awayMaxTemp
+          ),
+          values(
+
+              "Guest",
+              "06:00",
+              65,
+              68,
+              "10:30",
+              62,
+              65,
+              "16:00",
+              65,
+              68,
+              "23:30",
+              62,
+              65,
+
+              "07:00",
+              66,
+              69,
+              "12:00",
+              65,
+              68,
+              "16:00",
+              66,
+              69,
+              "23:30",
+              64,
+              67,
+
+              58,
+              61
+          ), (err, result) => {
+                if (err) throw (error)
+            })
+
+        //db.furnaceSettings.create(
+        connection.query("insert into furnaceSettings set ?",
+          (
+              state,
+              weekDayMorningOnTime,
+              WeekDayMorningMinTemp,
+              WeekDayMorningMaxTemp,
+              weekDayMiddayOnTime,
+              WeekDayMiddayMinTemp,
+              WeekDayMiddayMaxTemp,
+              weekDayEveningOnTime,
+              WeekDayEveningMinTemp,
+              WeekDayEveningMaxTemp,
+              weekDayNightOnTime,
+              WeekDayNightMinTemp,
+              WeekDayNightMaxTemp,
+
+              weekEndMorningOnTime,
+              WeekEndMorningMinTemp,
+              WeekEndMorningMaxTemp,
+              weekEndMiddayOnTime,
+              WeekEndMiddayMinTemp,
+              WeekEndMiddayMaxTemp,
+              weekEndEveningOnTime,
+              WeekEndEveningMinTemp,
+              WeekEndEveningMaxTemp,
+              weekEndNightOnTime,
+              WeekEndNightMinTemp,
+              WeekEndNightMaxTemp,
+
+              awayMinTemp,
+              awayMaxTemp
+
+          ),
+          values(
+
+              "Working From Home",
+              "06:00",
+              65,
+              68,
+              "10:30",
+              64,
+              66,
+              "16:00",
+              65,
+              68,
+              "23:30",
+              62,
+              65,
+
+              "07:00",
+              66,
+              69,
+              "12:00",
+              65,
+              68,
+              "16:00",
+              66,
+              69,
+              "23:30",
+              64,
+              67,
+
+              58,
+              61
+          )
+          .then ((result) => {
+              console.log("got the **  WTF **  third then in init furnace settings" + result);
+            })
+          .catch ((err) => {
+              console.log("Got a DB error in init furnace settings THIRD");
+              console.log (err);
+          })
+      );
+          */
+
 
   // get the recirculator settings for the recirc controller
+  //exports.recircSettingsRecirCNTRL = function (what, fn) {
   exports.recircSettingsRecirCNTRL = function (what, fn) {
-    console.log("dbase controoler get recirc settings from recirs controller");
-    db.recirculatorSettings.findAll({
-      where: { id: 1 }
-    })
-      .then ((result) => {
-          console.log("db controller, get recirc settings for the recirc controller - ");
-          console.log(result[0].dataValues);
-          console.log(result[0].dataValues.pipeTempOn);
-          fn (result[0].dataValues);
-        })
-      .catch ((err) => {
-          console.log("Got a DB error in recirc setting for the recirc cntrlr");
-          console.log (err);
-      });
+    console.log("dbase controoler get recirc settings from recirs controller - " + what);
+    //exports.recircSettingsRecirCNTRL = function (){
 
-//    connection.query("SELECT * FROM recirculatorSettings", (err, result) => {
-//      return ( fn ( result ));
-//    });
+//    var sqltest = "SELECT * FROM recirculatorSettings";
+//    connection.query (sqltest, function (err, result) {
+    connection.query ("SELECT * FROM recirculatorSettings", function (err, result) {
+          if (err) throw error;
+          console.log(result);
+          //return (result);
+          fn (result);
+    })
   };
 
   // get the recirculator settings for the front end
   exports.recircSettingsFrontEnd = function (req, res) {
     console.log("dbase controoler get recirc settings from the front end");
-    db.recirculatorSettings.findAll({})
-      .then ((result) => {
-          console.log("db controller, get setting for the front end - " + result);
-          res.send (result);
-        })
-      .catch ((err) => {
-          console.log("Got a DB error in get recird setting for the front end");
-          console.log (err);
+    connection.query("SELECT * FROM recirculatorSettings", function (err, result){
+        if (err) throw err;
+        console.log("***   db controller, get setting for the front end -    ****");
+        console.log(result);
+        res.send (result);
+    })
+          //    db.recirculatorSettings.findAll({})
+          /*      .then ((result) => {
+                })
+                .catch ((err) => {
+                    console.log("Got a DB error in get recird setting for the front end");
+                    console.log (err);
 
-//    connection.query("SELECT * FROM recirculatorSettings", (err, result) => {
-//        res.send( result );
-    });
+          //        res.send( result );
+                })
+          */
   };
 
   // retrieve the stored temp data for display
   exports.getTempData = function (req, res) {
     console.log("in get temp data  yyyoooo");
-    //var temp = "SELECT * FROM temperatures ORDER By id DESC LIMIT ";
-    //var oursql = temp.concat(numDataPointsReadGen);
-    //console.log(oursql);
-    db.temperatures.findAll({
-      order:[['id', 'DESC']]
-    })
+    var temp = "SELECT * FROM temperatures ORDER By id DESC LIMIT ";
+    var oursql = temp.concat(numDataPointsReadGen);
+    console.log(oursql);
+    //db.temperatures.findAll({
+      //order:[['id', 'DESC']]
+/*    })
       .then ((result) => {
           console.log("got the third then" + result);
           res.send (result);
@@ -364,30 +376,32 @@ connection.connect((err) => {
       .catch ((err) => {
           console.log("Got a DB error in init furnace settings THIRD");
           console.log (err);
-
-//    connection.query("SELECT * FROM recirculatorSettings", (err, result) => {
-//        res.send( result );
+    connection.query("SELECT * FROM recirculatorSettings", (err, result) => {
+        res.send( result );
     });
+*/
 
-/*      
+      
     connection.query( oursql, (err, result) => {
         //console.log(result);
         if (err) {
           console.log("Got a DB error in getTempData (other)");
           console.log (err);
           };
+      console.log ("in db controller getTempData, result - ")
+      console.log (result);
       res.send( result );
     });
-*/
+
   };
 
   // retrieve the pipe temperature data
   exports.getPipeTempData = function (req, res) {
     console.log("in dbcontroler get pipe data");
-    //var temp = "SELECT * FROM recirculatorHistory ORDER By id DESC LIMIT ";
-    //var oursql = temp.concat(numDataPointsReadPipe);
-    //console.log(oursql);
-    db.recirculatorHistory.findAll({
+    var temp = "SELECT * FROM recirculatorHistory ORDER By id DESC LIMIT ";
+    var oursql = temp.concat(numDataPointsReadPipe);
+    console.log(oursql);
+    /*db.recirculatorHistory.findAll({
       order:[['id', 'DESC']],
       limit: [[numDataPointsReadPipe]]
     })
@@ -399,15 +413,15 @@ connection.connect((err) => {
         console.log("Got a DB error in init furnace settings THIRD");
         console.log (err);
       })
-
-/*    connection.query( oursql, (err, result) => {
+*/
+    connection.query( oursql, (err, result) => {
         console.log(result);
         if (err) {
           console.log("Got a DB error in getPipeTempData");
           console.log (err);
           };
         res.send ( result );
-    });*/
+    });
   };
 
 
@@ -485,56 +499,48 @@ connection.connect((err) => {
     };
 
       //      console.log("Current Save Delay Count - " + currentSaveDelayCount);
-      if (currentSaveDelayCount <= 0){
+    if (currentSaveDelayCount <= 0){
 
-          console.log("* * * * * Saving Temp Data * * * * * * ");
-          //var oldestRecordTime = '';
+        console.log("* * * * * Saving Temp Data * * * * * * ");
+        // remove the oldest record if older than keep time - days
+        console.log("Keep Data Time - " + keepDataTime);
+        //let timeDifference = 86400000 * keepDataTime;
+        //console.log("timeDifference - " + timeDifference);
+        var currentTime = new Date();
+        console.log ("current time - " + currentTime);
+        var timehere = currentTime - keepDataTime;
+        console.log("timehere - " + timehere);
+        //console.log("try this time - " + UNIX_TIMESTAMP(DATE_SUB(NOW())));
 
-          // remove the oldest record if older than keep time
-          let timeDifference = 86400000 * keepDataTime;
-          console.log("Keep Data Time - " + keepDataTime);
-          db.temperatures.destroy({
+        var sqltemp = "DELETE FROM temperatures WHERE createdAt < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL " + keepDataTime +" DAY))";
+        //WHERE search_date < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 180 DAY))
+        console.log (sqltemp);
+        connection.query (sqltemp, function (err, result){
+          if (err) throw err;
+          /* db.temperatures.destroy({
                 where: {
                     createdAt: { [Op. lt]: (new Date() -  timeDifference) }
                 }
           })
-
-          .then ((result) => {
-
-            console.log("in the .then after the destroy");
-            db.temperatures.create(
-              {
-                tempWoodStove:     avgTemp1,
-                tempFamilyRoom:    avgFamTemp,
-                tempBedRoom:       avgTemp3,
-                tempPipe:          avgTemp4,
-                tempFurnace:       avgTemp5,
-                tempDesk:          avgTemp6,
-                tempOutDoorsSun:   avgTemp7,
-                tempOutDoorsShade: avgTemp8,
-                tempWaterTank:     avgTemp9,
-                furnaceOnOff:      localFurnAction
+          */
+            console.log("in the .then after the destroy, result - ");
+            console.log(result);
+            var sqlhere = "INSERT INTO temperatures (tempWoodStove, tempFamilyRoom, tempBedRoom, tempPipe, tempFurnace, tempDesk, tempOutDoorsSun, tempOutDoorsShade, tempWaterTank, furnaceOnOff) VALUES (" + avgTemp1 + "," + avgFamTemp + "," + avgTemp3 + "," + avgTemp4 + "," + avgTemp5 + "," + avgTemp6 + "," + avgTemp7 + "," + avgTemp8 + "," + avgTemp9 + ",'" + localFurnAction + "')"
+            console.log (sqlhere);
+            localFurnAction = "noChange";
+            connection.query (sqlhere, function (err, result) {
+                if (err) throw err
+                return (result);
               })
-            .then (( result ) => {
-              console.log("I think we inserted new temperatures into the db");
-              localFurnAction = "noChange";
-              return (result);
-            })
-            .catch ((err) =>{
-              console.log("ERROR IN THE SAVE TEMPS " + err)
-            })
-          })
-          .catch (( err ) => {
-            console.log ("So ERROR on the delete old record " + err)
-          })
 
-                // NOTE:  assignment of temps to locations
-                // end write temperatures to the database
-        currentSaveDelayCount = saveDelayIntervalSeconds;
-        console.log ("just set the current save delay count to the interval - " + currentSaveDelayCount)
+                  // NOTE:  assignment of temps to locations
+                  // end write temperatures to the database
+            currentSaveDelayCount = saveDelayIntervalSeconds;
+            console.log ("just set the current save delay count to the interval - " + currentSaveDelayCount)
+        })
 
-        // end the if save delay count
-      };
+      // end the if save delay count
+    };
 
   // end save temp data
   };
@@ -542,13 +548,23 @@ connection.connect((err) => {
   exports.savePipeTemp = function (action, pipeTemp){
     console.log("In save pipe temp" + action + " , " + pipeTemp);
 
-/*    var temp = "DELETE FROM recirculatorHistory WHERE recircHist < now() - interval ";
-    var oursql = temp.concat(delayDays);
+    var temp = "DELETE FROM recirculatorHistory WHERE recircHist < now() - interval ";
+    var oursql = temp.concat(keepDataTime);
     var finalSQL = oursql.concat(" day");
     console.log(finalSQL);
+    connection.query(finalSQL, function (err){
+      if (err) throw err
 
-    let timeDifference = currentTimeHere - (86400000 * keepDataTime);
-*/    // delete the oldest record if < keepDataTime
+      var curSQL = "INSERT INTO recirculatorHistory (pipetemperatures, recircOnOff) VALUES (" + pipeTemp + ", '" + action + "')"
+        connection.query(curSQL, function (err){
+          if (err) throw err;
+        })
+
+    })
+
+
+/*    let timeDifference = currentTimeHere - (86400000 * keepDataTime);
+    // delete the oldest record if < keepDataTime
     let delayDays = keepDataTime + .5;
     db.recirculatorHistory.destroy({
         where: {
@@ -572,8 +588,8 @@ connection.connect((err) => {
         console.log("Got a DB error in savePipeTemp");
         console.log (err);
       })
-
     })
+*/
   }
 
 /*
@@ -634,6 +650,16 @@ connection.connect((err) => {
     console.log("in dbcontroller get furnace settings");
     console.log("Current state - " + HomeState);
 
+    var sqltest = "SELECT * FROM furnaceSettings WHERE state IN ('" + HomeState + "')";
+        connection.query (sqltest, function (err, result) {
+          if (err) throw err;
+          console.log("just back from the db, result -")
+          console.log(result);
+          return ( fn (result) )
+      });
+  };
+
+/*
     db.furnaceSettings.findAll(
         {
           where: {state : HomeState }
@@ -652,6 +678,7 @@ connection.connect((err) => {
         console.log("ERROR IN THE SAVE TEMPS " + err)
       })
   };
+*/
 
 // save new settings from the front end to the database, overwriting existing settings
 // or saving under a new name if given
@@ -686,4 +713,5 @@ connection.connect((err) => {
 
 
 // end connection
+});
 

@@ -2,7 +2,7 @@
 
 ## Overview
 The home energy manager controls the oil furnace and the hot water recirculator.
-The connection to the furnace is between the temperature sensor and the motor control unit so as to not interrupt the norma cycling up and down of the blower, while providing the ability to maintain a boiler tank temperature as logic determines.  THe hot water recurculator  long term objective for this project is to monitor energy use in my home and control various appliances to maximize efficiency.  The present implementation contains the basis on which to build additional functionality but is limited to controlling a hot water recirculating pump for a second floor bathroom.
+The connection to the furnace is between the temperature sensor and the motor control unit so as to not interrupt the norma cycling up and down of the blower, while providing the ability to maintain a boiler tank temperature as logic determines.  THe hot water recurculator  long term objective for this project is to monitor energy use in my home and control various appliances to maximize efficiency.  The present implementation contains the basis on which to build additional functionality but is limited to controlling the furnace and the hot water recirculating pump for a second floor bathroom.
 
 ## Homepage
 

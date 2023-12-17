@@ -44,8 +44,8 @@ var furnaceSettings = {
 	id: 0,
 	WeekDayMorningMinTemp: 65,
 	WeekDayMorningMaxTemp: 68,
-	WeekDayMiddayMinTemp: 62,
-	WeekDayMiddayMaxTemp: 65,
+	WeekDayMiddayMinTemp: 60,
+	WeekDayMiddayMaxTemp: 63,
 	WeekDayEveningMinTemp: 66,
 	WeekDayEveningMaxTemp: 69,
 	WeekDayNightMinTemp: 61,
@@ -66,11 +66,11 @@ var furnaceSettings = {
 	maxHouseTemp: 64,
 
     weekDayMorningOnTime: "06:00",
-    weekDayMiddayOnTime: "09:30",
-    weekDayEveningOnTime: "16:30",
-    weekDayNightOnTime: "23:30",
+    weekDayMiddayOnTime: "08:30",
+    weekDayEveningOnTime: "17:00",
+    weekDayNightOnTime: "23:00",
     weekEndMorningOnTime: "07:00",
-    weekEndMiddayOnTime: "12:00",
+    weekEndMiddayOnTime: "11:00",
     weekEndEveningOnTime: "16:00",
     weekEndNightOnTime: "23:30",
     state: "Home",      //  ****** this needs to be implemented  ******
@@ -223,8 +223,8 @@ inTimeCheckTemps = function (){
 			//var currentState = communicationController.getState();
 			if (currentState.stateHomeAway == "Away"){
 				console.log("We're Away");
-				furnaceSettings.minHouseTemp = awayMinTemp;
-				furnaceSettings.maxHouseTemp = awayMaxTemp;
+				furnaceSettings.minHouseTemp = furnaceSettings.awayMinTemp;
+				furnaceSettings.maxHouseTemp = furnaceSettings.awayMaxTemp;
 				communicationController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
 			} else {
 
@@ -403,44 +403,44 @@ exports.checkFurnace = function (furnaceTemp, familyTemp, bedroomTemp, deskTemp,
 			dbController.getFurnaceSettings(furnaceSettings.state, function (tempFurnaceSettings){
 				console.log("* * * in furnace controller just back from getting settings");
 				console.log(tempFurnaceSettings.state);
+/*
+				furnaceSettings.id = tempFurnaceSettings.id;
+			    furnaceSettings.minHouseTemp = tempFurnaceSettings.minHouseTemp;
+			    furnaceSettings.maxHouseTemp = tempFurnaceSettings.maxHouseTemp;
+				furnaceSettings.WeekDayMorningMinTemp = tempFurnaceSettings.WeekDayMorningMinTemp;
+				furnaceSettings.WeekDayMorningMaxTemp = tempFurnaceSettings.WeekDayMorningMaxTemp;
+				furnaceSettings.WeekDayMiddayMinTemp = tempFurnaceSettings.WeekDayMiddayMinTemp;
+				furnaceSettings.WeekDayMiddayMaxTemp = tempFurnaceSettings.WeekDayMiddayMaxTemp;
+				furnaceSettings.WeekDayEveningMinTemp = tempFurnaceSettings.WeekDayEveningMinTemp;
+				furnaceSettings.WeekDayEveningMaxTemp = tempFurnaceSettings.WeekDayEveningMaxTemp;
+				furnaceSettings.WeekDayNightMinTemp = tempFurnaceSettings.WeekDayNightMinTemp;
+				furnaceSettings.WeekDayNightMaxTemp = tempFurnaceSettings.WeekDayNightMaxTemp;
 
-				furnaceSettings.id = tempFurnaceSettings.id,
-			    furnaceSettings.minHouseTemp = tempFurnaceSettings.minHouseTemp,
-			    furnaceSettings.maxHouseTemp = tempFurnaceSettings.maxHouseTemp,
-				furnaceSettings.WeekDayMorningMinTemp = tempFurnaceSettings.WeekDayMorningMinTemp,
-				furnaceSettings.WeekDayMorningMaxTemp = tempFurnaceSettings.WeekDayMorningMaxTemp,
-				furnaceSettings.WeekDayMiddayMinTemp = tempFurnaceSettings.WeekDayMiddayMinTemp,
-				furnaceSettings.WeekDayMiddayMaxTemp = tempFurnaceSettings.WeekDayMiddayMaxTemp,
-				furnaceSettings.WeekDayEveningMinTemp = tempFurnaceSettings.WeekDayEveningMinTemp,
-				furnaceSettings.WeekDayEveningMaxTemp = tempFurnaceSettings.WeekDayEveningMaxTemp,
-				furnaceSettings.WeekDayNightMinTemp = tempFurnaceSettings.WeekDayNightMinTemp,
-				furnaceSettings.WeekDayNightMaxTemp = tempFurnaceSettings.WeekDayNightMaxTemp,
-
-				furnaceSettings.WeekEndMorningMinTemp = tempFurnaceSettings.WeekEndMorningMinTemp,
-				furnaceSettings.WeekEndMorningMaxTemp = tempFurnaceSettings.WeekEndMorningMaxTemp,
-				furnaceSettings.WeekEndMiddayMinTemp = tempFurnaceSettings.WeekEndMiddayMinTemp,
-				furnaceSettings.WeekEndMiddayMaxTemp = tempFurnaceSettings.WeekEndMiddayMaxTemp,
-				furnaceSettings.WeekEndEveningMinTemp = tempFurnaceSettings.WeekEndEveningMinTemp,
-				furnaceSettings.WeekEndEveningMaxTemp = tempFurnaceSettings.WeekEndEveningMaxTemp,
-				furnaceSettings.WeekEndNightMinTemp = tempFurnaceSettings.WeekEndNightMinTemp,
-				furnaceSettings.WeekEndNightMaxTemp = tempFurnaceSettings.WeekEndNightMaxTemp,
-				furnaceSettings.awayMinTemp = tempFurnaceSettings.awayMinTemp,
-				furnaceSettings.awayMaxTemp = tempFurnaceSettings.awayMaxTemp,
+				furnaceSettings.WeekEndMorningMinTemp = tempFurnaceSettings.WeekEndMorningMinTemp;
+				furnaceSettings.WeekEndMorningMaxTemp = tempFurnaceSettings.WeekEndMorningMaxTemp;
+				furnaceSettings.WeekEndMiddayMinTemp = tempFurnaceSettings.WeekEndMiddayMinTemp;
+				furnaceSettings.WeekEndMiddayMaxTemp = tempFurnaceSettings.WeekEndMiddayMaxTemp;
+				furnaceSettings.WeekEndEveningMinTemp = tempFurnaceSettings.WeekEndEveningMinTemp;
+				furnaceSettings.WeekEndEveningMaxTemp = tempFurnaceSettings.WeekEndEveningMaxTemp;
+				furnaceSettings.WeekEndNightMinTemp = tempFurnaceSettings.WeekEndNightMinTemp;
+				furnaceSettings.WeekEndNightMaxTemp = tempFurnaceSettings.WeekEndNightMaxTemp;
+				furnaceSettings.awayMinTemp = tempFurnaceSettings.awayMinTemp;
+				furnaceSettings.awayMaxTemp = tempFurnaceSettings.awayMaxTemp;
 
 				//furnaceSettings.minHouseTemp = tempFurnaceSettings.minHouseTemp,
 				//furnaceSettings.maxHouseTemp = tempFurnaceSettings.maxHouseTemp,
 
-			    furnaceSettings.weekDayMorningOnTime = tempFurnaceSettings.weekDayMorningOnTime,
-			    furnaceSettings.weekDayMiddayOnTime = tempFurnaceSettings.weekDayMiddayOnTime,
-			    furnaceSettings.weekDayEveningOnTime = tempFurnaceSettings.weekDayEveningOnTime,
-			    furnaceSettings.weekDayNightOnTime = tempFurnaceSettings.weekDayNightOnTime,
-			    furnaceSettings.weekEndMorningOnTime = tempFurnaceSettings.weekEndMorningOnTime,
-			    furnaceSettings.weekEndMiddayOnTime = tempFurnaceSettings.weekEndMiddayOnTime,
-			    furnaceSettings.weekEndEveningOnTime = tempFurnaceSettings.weekEndEveningOnTime,
-			    furnaceSettings.weekEndNightOnTime = tempFurnaceSettings.weekEndNightOnTime,
-			    furnaceSettings.state = tempFurnaceSettings.state      //  ****** this needs to be implemented  ******
+			    furnaceSettings.weekDayMorningOnTime = tempFurnaceSettings.weekDayMorningOnTime;
+			    furnaceSettings.weekDayMiddayOnTime = tempFurnaceSettings.weekDayMiddayOnTime;
+			    furnaceSettings.weekDayEveningOnTime = tempFurnaceSettings.weekDayEveningOnTime;
+			    furnaceSettings.weekDayNightOnTime = tempFurnaceSettings.weekDayNightOnTime;
+			    furnaceSettings.weekEndMorningOnTime = tempFurnaceSettings.weekEndMorningOnTime;
+			    furnaceSettings.weekEndMiddayOnTime = tempFurnaceSettings.weekEndMiddayOnTime;
+			    furnaceSettings.weekEndEveningOnTime = tempFurnaceSettings.weekEndEveningOnTime;
+			    furnaceSettings.weekEndNightOnTime = tempFurnaceSettings.weekEndNightOnTime;
+			    furnaceSettings.state = tempFurnaceSettings.state;
 			    //furnaceSettings.currentSensor = tempFurnaceSettings.
-
+*/
 				console.log("just got the new furnace settings, id - " + furnaceSettings.id);
 				console.log("just got the new furnace settings, WeekDayMiddayMinTemp - " + furnaceSettings.WeekDayMiddayMinTemp);
 				console.log("just got the new furnace settings, WeekDayMiddayMaxTemp - " + furnaceSettings.WeekDayMiddayMaxTemp);

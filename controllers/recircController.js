@@ -21,16 +21,16 @@ var dayOfTheWeek = 0;
 
 var recircSettings = {
 	id: 0,
-    pipeTempOn: 85,
-    pipeTempOff: 0,
+    pipeTempOn: 100,
+    pipeTempOff: 110,
     weekDayOn1: '0',
     weekDayOff1: '0',
-    weekDayOn2: '0',
-    weekDayOff2: '0',
+    weekDayOn2: '17:30',
+    weekDayOff2: '18:30',
     weekEndOn1: '0',
     weekEndOff1: '0',
-    weekEndOn2: '0',
-    weekEndOff2: '0'
+    weekEndOn2: '16:30',
+    weekEndOff2: '21:30'
 };
 var allStates = {};
 var pumpState = "off";
@@ -105,7 +105,8 @@ exports.checkRecirc = function (recircTemp, currentStates){
 	//dayOfTheWeek = dayAndTime.day;
 	//dayAndTime.time = currentTime;
 
-	console.log("in RECIRC current time - " + currentTime)
+	console.log("in RECIRC current time - " + currentTime);
+	console.log("in RECIRC current day - " + dayOfTheWeek);
 
 	/*
 	try this one instead
@@ -130,8 +131,8 @@ exports.checkRecirc = function (recircTemp, currentStates){
 		// if NOT the first time through or if we've been through test count times, do
 		// normal processing otherwise get the recirc settings
 		console.log("recircSetting id - " + recircSettings.id);
-		console.log("get settings count - " + getSettingsCount);
-		console.log("get settings interval - " + getSettingsInterval);
+		console.log("Recirc get settings count - " + getSettingsCount);
+		console.log("Recirc get settings interval - " + getSettingsInterval);
 
 		if (recircSettings.id == 1 && getSettingsCount < getSettingsInterval) {
 			//console.log("have the settings");
@@ -191,7 +192,7 @@ exports.checkRecirc = function (recircTemp, currentStates){
 
 			//*****************************************
 			//*****	Main processing starts here	*******
-			console.log("The Current Time (RECIRC MAIN LOOP) - " + currentTime + ", on = " + dayOfTheWeek);
+			console.log("The Current Time (RECIRC MAIN LOOP) - " + currentTime + ", on day = " + dayOfTheWeek);
 			allStates = comController.getState();
 
 			console.log("All States - ");
@@ -206,11 +207,16 @@ exports.checkRecirc = function (recircTemp, currentStates){
 					// pump in NOT running so check if weekend	
 					if(date_ob.getDay() == 6 || date_ob.getDay() == 0){
 						console.log("It's a weekend YEA");
+						console.log (currentTime);
+						console.log (recircSettings.weekEndOn1);
 						if (currentTime >= recircSettings.weekEndOn1 && currentTime <= recircSettings.weekEndOff1){
 							// we are within the time parameters
 							inTimeCheckTemps();
 						} else if (currentTime >= recircSettings.weekEndOn2 && currentTime <= recircSettings.weekEndOff2){
 							inTimeCheckTemps();
+							}
+							else {
+								console.log (" * * * * * * *   Recirc Controler  NOT in Time * * * * * * * ");
 							}
 						}
 					else {
@@ -226,17 +232,20 @@ exports.checkRecirc = function (recircTemp, currentStates){
 						if (currentTime >= recircSettings.weekDayOn2 && currentTime <= recircSettings.weekDayOff2){
 							inTimeCheckTemps();
 						};
-					};
+					}
+
 				};
 			// end check if home/away			
 		} else {
 			console.log(" either the first time through or exceeded the loop count so update recirc settings");
+			
 			dbController.recircSettingsRecirCNTRL("somethign", function (tempRecircSettings) {
 				console.log("**  in recirc controller, just back from getting recirc settings from db");
-				console.log(tempRecircSettings.pipeTempOn);
+				//var tempRecircSettings = dbController.recircSettingsRecirCNTRL()
+				console.log("WHOLEY SHIT - " + tempRecircSettings.pipeTempOn);
 				console.log(tempRecircSettings.id);
-
-				recircSettings.id = 1;
+/*
+				recircSettings.id = tempRecircSettings.id;
 				recircSettings.pipeTempOn = tempRecircSettings.pipeTempOn;
 				recircSettings.pipeTempOff = tempRecircSettings.pipeTempOff;
 				recircSettings.weekDayOn1 = tempRecircSettings.weekDayOn1;
@@ -248,8 +257,12 @@ exports.checkRecirc = function (recircTemp, currentStates){
 				recircSettings.weekEndOn2 = tempRecircSettings.weekEndOn2;
 				recircSettings.weekEndOff2 = tempRecircSettings.weekEndOff2;
 
+*/
 				getSettingsCount = 0;
 			});
+			
+			recircSettings.id = 1;
+
 		};
 
 	// end check if away	
