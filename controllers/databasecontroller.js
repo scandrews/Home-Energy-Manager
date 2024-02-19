@@ -1,15 +1,16 @@
 //  Database controller - all interaction with the database are here
 
+var version = "2.0.1";
+
+//const server = require('.././server');
 const mysql = require('mysql2');
 var comController = require ('./communicationsController');
 const recircCNTRL = require ('./recircController');
 const furnaceController = require ('./furnaceController');
+const config = require ('../config/config');
 
 //var db = require("../models");
 //const { Op } = require("sequelize");
-
-// for troubleshooting run for water
-    var setFurnChngCounter = 0;
 
 
 // variables for the temperature sensor
@@ -53,11 +54,23 @@ var currentDelayCountMin = 0; // only used to display the count
 var numDataPointsReadGen = 300;
 var numDataPointsReadPipe = 100;
 var temporaryTimes = [];
-var test = "Test";
+//var test = "Test";
+
+// for troubleshooting run for water
+var setFurnChngCounter = 0;
 
 var furnChangeState = 'NULL';
 var localFurnAction = "noChange";
 var keepDataTime = 2;  //days
+
+var recircChangeState = 'NULL';
+var setRecircChngCounter = 0;
+var localRecircAction = "noChange";
+
+
+exports.getVersion = function (){
+  return (version);
+};
 
 // timer
 var myVar = setInterval(myTimer, 1000);
@@ -104,7 +117,7 @@ function getCurrentTime(){
     return(currentDate);
 };
 
-
+//used for writing state changes to the db
 exports.upDateFurnState = function (newState){
   furnChangeState = newState;
 }
@@ -134,14 +147,23 @@ exports.changeKeepDataTime = function(newTime){
   return(keepDataTime)
 };
 
+//var configLocal = {};
+
+//var runMode = "";
+exports.setProcessEnv = function (runMode){
+//  runMode = tempRunMode;
+
 var connection;
 
+console.log("In db CNTRL startup - get the config");
+console.log("db run mode - " + runMode);
+console.log(config[runMode]);
 connection = mysql.createConnection({
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: 'RutBud17',
-    database: 'home_control_db'
+    host: config[runMode].host,
+    port: config[runMode].port,
+    user: config[runMode].username,
+    password: config[runMode].password,
+    database: config[runMode].database
 });
 
 connection.connect(function (err) {
@@ -324,7 +346,6 @@ connection.connect(function (err) {
 
 
   // get the recirculator settings for the recirc controller
-  //exports.recircSettingsRecirCNTRL = function (what, fn) {
   exports.recircSettingsRecirCNTRL = function (what, fn) {
     console.log("dbase controoler get recirc settings from recirs controller - " + what);
     //exports.recircSettingsRecirCNTRL = function (){
@@ -334,10 +355,12 @@ connection.connect(function (err) {
     connection.query ("SELECT * FROM recirculatorSettings", function (err, result) {
           if (err) throw error;
           console.log(result);
+          console.log(result[id] + results[weekDayon2]);
           //return (result);
           fn (result);
     })
   };
+
 
   // get the recirculator settings for the front end
   exports.recircSettingsFrontEnd = function (req, res) {
@@ -433,13 +456,19 @@ connection.connect(function (err) {
   };
 
 
-
-
   exports.setFurnaceChange = function (furnChangeText){
     console.log("Db Controller - setFurnaceChange, counter - " + setFurnChngCounter);
     setFurnChngCounter ++;
     localFurnAction = furnChangeText;
   };
+
+  exports.setRecircChange = function (recircChangeText){
+    console.log("db controller setting the recirc change to - " + recircChangeText);
+    setRecircChngCounter ++;
+    localRecircAction = recircChangeText;
+  }
+
+
 
   exports.getCurentAvgTemps = function (){
     var dataPac = [avgTemp1, avgFamTemp, avgTemp3, avgTemp4, avgTemp5, avgTemp6, avgTemp7, avgTemp8, avgTemp9];
@@ -454,7 +483,7 @@ connection.connect(function (err) {
   };
 
 
-  exports.saveTempData = function (temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, furnAction, currentStates) {
+  exports.saveTempData = function (temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, furnAction, recicrcAction, currentStates) {
     console.log("in save temperature data");
     console.log(temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, furnAction);
     //currentSaveDelayCount--;
@@ -525,13 +554,14 @@ connection.connect(function (err) {
           */
             console.log("in the .then after the destroy, result - ");
             console.log(result);
-            var sqlhere = "INSERT INTO temperatures (tempWoodStove, tempFamilyRoom, tempBedRoom, tempPipe, tempFurnace, tempDesk, tempOutDoorsSun, tempOutDoorsShade, tempWaterTank, furnaceOnOff) VALUES (" + avgTemp1 + "," + avgFamTemp + "," + avgTemp3 + "," + avgTemp4 + "," + avgTemp5 + "," + avgTemp6 + "," + avgTemp7 + "," + avgTemp8 + "," + avgTemp9 + ",'" + localFurnAction + "')"
+            var sqlhere = "INSERT INTO temperatures (tempWoodStove, tempFamilyRoom, tempBedRoom, tempPipe, tempFurnace, tempDesk, tempOutDoorsSun, tempOutDoorsShade, tempWaterTank, furnaceOnOff, recircOnOff) VALUES (" + avgTemp1 + "," + avgFamTemp + "," + avgTemp3 + "," + avgTemp4 + "," + avgTemp5 + "," + avgTemp6 + "," + avgTemp7 + "," + avgTemp8 + "," + avgTemp9 + ",'" + localFurnAction + "','" + localRecircAction + "')"
             console.log (sqlhere);
-            localFurnAction = "noChange";
             connection.query (sqlhere, function (err, result) {
                 if (err) throw err
                 return (result);
               })
+            localFurnAction = "noChange";
+            localRecircAction = "noChange";
 
                   // NOTE:  assignment of temps to locations
                   // end write temperatures to the database
@@ -714,4 +744,5 @@ connection.connect(function (err) {
 
 // end connection
 });
+};
 

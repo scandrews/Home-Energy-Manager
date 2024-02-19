@@ -1,17 +1,24 @@
-<!DOCTYPE html>
+<!-- version 2.0.1 -->
+
+<!doctype html>
 <html lang="en">
-
 <head>
-	<meta charset="utf-8">
-	<title>Home Energy Controller</title>
+    <meta charset="utf-8">
+	  <!-- <meta name="viewport" content="width=device-width, initial-scale=1">
+	  -->
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		
 
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-	<link rel="stylesheet" href="assets/css/style.css">
+		<title>Home Energy Manager</title>
 
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+		<link rel="stylesheet" href="assets/css/style.css">
+
 </head>
 
 <body>
+
 	<div class = "container-fluid">
 		<div class = "jumbotron text-center header">
 			<h2>Home Energy Manager</h2>
@@ -20,33 +27,35 @@
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
 		  <div class="collapse navbar-collapse" id="navbarSupportedContent">
 		    <div class="navbar-nav btn-group">
+<!--
 		    	<div>
 					<a class="nav-item nav-link messageChartPipeTemps" href="#">Chart Pipe Temp</a>
 				</div>
+-->
 				<div>
 					<a class="nav-item nav-link messageChartOtherTemps" href="#">Chart All Temps</a>
 					<a class="nav-item nav-link messageChartOtherTemps" href="#">Update in:</a>
-					<a class="timeToSaveStatus"></a>
+					<a class="timeToSaveStatus status-info"></a>
 				</div>
 				<div>
 					<a class="nav-item nav-link messageShowCurrentTemps" href="#">Show Current Temps</a>
 					<a class="nav-item nav-link messageShowCurrentTimeOfDay" href="#">Time of Day</a>
-					<a class="CurrentTimeOfDay"></a>
+					<a class="CurrentTimeOfDay status-info"></a>
 				</div>
 				<div>
 					<a class="nav-item nav-link messageTurnPumpOn" href="#">Start Recirculator</a>
 					<a class="nav-item nav-link" href="#"> Recirculator Pump Is </a>
-					<a class="pumpStatus"></a>
+					<a class="pumpStatus status-info"></a>
 				</div>
 				<div>
 					<a class="nav-item nav-link messageStartFurnace" href="#">Start Furnace</a>
 					<a class="nav-item nav-link showTemp" href="#"> Furnace Is </a>
-					<a class="furnaceStatus"></a>
+					<a class="furnaceStatus status-info"></a>
 				</div>
 			    <div class="dropdown">
-					<a class="nav-item nav-link dropdown-toggle" data-toggle="dropdown">Mode</a>
+					<a class="nav-item nav-link dropdown-toggle" data-bs-toggle='dropdown' id="dropdownMenuButton1">Mode</a>
 
-					  <ul class="dropdown-menu" id="stateList">
+					  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="stateList">
 					    <li><a class="dropdown-item changeStateHome" href="#">Home</a></li>
 					    <li><a class="dropdown-item changeStateAlone" href="#">Home Alone</a></li>
 					    <li><a class="dropdown-item changeStateGuests" href="#">Guests</a></li>
@@ -55,25 +64,35 @@
 				    	<li><a class="dropdown-item changeStateFurnForWater" href="#">Run Furnace For Hot Water 30</a></li>
 					    <li><a class="dropdown-item changeStateFurnForWater" href="#">Run Furnace For Hot Water 60</a></li>
 					  </ul>
-
 					<a class="nav-item nav-link showMode" href="#">Current Mode</a>
-					<a class="mode"></a>
-
+					<a class="mode status-info"></a>
 				</div>
+<!--
 				<div>
 					<a class="nav-item nav-link getRecircSettings" href="#">Arduino Max Temp</a>
 					<a class="nav-item nav-link maxTemp" href="#">Current Max Temp</a>
-					<a class="arduinoMaxHouseTemp"></a>
+					<a class="arduinoMaxHouseTemp status-info"></a>
 				</div>
-
+-->
 				<div>
-					<a class="nav-item nav-link" href="#">About</a>
+<!--
+					<a class="nav-item" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#" >About</a>
+-->
+					<a class="nav-item nav-link loadAbout" href="#">About</a>
 					<a class="nav-item nav-link RFWTime" href="#">Run For Water Time</a>
-					<a class="runForWaterTime"></a>
+					<a class="runForWaterTime status-info"></a>
 				</div>
 		    </div>
 		  </div>
 		</nav>
+
+<!-- Button trigger modal
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Launch demo modal
+</button>
+ -->
+
+
 
 
 		<!-- Div for the real time status Line -->
@@ -101,6 +120,7 @@
 
 	</div>
 	
+
 		<!-- Div for other temp chart -->
 		<div class="otherTempsChartcontainer" id="div2">
 			<div id="otherTempsChart" class="chart--container">
@@ -428,9 +448,9 @@
 					    <label for="whichSensor" class="col-sm-6 col-form-label my-col-form-label">Which Sensor Turns Furnace Off</label>
 					    <div class="col-sm-4 dropdown">
 					    	<!--<input type="whichSensor" class="form-control my-col-form-label" id="whichSensor" placeholder="Bedroom">  -->
-					    	<button class="btn btn-secondary dropdown-toggle whichSensor" type="button whichSensor" id="whichSensor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder="Bedroom">
+					    	<label class="form-control my-col-form-label dropdown-toggle whichSensor" id="whichSensor" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder="Bedroom">
     							Bedroom
-  							</button>
+  							</label>
   							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 						    	<a class="dropdown-item changeFurnTurnOffBedroom" href="#">Bedroom</a>
 						    	<a class="dropdown-item changeFurnTurnOffFamilyroom" href="#">Family Room</a>
@@ -471,7 +491,6 @@
 			</div>
 	</div>
 
-
 	</div>
 
 <!--  yeah fucken hello  -->
@@ -480,15 +499,161 @@
 
 </div>
 
-<!--  for Bootstrap --> 
+
+		<!-- Modal -->
+		<!--
+		<div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLabel">Current Versions</h5>
+		      </div>
+		      <div class="modal-body my-modal-body">
+		      	<div class="row">
+		      	<div> Test Content
+		      	</div>
+					      	<a class="versionStuff">WTF Modal</a>
+				      	<div>
+				      	</div>
+
+						  <div class="form-group row my-form-group">
+						    <label for="offTemperature" class="col-sm-5 col-form-label my-col-form-label">Off Temperature</label>
+						    <div class="col-sm-4 my-form-data">
+						      <input type="offTemperature" class="form-control my-col-form-label" id="offTemperature" placeholder="Off Temperature">
+						    </div>
+						  </div>
+		-->
+
+
+		<!--
+						  <div class="form-group row my-form-group">
+						    <label for="dbControllerVersion" class="col-sm-5 col-form-label my-col-form-label" type="search">Route Controller Version</label>
+						    <div class="col-sm-4 my-form-data">
+						      <input type="dbControllerVersion" class="form-control my-col-form-label" id="dbControllerVersion" placeholder="On Temperature">
+						    </div>
+						  </div>
+
+
+								<div>
+				      		<a class="dbcontrollerVersion">db controller version</a>
+				      		<a class="my-label" id="dbControllerVersion"></a>
+								</div>
+		      	</div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		-->
+
+
+<!-- Modal -->
+<div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">File Versions</h5>
+      </div>
+      <div class="modal-body">
+
+
+					  <div class="form-group row my-form-group">
+					    <label for="routecontrolerVersion" class="col-sm-6 col-form-label my-col-form-label">Route Controller Version</label>
+					    <div class="col-sm-4">
+					      <input type="routecontrolerVersion" class="form-control my-col-form-label" id="routecontrolerVersion" placeholder="0.0.0">
+					    </div>
+					  </div>
+
+					  <div class="form-group row my-form-group">
+					    <label for="recircVersion" class="col-sm-6 col-form-label my-col-form-label">Recirc Controller Version</label>
+					    <div class="col-sm-4">
+					      <input type="recircVersion" class="form-control my-col-form-label" id="recircVersion" placeholder="0.0.0">
+					    </div>
+					  </div>
+
+	
+					  <div class="form-group row my-form-group">
+					    <label for="dbControllerVersion" class="col-sm-6 col-form-label my-col-form-label">db Controller Version</label>
+					    <div class="col-sm-4">
+					      <input type="dbControllerVersion" class="form-control my-col-form-label" id="dbControllerVersion" placeholder="0.0.0">
+					    </div>
+					  </div>
+
+	
+					  <div class="form-group row my-form-group">
+					    <label for="furnaceVersion" class="col-sm-6 col-form-label my-col-form-label">Furnace Controller Version</label>
+					    <div class="col-sm-4">
+					      <input type="furnaceVersion" class="form-control my-col-form-label" id="furnaceVersion" placeholder="0.0.0">
+					    </div>
+					  </div>
+	
+					  <div class="form-group row my-form-group">
+					    <label for="comVersion" class="col-sm-6 col-form-label my-col-form-label">Communications Controller Version</label>
+					    <div class="col-sm-4">
+					      <input type="comVersion" class="form-control my-col-form-label" id="comVersion" placeholder="0.0.0">
+					    </div>
+					  </div>
+
+
+					  <div class="form-group row my-form-group">
+					    <label for="serverVersion" class="col-sm-6 col-form-label my-col-form-label">Server Version</label>
+					    <div class="col-sm-4">
+					      <input type="serverVersion" class="form-control my-col-form-label" id="serverVersion" placeholder="0.0.0">
+					    </div>
+					  </div>
+
+
+					  <div class="form-group row my-form-group">
+					    <label for="indexVersion" class="col-sm-6 col-form-label my-col-form-label">Index Version</label>
+					    <div class="col-sm-4">
+					      <input type="indexVersion" class="form-control my-col-form-label" id="indexVersion" placeholder="0.0.0">
+					    </div>
+					  </div>
+
+
+					  <div class="form-group row my-form-group">
+					    <label for="scriptsVersion" class="col-sm-6 col-form-label my-col-form-label">Scripts Version</label>
+					    <div class="col-sm-4">
+					      <input type="scriptsVersion" class="form-control my-col-form-label" id="scriptsVersion" placeholder="0.0.0">
+					    </div>
+					  </div>
+
+
+					  <div class="form-group row my-form-group">
+					    <label for="styleVersion" class="col-sm-6 col-form-label my-col-form-label">Style Version</label>
+					    <div class="col-sm-4">
+					      <input type="styleVersion" class="form-control my-col-form-label" id="styleVersion" placeholder="0.0.0">
+					    </div>
+					  </div>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!--  for Bootstrap 
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+--> 
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+<!--
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
-
-<!--   	<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.js"></script> -->
- 	<script type="text/javascript" src="https://code.jquery.com/jquery.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+-->
+
+ 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.js"></script>
+
+ 	<script type="text/javascript" src="https://code.jquery.com/jquery.js"></script>
  	<script type="text/javascript" src="assets/scripts/script.js"></script>
 
 	<script src="https://cdn.zingchart.com/zingchart.min.js"></script>

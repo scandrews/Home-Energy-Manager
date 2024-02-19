@@ -1,3 +1,5 @@
+// verson 2.0.1
+var routeVersion = "2.0.1";
 
 var express = require("express");
 var bodyParser = require ("body-parser");
@@ -24,13 +26,38 @@ const dbaccess = require ('./databasecontroller');
 const comControler = require ('./communicationsController');
 const recircController = require ('./recircController');
 const furnaceController = require ('./furnaceController');
+const mainServer = require ('../server');
 //let SendMessageToArdunio = comControler.sendMessageToArdunio;
 
-//app.get('')
+var currentRecircPump = "Don't know";
+
+exports.setPumpState = function (newPumpState){
+	currentRecircPump = newPumpState;
+};
 
 app.get('/about', (req, res) => {
-//    res.sendFile('./about.html');
-	res.sendFile(__dirname, "./views/about.html");
+	console.log("Route CNTRL got the about click");
+	//res.sendFile('../about.html');
+	res.sendFile(__dirname, "./about.html");
+});
+
+app.get('/getVersions', (req, res) => {
+	console.log("Route Controller got the get versions");
+	var dbVersion = dbaccess.getVersion();
+	var comVersion = comControler.getVersion();
+	var recircVersion = recircController.getVersion();
+	var furnVersion = furnaceController.getVersion();
+	var serverVersion = mainServer.getVersion();
+	var verArray = [
+		routeVersion,
+		dbVersion,
+		comVersion,
+		recircVersion,
+		furnVersion,
+		serverVersion
+		];
+	console.log(verArray);
+	res.send(verArray)
 });
 
 app.get('/currentTemps', (req, res) => {
@@ -63,7 +90,8 @@ app.get('/curTempHistory', (req, res) => {
 app.get('/recircSettings', (req, res) => {
 	console.log("in route controller get recirculator settings duuu");
 //	res.send("What da FAAA");
-	dbaccess.recircSettingsFrontEnd(req, res), function(){
+	recircController.getCurrentRecircSettings(req, res), function (){
+	//dbaccess.recircSettingsFrontEnd(req, res), function(){
 	};
 });
 
@@ -90,22 +118,26 @@ app.get('/pipeTemp', (req, res) => {
 	//Run Furnace For Hot Water 30
 	//Run Furnace For Hot Water 60
 app.post('/changeFurnState', (req,res) => {
-	console.log("Route CNTRL change Furnace State");
+	console.log("++++++++++   Route CNTRL change Furnace State    ++++++++++");
 	comControler.changeState("changeHome-Away", req.body.message);
 });
 
 app.post('/sendMessage', (req, res) => {
-	console.log("in route controller send message - " + req.body.message);
+	console.log("*-*-*-*-*-*- in route controller send message - " + req.body.message + " *-*-*-*-*-*-*-*");
 	if (req.body.message == "changeHome-Away"){
 		newState = comControler.changeState(req.body.message);
 		console.log("GOT THE RETURN CHANGE HOME/AWAY - " + newState.stateHomeAway + newState.statePump);
 		res.send(newState);
+
 	} else if (req.body.message == "ManualPumpChange") {
-		newState = recircController.manualPumpChange(req.body.message);
-		//comControler.changeState()
-		//newState = comControler.getState();
-		console.log("GOT THE RETURN MANUAL PUMP CHANGE - " + newState);
-		res.send(newState);
+		recircController.manualPumpChange(req.body.message, function (newState){
+
+				//comControler.changeState()
+				//newState = comControler.getState();
+				console.log("GOT THE RETURN MANUAL PUMP CHANGE - " + newState);
+				res.send(newState);
+				}) ;
+			
 	} else if (req.body.message == "changeFurnace") {
 		// manually chage the furnace
 		console.log("in the change furnace route");
@@ -117,6 +149,16 @@ app.post('/sendMessage', (req, res) => {
 		console.log(newState.stateFurnace)
 		res.send(newState);
 	};
+});
+
+app.get('/getPumpStatus', (req, res) => {
+	console.log("*** in route controler get pump status ***");
+	curStates = comControler.getState()
+
+		console.log("back from getStates");
+		console.log(curStates);
+		//	res.send(recircController.returnPumpStatus());
+		res.send(curStates.stateRecircPump);
 });
 
 app.get('/currentStatus', (req, res) => {
@@ -145,6 +187,7 @@ var getCurrentGeneralSettings = function (req, res){
 		var generalSettings = {
 			tempSaveInterval : dbSettings[0],
 			numDataPointsToGraph : dbSettings[1],
+			keepDataDays: dbSettings[2],
 			minHouseTemp : furnSettings.minHouseTemp,
 			maxHouseTemp : furnSettings.maxHouseTemp,
 			minFurnaceTemp : furnSettings.minFurnaceTemp,
@@ -153,8 +196,7 @@ var getCurrentGeneralSettings = function (req, res){
 			currentSensor : furnSettings.currentSensor,
 			serverIPAddress : IPAddresses[0],
 			arduinoIPAddress : IPAddresses[1],
-			runMode : states.stateHomeAway,
-			keepDataDays: dbSettings[2]
+			runMode : states.stateHomeAway
 		}
 	return (generalSettings)
 };
@@ -162,6 +204,8 @@ var getCurrentGeneralSettings = function (req, res){
 app.get('/generalSettings', (req, res) => {
 	console.log("in route controler get general settings");
 	generalSettings = getCurrentGeneralSettings();
+	console.log ("-------------------    general settings      ------------------------");
+	console.log (generalSettings);
 	res.send (generalSettings)
 });
 

@@ -1,3 +1,23 @@
+
+
+create table temperatures(
+	id integer(10)auto_increment not null,
+	tempOutDoorsSun FLOAT,
+    tempOutDoorsShade FLOAT,
+	tempBedRoom FLOAT,
+	tempFamilyRoom FLOAT,
+    tempDesk FLOAT,
+	tempWaterTank FLOAT,
+	tempPipe FLOAT,
+	tempFurnace FLOAT,
+    tempWoodStove FLOAT,
+    furnaceOnOff varchar(16),
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    primary key (id)
+    );
+
+
+/*
 module.exports = (sequelize, Datatypes) => {
 
 	//import { DataTypes } from '@sequelize/core';
@@ -47,7 +67,7 @@ module.exports = (sequelize, Datatypes) => {
 	return temperatures;
 
 };
-
+*/
 /*
 		},
 		createdAt: {

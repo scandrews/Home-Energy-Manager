@@ -1,4 +1,4 @@
-module.exports = (sequelize, Datatypes) => {
+/*module.exports = (sequelize, Datatypes) => {
 
 	//import { DataTypes } from '@sequelize/core';
 
@@ -15,7 +15,7 @@ module.exports = (sequelize, Datatypes) => {
 	});
 	return recirculatorHistory;
 };
-
+*/
 
 /*
 		},

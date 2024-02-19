@@ -1,3 +1,4 @@
+
 {
   "development": {
     "user": "root",
@@ -8,10 +9,10 @@
     "dialect": "mysql"
   },
   "test": {
-    "username": "q8755cde3l1gijyw",
-    "password": "joijwvy2d0z01nso",
-    "database": "ta9un96plv1ezgu",
-    "host": "erxv1bzckceve5lh.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+    "username": "root",
+    "password": "RutBud17",
+    "database": "home_control_db",
+    "host": "localhost",
     "dialect": "mysql"
   },
   "production": {

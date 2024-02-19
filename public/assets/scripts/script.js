@@ -1,6 +1,9 @@
-// client side script file for the home control application
-
+// client side script file for the home controller
 $(document).ready(function() {
+
+var scriptsVersion = "2.0.1";
+var indexVersion = "2.0.1";
+var styleVersion = "2.0.1";
 
 var currentLocation = window.location.href;
 console.log("curent URL - " + currentLocation);
@@ -26,12 +29,124 @@ var time = 2;
 //	})
 //};
 
+
 var variableH = 6;
-var veriableM = 30;
+//var veriableM = 30;
 var variable = "6:30";
 
 furnaceSettings = {}; // global to keep seeting
+
+var recircStatus = "off";
+
 // ------------------------------------------------
+
+$('#aboutModal').modal({ show: false})
+
+// handling the about page click
+
+	//event.preventDefault();
+	//console.log("got the about click");
+//	getVersionNums ();
+
+
+//});
+
+
+
+$(".loadAbout").on("click", function(event){
+	console.log("in the get version nums funct");
+//	$.get('getVersions', (newVersions) => {
+
+		$('#aboutModal').modal('show');
+
+	$.ajax({
+		url: currentLocation + "getVersions",
+		type: "get",
+		data: {message: "getVersionsPlease"},
+		success: function(newVersions){
+
+			console.log("back with version numbers");
+			console.log(newVersions);
+		//console.log(stuff[0].weekDayOn1 + stuff[0].pipeTempOn);
+		$("#routecontrolerVersion").attr("placeholder", newVersions[0]);
+		$("#recircVersion").attr("placeholder", newVersions[3]);
+		$("#dbControllerVersion").attr("placeholder", newVersions[1]);
+		$("#furnaceVersion").attr("placeholder", newVersions[4]);
+		$("#comVersion").attr("placeholder", newVersions[2]);
+		$("#serverVersion").attr("placeholder", newVersions[5]);
+		$("#indexVersion").attr("placeholder", indexVersion);
+		$("#scriptsVersion").attr("placeholder", scriptsVersion);
+		$("#styleVersion").attr("placeholder", styleVersion);
+		/*
+		$("#weekdayStartTime1").attr("placeholder", newVersions[0]);
+
+		$("#routecontrolerVersion").text(newVersions[0]);
+		$("#recircVersion").text(newVersions[1]);
+			$(".dbcontrollerVersion").text(newVersions[0]);
+			$(".serverVersion").text(newVersions[0]);
+			return(newVersions);
+		*/
+		}
+	})
+});
+
+
+
+// manually turn the recirc pump on  -  or run recirc
+$(".messageTurnPumpOn").on("click", function(event){
+	event.preventDefault();
+
+	//$(this).text('Turn Pump Off');
+	console.log("got the pump on message click");
+	$(".messageTurnPumpOn") .text("pending");
+    $.ajax({
+    	url: currentLocation + "sendMessage",
+        type: "POST",
+        data: {message: "ManualPumpChange"},
+        success: function(returnState) {
+        	console.log("Back from the server - " + returnState);
+        	if (returnState == "on"){
+        		$(".messageTurnPumpOn").text("Stop Recirculator");
+			} else if (returnState == "off"){
+				$(".messageTurnPumpOn").text("Run Recirculator");
+			}
+        	console.log("SUCCESS in the change start/stop Recirc state");
+        }
+        /*
+        error: function (err){
+        	console.log("Got an error in manualpumpchange message");
+        	console.log(err);
+        }
+        */
+    });
+    // set a timer to check for a sucessful start pump
+    var myVar = setTimeout(function (){
+    	pumpOnTimer()
+    }, 2000);
+});
+
+
+function pumpOnTimer(){
+	console.log("in pump on timer - right before call to server");
+	$.ajax({
+		url: currentLocation + "getPumpStatus",
+		type: "GET",
+		success: function(pumpState){
+			console.log("in return get pump status - " + pumpState);
+			if (pumpState == "on"){
+				$(".messageTurnPumpOn") .text("Stop Recirculator");
+				$(".pumpStatus") .text("On");
+			} else if (pumpState == "off"){
+				$(".messageTurnPumpOn") .text("Start Recirculator");
+				$(".pumpStatus") .text("Off");
+			} else {
+				var myVar2 = setTimeout(function(){
+					pumpOnTimer()}, 2000);
+				}
+			},
+		//error: console.log("**ERROR IN THE RETURN FROM NEW PUMP STATUS")
+		})
+};
 
 
 // Handle the show current temps button
@@ -43,9 +158,11 @@ $(".messageShowCurrentTemps").on("click", function(){
 	function writeTemperatures(localTempArray){
 		console.log(localTempArray);
 		if(localTempArray[2] == 1){
-			localPumpStatus = 'on'
+			localPumpStatus = 'on';
+       		$(".messageTurnPumpOn").text("Stop Recirculator");
 		} else if (localTempArray[2] == 0){
 			localPumpStatus = 'off'
+       		$(".messageTurnPumpOn").text("Start Recirculator");
 		}
 		if(localTempArray[3] == 1){
 			localFurnStatus = 'on'
@@ -82,145 +199,64 @@ $(".messageShowCurrentTemps").on("click", function(){
 
 
 
-
-// handling the Chart Pipe Temps click
-$(".messageChartPipeTemps").on("click", function(event){
+// Handle the GET other settings button
+$(".getGeneralSettings").on("click", function(event){
 	event.preventDefault();
-	const labels = [];
-	const pipeTempArray = [];     // pipe temp array will hopd the temps for display
-	var time = [];
-	console.log("got the Chart Pipe Temps click");
+	console.log("got the get general settings click");
 
-	document.getElementById("div1").removeAttribute("display:none");
-	document.getElementById("div1").setAttribute("style", "display:block");
+	var serverURL =	currentLocation + "generalSettings";
+	$.ajax({
+		url: serverURL,
+		type: "get",
+		success: function(stuff) {
+			console.log("the get worked");
+			console.log(stuff);
 
-
-	// to convert mysql timestamp
-	// https://stackoverflow.com/questions/3075577/convert-mysql-datetime-stamp-into-javascripts-date-format
-
-	// get the pipe temperature data
-	$.get('pipeTemp', (temps) => {
-		console.log("data back from pipe temps - ");
-		console.log(temps);          // the temps array is te temperatures returned from the server
-
-		// label array is the x axis lable for each data point
-		var labelArray = [];
-		for (i=0; i<temps.length; i++){
-			var od = temps[i].recircHist;
-			var pt = temps[i].pipetemperatures;  // put the temp in the variable
-
-			var t = od.split(/[- : T .]/);
-			console.log(t);
-			if (t[3] < 5){
-				x = t[3] - 5;
-				t[3] = x + 24;
-			} else t[3] = t[3] - 5;
-
-			// Apply each element to the Date function
-			time = t[3] + ":" + t[4];
-			console.log(time);
-			labels [i] = time;    // assine the time to the array at the data point
-			Math.round(pt);        // round the temp
-			pipeTempArray[i] = pt   // then put it into the pipe temp array
-			if (temps[i].recircOnOff == "turnRecircOn"){
-				labelArray.push( {
-							      "text": "Pump Turned ON",
-							      "background-color": "#90A23B",
-							      "font-size": "14px",
-							      "font-family": "arial",
-							      "font-weight": "normal",
-							      "font-color": "#FFFFFF",
-							      "padding": "10%",
-							      "border-radius": "3px",
-							      "offset-y": -30,
-							      "shadow": false,
-							      "callout": true,
-							      "callout-height": "10px",
-							      "callout-width": "15px",
-							      "hook": "node:index=" + i
-								})
-			};
-			if (temps[i].recircOnOff == "turningRecircOff"){
-				labelArray.push ( {
-							      "text": "Pump Turned OFF",
-							      "background-color": "#90A23B",
-							      "font-size": "14px",
-							      "font-family": "arial",
-							      "font-weight": "normal",
-							      "font-color": "#FFFFFF",
-							      "padding": "10%",
-							      "border-radius": "3px",
-							      "offset-y": -30,
-							      "shadow": false,
-							      "callout": true,
-							      "callout-height": "10px",
-							      "callout-width": "15px",
-							      "hook": "node:index=" + i
-								})
-			}
+			//serverIPAddress = stuff.serverIPAddress;
+			$("#tempSaveInterval").attr("placeholder", stuff.tempSaveInterval);
+			$("#dataPointsInGraph").attr("placeholder", stuff.numDataPointsToGraph);
+			$("#minHouseTemp").attr("placeholder", stuff.minHouseTemp);
+			$("#maxHouseTemp").attr("placeholder", stuff.maxHouseTemp);
+			$("#minFurnaceTemp").attr("placeholder", stuff.minFurnaceTemp);
+			$("#maxFurnaceTemp").attr("placeholder", stuff.maxFurnaceTemp);
+			$("#serverIPAddress").attr("placeholder", stuff.serverIPAddress);
+			$("#ArduinoIPAddress").attr("placeholder", stuff.arduinoIPAddress);
+			$("#runMode").attr("placeholder", stuff.runMode);
+			$("#keepDataDays").attr("placeholder", stuff.keepDataDays);
+			$("#whichSensor").text(stuff.currentSensor);
 		}
+	});
+});
 
-		console.log("built the chart struct - ");
-		console.log(labelArray);
 
-		// full ZingChart schema can be found here:
-		// https://www.zingchart.com/docs/api/json-configuration/
-		const myConfig = {
-    	    type: 'line',
-        	title: {
-				text: 'Recirculator status',
-				fontSize: 22,
-				color: '#5d7d9a'
-			},
-			legend: {
-				draggable: true,
-			},
-			scaleX: {
-				// set scale label
-				label: {
-					text: 'Time'
-				},
-				// convert text on scale indices
-				labels: labels
-				//  labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-			},
-			scaleY: {
-			// scale label with unicode character
-				label: {
-					text: 'Temperature (°F)'
-				}
-			},
-			plot: {
-				// animation docs here:
-				// https://www.zingchart.com/docs/tutorials/design-and-styling/chart-animation/#animation__effect
-				animation: {
-					effect: 'ANIMATION_EXPAND_BOTTOM',
-					method: 'ANIMATION_STRONG_EASE_OUT',
-					sequence: 'ANIMATION_BY_NODE',
-					speed: 15,
-				}
-			},
+// Update the General settings
+$(".upDateGeneralSettings").on("click", function(event){
+	event.preventDefault();
+	console.log("got the update general click");
+	var newGenSettings = {
+		tempSaveInterval: $("#tempSaveInterval").val().trim(),
+		dataPointsToGraph: $("#dataPointsInGraph").val().trim(),
+		setMinHouseTemp: $("#minHouseTemp").val().trim(),
+		setMaxHouseTemp: $("#maxHouseTemp").val().trim(),
+		minFurnaceTemp: $("#minFurnaceTemp").val().trim(),
+		maxFurnaceTemp: $("#maxFurnaceTemp").val().trim(),
+		whichSensor: $("#whichSensor").val().trim(),
+		serverIPAddress: $("#serverIPAddress").val().trim(),
+		arduinoIPAddress: $("#ArduinoIPAddress").val().trim(),
+		keepDataDays: $("#keepDataDays").val().trim(),
+	};
+	console.log(newGenSettings);
+	$(".generalSettingsForm")[0].reset();
+//	var serverURL = "'http://" + serverIPAddress + ":2000/upDateGeneralSettings'";
 
-			"labels": labelArray,
-
-			series: [{
-				// plot 1 values, linear data
-				values: pipeTempArray,
-				text: 'Pipe Temperature',
-				backgroundColor: '#4d80a6'
-			}]
-		};
-     
-		// render chart with width and height to
-		// fill the parent container CSS dimensions
-		zingchart.render({
-			id: 'myChart',
-			data: myConfig,
-			height: '100%',
-			width: '100%'
-		});
-    });
-// end the chart pipe temps click
+	$.ajax({
+		url: currentLocation + "upDateGeneralSettings",
+		type: "POST",
+		data: newGenSettings,
+		success: function(d) {
+			console.log("the post worked");
+		}
+	})
 });
 
 
@@ -306,6 +342,7 @@ $(".messageChartOtherTemps").on("click", function(event){
 			woodStoveTempArray[i] = wst;
 			furnaceTempArray[i] = ft;
 
+		//setup furnace lable
 			if (temps[i].furnaceOnOff != "noChange"){
 				var onOffText = "";
 				switch (temps[i].furnaceOnOff){
@@ -332,7 +369,7 @@ $(".messageChartOtherTemps").on("click", function(event){
 						break;
 				};
 
-			// build the screen lables here
+			// build the Furn screen lables here
 				labelArray.push( {
 							      "text": onOffText,
 							      "background-color": "#4d80a6",
@@ -351,6 +388,51 @@ $(".messageChartOtherTemps").on("click", function(event){
 							      //"hook": "node:plot=2;index=4"
 								})
 			};
+
+		//setup recirc lable
+			if (temps[i].recircOnOff != "noChange"){
+				var onOffText = "";
+				switch (temps[i].recircOnOff){
+					case "turnedRecircOn":
+						onOffText = "Recirc On";
+						break;
+					case "recircOff":
+						onOffText = "Recirc Off";
+						break;
+					case "manRecircOn":
+						onOffText = "Manual Recirc On";
+						break;
+					case "manRecircOff":
+						onOffText = "Manual Recirc Off";
+						break;
+					default:
+						console.log("Error - Hit the default in the furnace change");
+						break;
+				};
+
+			// build the Furn screen lables here
+				labelArray.push( {
+							      "text": onOffText,
+							      "background-color": "#4d80a6",
+							      "font-size": "14px",
+							      "font-family": "arial",
+							      "font-weight": "normal",
+							      "font-color": "#FFFFFF",
+							      "padding": "10%",
+							      "border-radius": "3px",
+							      "offset-y": -30,
+							      "shadow": false,
+							      "callout": true,
+							      "callout-height": "10px",
+							      "callout-width": "15px",
+							      "hook": "node: plot=4; index=" + i
+							      //"hook": "node:plot=2;index=4"
+								})
+			};
+
+
+
+
 /*			if (temps[i].furnaceOnOff == "turnedFurnaceOff"){
 				labelArray.push ({
 							      "text": "Furnace Off",
@@ -544,28 +626,6 @@ $(".messageStartFurnace").on("click", function(event){
 
 /*******************************************************************/
 
-// manually turn the pump on   or run recirc
-$(".messageTurnPumpOn").on("click", function(event){
-	event.preventDefault();
-
-	//$(this).text('Turn Pump Off');
-	console.log("got the pump on message click");
-    $.ajax({
-    	url: currentLocation + "sendMessage",
-        type: "POST",
-        data: {message: "ManualPumpChange"},
-        success: function(returnState) {
-        	console.log("Back from the server - " + returnState);
-        	if (returnState == "on"){
-        		$(".messageTurnPumpOn").text("Stop Recirculator");
-			} else if (returnState == "off"){
-				$(".messageTurnPumpOn").text("Run Recirculator");
-			}
-        	console.log("SUCCESS in the change start/stop Recirc state");
-        }
-    });
-});
-
 // manually turn the pump off
 // delete this - make the pump change toggle
 /*
@@ -590,17 +650,17 @@ $(".getRecircSettings").on("click", function(event){
 	console.log("got the get recirc settings click");
 	$.get('recircSettings', (stuff) => {
 		console.log(stuff);
-		console.log(stuff[0].weekDayOn1 + stuff[0].pipeTempOn);
-		$("#onTemperature").attr("placeholder", stuff[0].pipeTempOn);
-		$("#offTemperature").attr("placeholder", stuff[0].pipeTempOff);
-		$("#weekdayStartTime1").attr("placeholder", stuff[0].weekDayOn1);
-		$("#weekdayOffTime1").attr("placeholder", stuff[0].weekDayOff1);
-		$("#weekdayStartTime2").attr("placeholder", stuff[0].weekDayOn2);
-		$("#weekdayOffTime2").attr("placeholder", stuff[0].weekDayOff2);
-		$("#weekendStartTime1").attr("placeholder", stuff[0].weekEndOn1);
-		$("#weekendOffTime1").attr("placeholder", stuff[0].weekEndOff1);
-		$("#weekendStartTime2").attr("placeholder", stuff[0].weekEndOn2);
-		$("#weekendOffTime2").attr("placeholder", stuff[0].weekEndOff2);
+		//console.log(stuff[0].weekDayOn1 + stuff[0].pipeTempOn);
+		$("#onTemperature").attr("placeholder", stuff.pipeTempOn);
+		$("#offTemperature").attr("placeholder", stuff.pipeTempOff);
+		$("#weekdayStartTime1").attr("placeholder", stuff.weekDayOn1);
+		$("#weekdayOffTime1").attr("placeholder", stuff.weekDayOff1);
+		$("#weekdayStartTime2").attr("placeholder", stuff.weekDayOn2);
+		$("#weekdayOffTime2").attr("placeholder", stuff.weekDayOff2);
+		$("#weekendStartTime1").attr("placeholder", stuff.weekEndOn1);
+		$("#weekendOffTime1").attr("placeholder", stuff.weekEndOff1);
+		$("#weekendStartTime2").attr("placeholder", stuff.weekEndOn2);
+		$("#weekendOffTime2").attr("placeholder", stuff.weekEndOff2);
     });
 });
 
@@ -760,68 +820,6 @@ $(".saveFurnaceSettings").on("click", function(event){
 
 
 // ----------------------------------
-
-// Handle the GET other settings button
-$(".getGeneralSettings").on("click", function(event){
-	event.preventDefault();
-	console.log("got the get general settings click");
-
-	var serverURL =	currentLocation + "generalSettings";
-	$.ajax({
-		url: serverURL,
-		type: "get",
-		success: function(stuff) {
-			console.log("the post worked");
-
-//	$.get('generalSettings', (stuff) => {
-			console.log(stuff);
-			//serverIPAddress = stuff.serverIPAddress;
-			$("#tempSaveInterval").attr("placeholder", stuff.tempSaveInterval);
-			$("#dataPointsInGraph").attr("placeholder", stuff.numDataPointsToGraph);
-			$("#minHouseTemp").attr("placeholder", stuff.minHouseTemp);
-			$("#maxHouseTemp").attr("placeholder", stuff.maxHouseTemp);
-			$("#minFurnaceTemp").attr("placeholder", stuff.minFurnaceTemp);
-			$("#maxFurnaceTemp").attr("placeholder", stuff.maxFurnaceTemp);
-			$("#serverIPAddress").attr("placeholder", stuff.serverIPAddress);
-			$("#ArduinoIPAddress").attr("placeholder", stuff.arduinoIPAddress);
-			$("#runMode").attr("placeholder", stuff.runMode);
-			$("#keepDataDays").attr("placeholder", stuff.keepDataDays);
-			$("#whichSensor").text(stuff.currentSensor);
-		}
-	});
-});
-
-
-// Update the General settings
-$(".upDateGeneralSettings").on("click", function(event){
-	event.preventDefault();
-	console.log("got the update general click");
-	var newGenSettings = {
-		tempSaveInterval: $("#tempSaveInterval").val().trim(),
-		dataPointsToGraph: $("#dataPointsInGraph").val().trim(),
-		setMinHouseTemp: $("#minHouseTemp").val().trim(),
-		setMaxHouseTemp: $("#maxHouseTemp").val().trim(),
-		minFurnaceTemp: $("#minFurnaceTemp").val().trim(),
-		maxFurnaceTemp: $("#maxFurnaceTemp").val().trim(),
-		whichSensor: $("#whichSensor").val().trim(),
-		serverIPAddress: $("#serverIPAddress").val().trim(),
-		arduinoIPAddress: $("#ArduinoIPAddress").val().trim(),
-		keepDataDays: $("#keepDataDays").val().trim(),
-	};
-	console.log(newGenSettings);
-	$(".generalSettingsForm")[0].reset();
-//	var serverURL = "'http://" + serverIPAddress + ":2000/upDateGeneralSettings'";
-
-	$.ajax({
-		url: currentLocation + "upDateGeneralSettings",
-		type: "POST",
-		data: newGenSettings,
-		success: function(d) {
-			console.log("the post worked");
-		}
-	})
-});
-
 // these next 4 change which sensor turns the furnace off
 $(".changeFurnTurnOffBedroom").on("click", function(event){
 	$("#whichSensor").text("Bedroom");
@@ -919,12 +917,145 @@ $('#stateList li a').on('click', function(){
 }); 
 
 
-// handling the about page click
-$(".about").on("click", function(event){
-//	event.preventDefault();
-	console.log("got the about click");
-	$.get('/about');
-})
+// handling the Chart Pipe Temps click
+$(".messageChartPipeTemps").on("click", function(event){
+	event.preventDefault();
+	const labels = [];
+	const pipeTempArray = [];     // pipe temp array will hopd the temps for display
+	var time = [];
+	console.log("got the Chart Pipe Temps click");
+
+	document.getElementById("div1").removeAttribute("display:none");
+	document.getElementById("div1").setAttribute("style", "display:block");
+
+
+	// to convert mysql timestamp
+	// https://stackoverflow.com/questions/3075577/convert-mysql-datetime-stamp-into-javascripts-date-format
+
+	// get the pipe temperature data
+	$.get('pipeTemp', (temps) => {
+		console.log("data back from pipe temps - ");
+		console.log(temps);          // the temps array is te temperatures returned from the server
+
+		// label array is the x axis lable for each data point
+		var labelArray = [];
+		for (i=0; i<temps.length; i++){
+			var od = temps[i].recircHist;
+			var pt = temps[i].pipetemperatures;  // put the temp in the variable
+
+			var t = od.split(/[- : T .]/);
+			console.log(t);
+			if (t[3] < 5){
+				x = t[3] - 5;
+				t[3] = x + 24;
+			} else t[3] = t[3] - 5;
+
+			// Apply each element to the Date function
+			time = t[3] + ":" + t[4];
+			console.log(time);
+			labels [i] = time;    // assine the time to the array at the data point
+			Math.round(pt);        // round the temp
+			pipeTempArray[i] = pt   // then put it into the pipe temp array
+			if (temps[i].recircOnOff == "turnRecircOn"){
+				labelArray.push( {
+							      "text": "Pump Turned ON",
+							      "background-color": "#90A23B",
+							      "font-size": "14px",
+							      "font-family": "arial",
+							      "font-weight": "normal",
+							      "font-color": "#FFFFFF",
+							      "padding": "10%",
+							      "border-radius": "3px",
+							      "offset-y": -30,
+							      "shadow": false,
+							      "callout": true,
+							      "callout-height": "10px",
+							      "callout-width": "15px",
+							      "hook": "node:index=" + i
+								})
+			};
+			if (temps[i].recircOnOff == "turningRecircOff"){
+				labelArray.push ( {
+							      "text": "Pump Turned OFF",
+							      "background-color": "#90A23B",
+							      "font-size": "14px",
+							      "font-family": "arial",
+							      "font-weight": "normal",
+							      "font-color": "#FFFFFF",
+							      "padding": "10%",
+							      "border-radius": "3px",
+							      "offset-y": -30,
+							      "shadow": false,
+							      "callout": true,
+							      "callout-height": "10px",
+							      "callout-width": "15px",
+							      "hook": "node:index=" + i
+								})
+			}
+		}
+
+		console.log("built the chart struct - ");
+		console.log(labelArray);
+
+		// full ZingChart schema can be found here:
+		// https://www.zingchart.com/docs/api/json-configuration/
+		const myConfig = {
+    	    type: 'line',
+        	title: {
+				text: 'Recirculator status',
+				fontSize: 22,
+				color: '#5d7d9a'
+			},
+			legend: {
+				draggable: true,
+			},
+			scaleX: {
+				// set scale label
+				label: {
+					text: 'Time'
+				},
+				// convert text on scale indices
+				labels: labels
+				//  labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+			},
+			scaleY: {
+			// scale label with unicode character
+				label: {
+					text: 'Temperature (°F)'
+				}
+			},
+			plot: {
+				// animation docs here:
+				// https://www.zingchart.com/docs/tutorials/design-and-styling/chart-animation/#animation__effect
+				animation: {
+					effect: 'ANIMATION_EXPAND_BOTTOM',
+					method: 'ANIMATION_STRONG_EASE_OUT',
+					sequence: 'ANIMATION_BY_NODE',
+					speed: 15,
+				}
+			},
+
+			"labels": labelArray,
+
+			series: [{
+				// plot 1 values, linear data
+				values: pipeTempArray,
+				text: 'Pipe Temperature',
+				backgroundColor: '#4d80a6'
+			}]
+		};
+     
+		// render chart with width and height to
+		// fill the parent container CSS dimensions
+		zingchart.render({
+			id: 'myChart',
+			data: myConfig,
+			height: '100%',
+			width: '100%'
+		});
+    });
+// end the chart pipe temps click
+});
 
 
 // end doc ready

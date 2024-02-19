@@ -1,11 +1,16 @@
 // all data communications serial and ethernet will be in this file
+// version 2.0.0
+var version = "2.0.1";
+
 const data_access = require('./databasecontroller');
 const recircContrl = require('./recircController');
 const furnaceController = require('./furnaceController');
+const routeCntrlr = require('./routeController');
 
 //  delete this - var tempToUse = [];
 //  delete this - var test = "Test";
 //  delete this - var temperature1 = 11.11;
+
 
 // Status flags - from the Arduino
 var whichSensor = 0;
@@ -53,6 +58,7 @@ var furnaceTurnOff = '7';
 var changeHouseMinTemp = '8';
 var changeHouseMaxTemp = '9';
 var furnaceText = "noChange";
+var recircText = "noChange";
 var maxHouseTempArduino = 0;
 
 // which sensors:
@@ -109,7 +115,7 @@ find().then(devices => {
 
 //  State Machine for the whole application
 var allStates = {
-	stateHomeAway: "Home",
+	stateHomeAway: "Away",
 	stateRecircPump: "off",
 	stateFurnace: "off",
 	stateWoodStove: "off",
@@ -130,6 +136,9 @@ var allStates = {
 //  to hold the state during a run for water
 var oldState = "";
 
+exports.getVersion = function (){
+	return (version);
+};
 
 // called by route controller to change the arduino address that the server listens for
 exports.changeArduinoIPAddress = function (newAddress){
@@ -225,7 +234,11 @@ exports.changeState = function (whichState, toWhatState){
 exports.getState = function (){
 	console.log("In con controller get state - ");
 	console.log(allStates);
-	return allStates
+	return allStates;
+};
+
+exports.getPumpState = function(){
+	return allStates.stateRecircPump
 };
 //  End state machine
 
@@ -236,7 +249,7 @@ exports.getIPAddresses = function (){
 	tempIPs[0] = serverAddress.address;
 	//console.log(tempIPs);
 	tempIPs[1] = (arduinoAddress);
-	//console.log("in com cntrlr get IPs " + tempIPs);
+	console.log("in com cntrlr get IPs " + tempIPs);
 	return tempIPs;
 };
 
@@ -313,7 +326,7 @@ server.on("message", function (StuffIn, remote) {
 	    console.log("Water Tank - 9 C & F - " + tempC9 + " " + tempF9);
 
         recircContrl.checkRecirc(tempF4, allStates);
-	    data_access.saveTempData(tempF1, tempF2, tempF3, tempF4, tempFurnaceF, tempF6, tempF7, tempF8, tempF9, furnaceText, allStates);
+	    data_access.saveTempData(tempF1, tempF2, tempF3, tempF4, tempFurnaceF, tempF6, tempF7, tempF8, tempF9, furnaceText, recircText, allStates);
 
     // f designates it as a flag packet
     // we will always get a flag packet before a temerature packet
@@ -332,11 +345,29 @@ server.on("message", function (StuffIn, remote) {
 		console.log("arduino State, furnace - " + arduinoFurnaceState);  // furnace state
 		console.log("Arduino Max House Temp - " + maxHouseTempArduino);
 		// update allstates with the Arduino recirc state
+		console.log(allStates);
 		if(recircMotorState == 1){
+			// recirc motor is on
+			if(allStates.stateRecircPump == "off"){
+				// just turned the recirc pump on - how to get back to the front end
+				// the route cntrolr will ask for it
+				console.log (" need to get this over to the recirc cntrl - ON");
+				//routeCntrlr.setPumpState ("on");
+			}
 			allStates.stateRecircPump = "on";
+
 		} else if (recircMotorState == 0){
+			// recirc motor is off
+			if(allStates.stateRecircPump == "on"){
+				// just turned the recirc pump off - how to get back to the front end
+				// the route cntrolr will ask for it
+				console.log (" need to get this over to the recirc cntrl - OFF");
+				data_access.setRecircChange("recircOff");
+				//routeCntrlr.setPumpState ("off");
+			}
 			allStates.stateRecircPump = "off";
 		};
+		
 		//  check if furnace just changed state
 		if (arduinoFurnaceState != allStates.stateFurnace){
 			if (arduinoFurnaceState == 1){   //  furnace was just turned on
@@ -487,6 +518,7 @@ exports.sendMessageToArdunio = function (whatToDo, data){
 			//var furnaceTurnOff = '08';
 			break;
 		case "changeHouseMinTemp":
+			// I don't think the arduino does anything with this temp
 			console.log("in case change min house temp - ");
 			console.log(data);
 			var dataToSend = changeHouseMinTemp + " " + data;
@@ -499,11 +531,15 @@ exports.sendMessageToArdunio = function (whatToDo, data){
 		case "changeHouseMaxTemp":
 			console.log("in case change max house temp - ");
 			console.log(data);
-			var dataToSend = changeHouseMaxTemp + " " + data + " ";
-			charsToSend = dataToSend.length;
-			console.log(dataToSend + " - " + charsToSend);
-			server.send(dataToSend, 0, charsToSend, arduinoPort, arduinoAddress);
-			//server.send(changeHouseMinTemp, 0, 2, arduinoPort, arduinoAddress);
+			if (maxHouseTempArduino != data){
+				// only send new data if not equal to current
+				console.log("!!!!!!!! WARNING Arduino max house temp NOT EQUAL furn temp from furncntrl  !!!!!!!!!")
+				var dataToSend = changeHouseMaxTemp + " " + data + " ";
+				charsToSend = dataToSend.length;
+				console.log(dataToSend + " - " + charsToSend);
+				server.send(dataToSend, 0, charsToSend, arduinoPort, arduinoAddress);
+				//server.send(changeHouseMinTemp, 0, 2, arduinoPort, arduinoAddress);
+			}
 			break;
 		default:
 			//server.send('WTF', 0, 3, arduinoPort, arduinoAddress)

@@ -1,7 +1,10 @@
 //  This module is called every time a temperature is recieved
-  
+//  version 2.0.0
+
 var comController = require ('./communicationsController');
 var dbController = require ('./databasecontroller');
+
+var version = "2.O.1";
 
 //var recircOn = 04;
 //var recircOff = 05;
@@ -46,9 +49,25 @@ var recirculatorTemp = 0.0;
 	return (dayAndTime);
 };*/
 
+exports.getVersion = function (){
+	return (version);
+};
+
 // force a re-read of the recirc settings
 exports.getNewRecircSettings = function(){
 	getSettingsCount = getSettingsInterval;
+};
+
+// front end requests a pump status
+exports.getPumpStatus = function(){
+	return (pumpState)
+};
+
+// Front Ends requests the current recirc settings
+exports.getCurrentRecircSettings = function (req, res){
+	console.log("in route controller - getCurrentRecircSettings");
+	console.log(recircSettings);
+	res.send(recircSettings);
 };
 
 // Front end requested a forced pump change
@@ -59,18 +78,24 @@ exports.manualPumpChange = function (newState){
 	//console.log("All States furnace - " + allStates.stateFurnace);
 	if (pumpState == "on"){
 		console.log("Recirc Pump is on and manula request to turn off");
-		comController.sendMessageToArdunio("stopRecirc");
+		comController.sendMessageToArdunio("stopRecirc", "placeholder 1");
 		dbController.savePipeTemp("ManualPumpOff", recirculatorTemp);
+		dbController.setRecircChange("manRecircOff");
 		comController.changeState("stateRecircPump", "off");
 		pumpState = "off";
 	} else if (pumpState == "off"){
 		console.log("Recirc Pump is off and manual request to turn on");
-		comController.sendMessageToArdunio("runRecirc");
+		comController.sendMessageToArdunio("runRecirc", "placeholder 2");
 		dbController.savePipeTemp("ManualPumpOn", recirculatorTemp);
-		comController.changeState("stateRecircPump", "on");
+		//comController.changeState("stateRecircPump", "on");
+		dbController.setRecircChange("manRecircOn");
 		pumpState = "on";
 	};
 	//allStates = comController.getState;
+	return (pumpState);
+};
+
+exports.returnPumpStatus = function (){
 	return (pumpState);
 };
 
@@ -157,6 +182,7 @@ exports.checkRecirc = function (recircTemp, currentStates){
 							// pump is on, but reached temp so turn off
 							console.log("Detected a turn Recirc pump off");
 							dbController.savePipeTemp("turningRecircOff", recircTemp);
+							dbController.setRecircChange("recircOff", recircTemp);
 							// coment out the stop - depend on the Arduino to do
 							//comController.sendMessageToArdunio("stopRecirc");
 							//comController.changeState("statePump", "off");
@@ -181,6 +207,9 @@ exports.checkRecirc = function (recircTemp, currentStates){
 					// turn pump on
 					comController.sendMessageToArdunio("runRecirc");
 					dbController.savePipeTemp("turnRecircOn", recircTemp);
+					dbController.setRecircChange("turnedRecircOn");
+
+					//comController.setRecircChange("turnRecircOn");
 					//comController.changeState("statePump", "on");
 				} else if (loopCount >= savePipeDataInterval){
 					dbController.savePipeTemp("recircIsOff", recircTemp);
@@ -242,8 +271,9 @@ exports.checkRecirc = function (recircTemp, currentStates){
 			dbController.recircSettingsRecirCNTRL("somethign", function (tempRecircSettings) {
 				console.log("**  in recirc controller, just back from getting recirc settings from db");
 				//var tempRecircSettings = dbController.recircSettingsRecirCNTRL()
-				console.log("WHOLEY SHIT - " + tempRecircSettings.pipeTempOn);
-				console.log(tempRecircSettings.id);
+				console.log("WHOLEY SHIT - " + tempRecircSettings.id);
+				console.log(tempRecircSettings);
+				console.log(tempRecircSettings.weekEndOff1);
 /*
 				recircSettings.id = tempRecircSettings.id;
 				recircSettings.pipeTempOn = tempRecircSettings.pipeTempOn;
@@ -256,8 +286,8 @@ exports.checkRecirc = function (recircTemp, currentStates){
 				recircSettings.weekEndOff1 = tempRecircSettings.weekEndOff1;
 				recircSettings.weekEndOn2 = tempRecircSettings.weekEndOn2;
 				recircSettings.weekEndOff2 = tempRecircSettings.weekEndOff2;
-
 */
+
 				getSettingsCount = 0;
 			});
 			

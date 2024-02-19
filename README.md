@@ -12,11 +12,11 @@ screenshot homepage
 
 The Home Energy Manager is built on a NODE.JS server using express for front end communications.  The front end is straight HTML using jquery and Bootstrap.  The interface with external equipment is done using an Adrino microcontroller which interfaces with the server using UDP over ethernet.  The Arduino includes a USB serial interface for simple comunications including downloading the Ardunio code.
 
-The application includes a SQL database using Sequelize which stores configuration information and temperature history.
+The application includes a SQL database using which stores configuration information and temperature history.
 
 This pic shows the external hardware in the development environment.  The Arduino microcontroller with the ethernet shield is at the top. sandwhiched between is a screw shield providing all the external connections. The bus at the top provides a pull down resister and a capacitor between the TMP-36s and ground. The LED is simply to show that the Arduino is running by connecting to a digital output which turns the LED on and off in two second interval.  On the left side is a xxx power supply.
 
-Connection to the water pump and furnace is through Adafruit Fether Shield which delivers up to 8 Amps AC.
+Connection to the water pump and furnace is through Adafruit Fether Shields which delivers up to 8 Amps AC.
 
 various status during development, and the blue power box to the right contains the power relay which steps up the power to control high power devices, in this case a water pump.
 
@@ -31,7 +31,7 @@ The repo is on Github: https://github.com/scandrews/Home-Energy-Manager.git
 
 HTML, javascript, jquery, ajax, express
 
-express, body-parser, fs, sequelize, socket.io, dgram, net, serialport, readline
+express, body-parser, fs, socket.io, dgram, net, serialport, readline
 
 Arduino development environment in 'C' and including libraries for serial, and ethernet i/o and UDP, and analog i/o for reading and writing analog devices such and the TMP-36, as well as digital i/o for writing to the power relay and LEDs.
 
