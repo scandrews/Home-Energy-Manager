@@ -228,7 +228,7 @@ app.post('/upDateGeneralSettings', function (req, res) {
 					console.log("return from #of points to graph - " + returnStatus);
 					break;
 				case "setMinHouseTemp":
-					var returnStatus = comControler.sendMessageToArdunio ("changeHouseMinTemp", newSettings[key]);
+					//var returnStatus = comControler.sendMessageToArdunio ("changeHouseMinTemp", newSettings[key]);
 					furnaceController.setFurnaceTemps("minHouseTemp", newSettings[key]);
 					console.log("return from change min house temp");
 					break;

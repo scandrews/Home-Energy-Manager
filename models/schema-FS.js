@@ -1,3 +1,326 @@
+
+// version 2.0.2
+
+INSERT into furnaceSettings (
+		state,
+		weekDayMorningOnTime,
+		WeekDayMorningMinTemp,
+		WeekDayMorningMaxTemp,
+		weekDayMiddayOnTime,
+		WeekDayMiddayMinTemp,
+		WeekDayMiddayMaxTemp,
+		weekDayEveningOnTime,
+		WeekDayEveningMinTemp,
+		WeekDayEveningMaxTemp,
+		weekDayNightOnTime,
+		WeekDayNightMinTemp,
+		WeekDayNightMaxTemp,
+		weekEndMorningOnTime,
+		WeekEndMorningMinTemp,
+		WeekEndMorningMaxTemp,
+		weekEndMiddayOnTime,
+		WeekEndMiddayMinTemp,
+		WeekEndMiddayMaxTemp,
+		weekEndEveningOnTime,
+		WeekEndEveningMinTemp,
+		WeekEndEveningMaxTemp,
+		weekEndNightOnTime,
+		WeekEndNightMinTemp,
+		WeekEndNightMaxTemp,
+		awayMinTemp,
+		awayMaxTemp
+		)
+	values(
+		'Home',
+		'06:00',
+		65,
+		68,
+		'09:30',
+		60,
+		63,
+		'16:30',
+		65,
+		68,
+		'23:30',
+		62,
+		65,
+		'07:00',
+		66,
+		69,
+		'12:00',
+		64,
+		67,
+		'16:00',
+		66,
+		69,
+		'23:30',
+		62,
+		65,
+
+		58,
+		61
+	);
+
+
+              //db.furnaceSettings.create(
+INSERT into furnaceSettings (
+              state,
+              weekDayMorningOnTime,
+              WeekDayMorningMinTemp,
+              WeekDayMorningMaxTemp,
+              weekDayMiddayOnTime,
+              WeekDayMiddayMinTemp,
+              WeekDayMiddayMaxTemp,
+              weekDayEveningOnTime,
+              WeekDayEveningMinTemp,
+              WeekDayEveningMaxTemp,
+              weekDayNightOnTime,
+              WeekDayNightMinTemp,
+              WeekDayNightMaxTemp,
+
+              weekEndMorningOnTime,
+              WeekEndMorningMinTemp,
+              WeekEndMorningMaxTemp,
+              weekEndMiddayOnTime,
+              WeekEndMiddayMinTemp,
+              WeekEndMiddayMaxTemp,
+              weekEndEveningOnTime,
+              WeekEndEveningMinTemp,
+              WeekEndEveningMaxTemp,
+              weekEndNightOnTime,
+              WeekEndNightMinTemp,
+              WeekEndNightMaxTemp,
+
+              awayMinTemp,
+              awayMaxTemp
+          )
+          values(
+
+              "Guest",
+              "06:00",
+              65,
+              68,
+              "10:30",
+              62,
+              65,
+              "16:00",
+              65,
+              68,
+              "23:30",
+              62,
+              65,
+
+              "07:00",
+              66,
+              69,
+              "12:00",
+              65,
+              68,
+              "16:00",
+              66,
+              69,
+              "23:30",
+              64,
+              67,
+
+              58,
+              61
+          );
+
+
+insert into furnaceSettings (
+              state,
+              weekDayMorningOnTime,
+              WeekDayMorningMinTemp,
+              WeekDayMorningMaxTemp,
+              weekDayMiddayOnTime,
+              WeekDayMiddayMinTemp,
+              WeekDayMiddayMaxTemp,
+              weekDayEveningOnTime,
+              WeekDayEveningMinTemp,
+              WeekDayEveningMaxTemp,
+              weekDayNightOnTime,
+              WeekDayNightMinTemp,
+              WeekDayNightMaxTemp,
+
+              weekEndMorningOnTime,
+              WeekEndMorningMinTemp,
+              WeekEndMorningMaxTemp,
+              weekEndMiddayOnTime,
+              WeekEndMiddayMinTemp,
+              WeekEndMiddayMaxTemp,
+              weekEndEveningOnTime,
+              WeekEndEveningMinTemp,
+              WeekEndEveningMaxTemp,
+              weekEndNightOnTime,
+              WeekEndNightMinTemp,
+              WeekEndNightMaxTemp,
+
+              awayMinTemp,
+              awayMaxTemp
+          )
+          values(
+
+              "Working From Home",
+              "06:00",
+              65,
+              68,
+              "10:30",
+              64,
+              66,
+              "16:00",
+              65,
+              68,
+              "23:30",
+              62,
+              65,
+
+              "07:00",
+              66,
+              69,
+              "12:00",
+              65,
+              68,
+              "16:00",
+              66,
+              69,
+              "23:30",
+              64,
+              67,
+
+              58,
+              61
+          );
+
+
+
+INSERT into furnaceSettings (
+		state,
+		weekDayMorningOnTime,
+		WeekDayMorningMinTemp,
+		WeekDayMorningMaxTemp,
+		weekDayMiddayOnTime,
+		WeekDayMiddayMinTemp,
+		WeekDayMiddayMaxTemp,
+		weekDayEveningOnTime,
+		WeekDayEveningMinTemp,
+		WeekDayEveningMaxTemp,
+		weekDayNightOnTime,
+		WeekDayNightMinTemp,
+		WeekDayNightMaxTemp,
+		weekEndMorningOnTime,
+		WeekEndMorningMinTemp,
+		WeekEndMorningMaxTemp,
+		weekEndMiddayOnTime,
+		WeekEndMiddayMinTemp,
+		WeekEndMiddayMaxTemp,
+		weekEndEveningOnTime,
+		WeekEndEveningMinTemp,
+		WeekEndEveningMaxTemp,
+		weekEndNightOnTime,
+		WeekEndNightMinTemp,
+		WeekEndNightMaxTemp,
+		awayMinTemp,
+		awayMaxTemp
+		)
+	values(
+		'Home Alone',
+		'06:00',
+		65,
+		68,
+		'09:30',
+		60,
+		63,
+		'16:30',
+		65,
+		68,
+		'23:30',
+		62,
+		65,
+		'07:00',
+		66,
+		69,
+		'12:00',
+		64,
+		67,
+		'16:00',
+		66,
+		69,
+		'23:30',
+		62,
+		65,
+
+		58,
+		61
+	);
+
+insert into furnaceSettings (
+              state,
+              weekDayMorningOnTime,
+              WeekDayMorningMinTemp,
+              WeekDayMorningMaxTemp,
+              weekDayMiddayOnTime,
+              WeekDayMiddayMinTemp,
+              WeekDayMiddayMaxTemp,
+              weekDayEveningOnTime,
+              WeekDayEveningMinTemp,
+              WeekDayEveningMaxTemp,
+              weekDayNightOnTime,
+              WeekDayNightMinTemp,
+              WeekDayNightMaxTemp,
+
+              weekEndMorningOnTime,
+              WeekEndMorningMinTemp,
+              WeekEndMorningMaxTemp,
+              weekEndMiddayOnTime,
+              WeekEndMiddayMinTemp,
+              WeekEndMiddayMaxTemp,
+              weekEndEveningOnTime,
+              WeekEndEveningMinTemp,
+              WeekEndEveningMaxTemp,
+              weekEndNightOnTime,
+              WeekEndNightMinTemp,
+              WeekEndNightMaxTemp,
+
+              awayMinTemp,
+              awayMaxTemp
+          )
+          values(
+
+              "Away",
+              "06:00",
+              65,
+              68,
+              "10:30",
+              64,
+              66,
+              "16:00",
+              65,
+              68,
+              "23:30",
+              62,
+              65,
+
+              "07:00",
+              66,
+              69,
+              "12:00",
+              65,
+              68,
+              "16:00",
+              66,
+              69,
+              "23:30",
+              64,
+              67,
+
+              58,
+              61
+          );
+
+
+
+
 /*
 module.exports = (sequelize, Datatypes) => {
 

@@ -1,6 +1,6 @@
 // all data communications serial and ethernet will be in this file
 // version 2.0.0
-var version = "2.0.1";
+var version = "2.0.2";
 
 const data_access = require('./databasecontroller');
 const recircContrl = require('./recircController');
@@ -176,26 +176,26 @@ exports.changeState = function (whichState, toWhatState){
 					break;
 				case "Home":
 					console.log("in case Home");
-					furnaceController.changeHomeState("Home")
+					furnaceController.changeHomeState("Home", allStates.stateTimeOfDay)
 					allStates.stateHomeAway = "Home";
 					break
 				case "Home Alone":
 					console.log("in case Home Alone");
-					furnaceController.changeHomeState("Home")
-					allStates.stateHomeAway = "Home";
+					furnaceController.changeHomeState("Home Alone", allStates.stateTimeOfDay)
+					allStates.stateHomeAway = "Home Alone";
 					break;
 				case "Working From Home":
 					console.log("in case Working From Home");
-					furnaceController.changeHomeState("Working From Home")
+					furnaceController.changeHomeState("Working From Home", allStates.stateTimeOfDay)
 					allStates.stateHomeAway = "Working From Home";
 					break;
 				case "Guests":
 					console.log("in case Guests");
-					furnaceController.changeHomeState("Guests")
+					furnaceController.changeHomeState("Guests", allStates.stateTimeOfDay)
 					break;
 				case "Away":
 					console.log("in case Away");
-					furnaceController.changeHomeState("Away")
+					furnaceController.changeHomeState("Away", allStates.stateTimeOfDay)
 					allStates.stateHomeAway = "Away";
 					break;
 				case "back":

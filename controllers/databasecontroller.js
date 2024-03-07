@@ -1,6 +1,7 @@
 //  Database controller - all interaction with the database are here
 
-var version = "2.0.1";
+var version = "2.0.2";
+var schemaFS = "2.0.2";
 
 //const server = require('.././server');
 const mysql = require('mysql2');
@@ -61,7 +62,7 @@ var setFurnChngCounter = 0;
 
 var furnChangeState = 'NULL';
 var localFurnAction = "noChange";
-var keepDataTime = 2;  //days
+var keepDataTime = 4;  //days
 
 var recircChangeState = 'NULL';
 var setRecircChngCounter = 0;
@@ -172,179 +173,6 @@ connection.connect(function (err) {
 
 
 
-/*
-  //populate the database
-  exports.initSettings = function(){
-      console.log("* * * in db cntrlr init ALL settings * * *");
-      var sqlcode = "";
-        //db.recirculatorSettings.destroy({ truncate: true });
-        //db.furnaceSettings.destroy({ truncate: true });
-        //db.recirculatorSettings.create(
-      sqlcode = "INSERT INTO recirculatorSettings (pipeTempOn, pipeTempOff, weekDayOn1, weekDayOff1, weekdayOn2, weekDayOff2, weekEndOn1, weekEndOff1, weekEndOn2, weekEndOff2) values (100, 110, '6:30', '8:30', '16:30', '22:30', '8:30', '11:00', '14:30', '23:30')";
-      connection.query (sqlcode, (err, result) => {
-         if (err) throw (error)
-            console.log("db controller init settings, insert recirculator, result - ");
-            console.log(result);
-      });
-      console.log("got through the first init, now on the first furnace init");
-
-        //db.furnaceSettings.create(
-      sqlcode = "INSERT into furnaceSettings (state, weekDayMorningOnTime, WeekDayMorningMinTemp, WeekDayMorningMaxTemp, weekDayMiddayOnTime, WeekDayMiddayMinTemp, WeekDayMiddayMaxTemp, weekDayEveningOnTime, WeekDayEveningMinTemp, WeekDayEveningMaxTemp, weekDayNightOnTime, WeekDayNightMinTemp, WeekDayNightMaxTemp, weekEndMorningOnTime, WeekEndMorningMinTemp, WeekEndMorningMaxTemp, weekEndMiddayOnTime, WeekEndMiddayMinTemp, WeekEndMiddayMaxTemp, weekEndEveningOnTime, WeekEndEveningMinTemp, WeekEndEveningMaxTemp, weekEndNightOnTime, WeekEndNightMinTemp, WeekEndNightMaxTemp, awayMinTemp, awayMaxTemp) values('Home', '06:00', 65, 68, '09:30', 60, 63, '16:30', 65, 68, '23:30', 62, 65, '07:00', 66, 69, '12:00', 64, 67, '16:00', 66, 69, '23:30', 62, 65, 58, 61)";
-      connection.query (sqlcode, (err, result) => {
-          if (err) throw (err)
-          console.log("db controller init settings insert into furnacesettings FIRST");
-          console.log (result);
-          })
-
-  // end init settings
-  }
-
-
-              //db.furnaceSettings.create(
-        connection.query(insert into furnaceSettings
-          (
-              state,
-              weekDayMorningOnTime,
-              WeekDayMorningMinTemp,
-              WeekDayMorningMaxTemp,
-              weekDayMiddayOnTime,
-              WeekDayMiddayMinTemp,
-              WeekDayMiddayMaxTemp,
-              weekDayEveningOnTime,
-              WeekDayEveningMinTemp,
-              WeekDayEveningMaxTemp,
-              weekDayNightOnTime,
-              WeekDayNightMinTemp,
-              WeekDayNightMaxTemp,
-
-              weekEndMorningOnTime,
-              WeekEndMorningMinTemp,
-              WeekEndMorningMaxTemp,
-              weekEndMiddayOnTime,
-              WeekEndMiddayMinTemp,
-              WeekEndMiddayMaxTemp,
-              weekEndEveningOnTime,
-              WeekEndEveningMinTemp,
-              WeekEndEveningMaxTemp,
-              weekEndNightOnTime,
-              WeekEndNightMinTemp,
-              WeekEndNightMaxTemp,
-
-              awayMinTemp,
-              awayMaxTemp
-          ),
-          values(
-
-              "Guest",
-              "06:00",
-              65,
-              68,
-              "10:30",
-              62,
-              65,
-              "16:00",
-              65,
-              68,
-              "23:30",
-              62,
-              65,
-
-              "07:00",
-              66,
-              69,
-              "12:00",
-              65,
-              68,
-              "16:00",
-              66,
-              69,
-              "23:30",
-              64,
-              67,
-
-              58,
-              61
-          ), (err, result) => {
-                if (err) throw (error)
-            })
-
-        //db.furnaceSettings.create(
-        connection.query("insert into furnaceSettings set ?",
-          (
-              state,
-              weekDayMorningOnTime,
-              WeekDayMorningMinTemp,
-              WeekDayMorningMaxTemp,
-              weekDayMiddayOnTime,
-              WeekDayMiddayMinTemp,
-              WeekDayMiddayMaxTemp,
-              weekDayEveningOnTime,
-              WeekDayEveningMinTemp,
-              WeekDayEveningMaxTemp,
-              weekDayNightOnTime,
-              WeekDayNightMinTemp,
-              WeekDayNightMaxTemp,
-
-              weekEndMorningOnTime,
-              WeekEndMorningMinTemp,
-              WeekEndMorningMaxTemp,
-              weekEndMiddayOnTime,
-              WeekEndMiddayMinTemp,
-              WeekEndMiddayMaxTemp,
-              weekEndEveningOnTime,
-              WeekEndEveningMinTemp,
-              WeekEndEveningMaxTemp,
-              weekEndNightOnTime,
-              WeekEndNightMinTemp,
-              WeekEndNightMaxTemp,
-
-              awayMinTemp,
-              awayMaxTemp
-
-          ),
-          values(
-
-              "Working From Home",
-              "06:00",
-              65,
-              68,
-              "10:30",
-              64,
-              66,
-              "16:00",
-              65,
-              68,
-              "23:30",
-              62,
-              65,
-
-              "07:00",
-              66,
-              69,
-              "12:00",
-              65,
-              68,
-              "16:00",
-              66,
-              69,
-              "23:30",
-              64,
-              67,
-
-              58,
-              61
-          )
-          .then ((result) => {
-              console.log("got the **  WTF **  third then in init furnace settings" + result);
-            })
-          .catch ((err) => {
-              console.log("Got a DB error in init furnace settings THIRD");
-              console.log (err);
-          })
-      );
-          */
-
-
   // get the recirculator settings for the recirc controller
   exports.recircSettingsRecirCNTRL = function (what, fn) {
     console.log("dbase controoler get recirc settings from recirs controller - " + what);
@@ -355,7 +183,8 @@ connection.connect(function (err) {
     connection.query ("SELECT * FROM recirculatorSettings", function (err, result) {
           if (err) throw error;
           console.log(result);
-          console.log(result[id] + results[weekDayon2]);
+          //console.log(result[0].id);
+          //console.log(result[0].weekDayOn2);
           //return (result);
           fn (result);
     })
@@ -482,7 +311,7 @@ connection.connect(function (err) {
     return (dataPac);
   };
 
-
+  // called by the communications controller with a new temperature packet
   exports.saveTempData = function (temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, furnAction, recicrcAction, currentStates) {
     console.log("in save temperature data");
     console.log(temp1, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, furnAction);
@@ -541,7 +370,7 @@ connection.connect(function (err) {
         console.log("timehere - " + timehere);
         //console.log("try this time - " + UNIX_TIMESTAMP(DATE_SUB(NOW())));
 
-        var sqltemp = "DELETE FROM temperatures WHERE createdAt < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL " + keepDataTime +" DAY))";
+        var sqltemp = "DELETE FROM temperatures WHERE createdAt < DATE_SUB(NOW(), INTERVAL " + keepDataTime +" DAY)";
         //WHERE search_date < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 180 DAY))
         console.log (sqltemp);
         connection.query (sqltemp, function (err, result){
@@ -677,14 +506,16 @@ connection.connect(function (err) {
 
   // called by the furnace controller
   exports.getFurnaceSettings = function (HomeState, fn){
-    console.log("in dbcontroller get furnace settings");
+    console.log("****************in dbcontroller get furnace settings***************");
     console.log("Current state - " + HomeState);
 
     var sqltest = "SELECT * FROM furnaceSettings WHERE state IN ('" + HomeState + "')";
+    console.log(sqltest);
         connection.query (sqltest, function (err, result) {
           if (err) throw err;
           console.log("just back from the db, result -")
           console.log(result);
+          console.log(result[0].WeekDayEveningMinTemp);
           return ( fn (result) )
       });
   };

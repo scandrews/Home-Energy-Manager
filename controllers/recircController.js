@@ -4,7 +4,7 @@
 var comController = require ('./communicationsController');
 var dbController = require ('./databasecontroller');
 
-var version = "2.O.1";
+var version = "2.O.2";
 
 //var recircOn = 04;
 //var recircOff = 05;
@@ -271,27 +271,27 @@ exports.checkRecirc = function (recircTemp, currentStates){
 			dbController.recircSettingsRecirCNTRL("somethign", function (tempRecircSettings) {
 				console.log("**  in recirc controller, just back from getting recirc settings from db");
 				//var tempRecircSettings = dbController.recircSettingsRecirCNTRL()
-				console.log("WHOLEY SHIT - " + tempRecircSettings.id);
+				console.log("WHOLEY SHIT - " + tempRecircSettings[0].id);
 				console.log(tempRecircSettings);
-				console.log(tempRecircSettings.weekEndOff1);
-/*
-				recircSettings.id = tempRecircSettings.id;
-				recircSettings.pipeTempOn = tempRecircSettings.pipeTempOn;
-				recircSettings.pipeTempOff = tempRecircSettings.pipeTempOff;
-				recircSettings.weekDayOn1 = tempRecircSettings.weekDayOn1;
-				recircSettings.weekDayOff1 = tempRecircSettings.weekDayOff1;
-				recircSettings.weekDayOn2 = tempRecircSettings.weekDayOn2
-				recircSettings.weekDayOff2 = tempRecircSettings.weekDayOff2
-				recircSettings.weekEndOn1 = tempRecircSettings.weekEndOn1;
-				recircSettings.weekEndOff1 = tempRecircSettings.weekEndOff1;
-				recircSettings.weekEndOn2 = tempRecircSettings.weekEndOn2;
-				recircSettings.weekEndOff2 = tempRecircSettings.weekEndOff2;
-*/
+				console.log(tempRecircSettings[0].weekEndOff1);
+
+				recircSettings.id = tempRecircSettings[0].id;
+				recircSettings.pipeTempOn = tempRecircSettings[0].pipeTempOn;
+				recircSettings.pipeTempOff = tempRecircSettings[0].pipeTempOff;
+				recircSettings.weekDayOn1 = tempRecircSettings[0].weekDayOn1;
+				recircSettings.weekDayOff1 = tempRecircSettings[0].weekDayOff1;
+				recircSettings.weekDayOn2 = tempRecircSettings[0].weekDayOn2
+				recircSettings.weekDayOff2 = tempRecircSettings[0].weekDayOff2
+				recircSettings.weekEndOn1 = tempRecircSettings[0].weekEndOn1;
+				recircSettings.weekEndOff1 = tempRecircSettings[0].weekEndOff1;
+				recircSettings.weekEndOn2 = tempRecircSettings[0].weekEndOn2;
+				recircSettings.weekEndOff2 = tempRecircSettings[0].weekEndOff2;
+
 
 				getSettingsCount = 0;
 			});
 			
-			recircSettings.id = 1;
+			//recircSettings.id = 1;
 
 		};
 
