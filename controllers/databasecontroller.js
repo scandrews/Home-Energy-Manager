@@ -162,7 +162,7 @@ console.log(config[runMode]);
 connection = mysql.createConnection({
     host: config[runMode].host,
     port: config[runMode].port,
-    user: config[runMode].username,
+    user: config[runMode].user,
     password: config[runMode].password,
     database: config[runMode].database
 });
@@ -173,26 +173,51 @@ connection.connect(function (err) {
 
 
 
+
+  // called by the furnace controller
+  exports.getFurnaceSettings = function (HomeState, fn){
+    console.log("****************in dbcontroller get furnace settings***************");
+    console.log("Current state - " + HomeState);
+
+    var sqltest = "SELECT * FROM furnaceSettings WHERE state IN ('" + HomeState + "')";
+        connection.query (sqltest, function (err, result) {
+          if (err) throw err;
+          console.log(result);
+          console.log(result[0].WeekDayEveningMinTemp);
+          return ( fn (result) )
+      });
+  };
+
+
   // get the recirculator settings for the recirc controller
   exports.recircSettingsRecirCNTRL = function (what, fn) {
     console.log("dbase controoler get recirc settings from recirs controller - " + what);
-    //exports.recircSettingsRecirCNTRL = function (){
+    console.log("Current state - " + what);
 
-//    var sqltest = "SELECT * FROM recirculatorSettings";
-//    connection.query (sqltest, function (err, result) {
-    connection.query ("SELECT * FROM recirculatorSettings", function (err, result) {
-          if (err) throw error;
-          console.log(result);
-          //console.log(result[0].id);
-          //console.log(result[0].weekDayOn2);
-          //return (result);
-          fn (result);
-    })
+//    if (what == "RunForWtr30" || what == "RunForWtr60") {
+
+    comController.getState(function(interumWhat){
+      console.log ("is the fucker back yet - " + interumWhat.stateHomeAway);
+
+      var sqltest = "SELECT * FROM recirculatorSettings WHERE state IN ('" + interumWhat.stateHomeAway + "')";
+      console.log(sqltest);
+      //    connection.query (sqltest, function (err, result) {
+      //connection.query ("SELECT * FROM recirculatorSettings", function (err, result) {
+      connection.query (sqltest, function (err, result) {
+            if (err) throw error;
+            console.log("just back from the db, result -")
+            console.log(result);
+            console.log(result[0].id);
+            console.log(result[0].weekDayOn2);
+            //return (result);
+            return (fn (result));
+      })
+    });
   };
 
 
   // get the recirculator settings for the front end
-  exports.recircSettingsFrontEnd = function (req, res) {
+/*  exports.recircSettingsFrontEnd = function (req, res) {
     console.log("dbase controoler get recirc settings from the front end");
     connection.query("SELECT * FROM recirculatorSettings", function (err, result){
         if (err) throw err;
@@ -201,7 +226,7 @@ connection.connect(function (err) {
         res.send (result);
     })
           //    db.recirculatorSettings.findAll({})
-          /*      .then ((result) => {
+                .then ((result) => {
                 })
                 .catch ((err) => {
                     console.log("Got a DB error in get recird setting for the front end");
@@ -209,8 +234,9 @@ connection.connect(function (err) {
 
           //        res.send( result );
                 })
-          */
   };
+          */
+
 
   // retrieve the stored temp data for display
   exports.getTempData = function (req, res) {
@@ -404,6 +430,7 @@ connection.connect(function (err) {
   // end save temp data
   };
 
+/*
   exports.savePipeTemp = function (action, pipeTemp){
     console.log("In save pipe temp" + action + " , " + pipeTemp);
 
@@ -418,50 +445,9 @@ connection.connect(function (err) {
         connection.query(curSQL, function (err){
           if (err) throw err;
         })
-
     })
-
-
-/*    let timeDifference = currentTimeHere - (86400000 * keepDataTime);
-    // delete the oldest record if < keepDataTime
-    let delayDays = keepDataTime + .5;
-    db.recirculatorHistory.destroy({
-        where: {
-          createdAt: { lt: new Date(Date.now() - delayDays) }
-        }
-      })
-      .then ((result) => {
-          db.recirculatorHistory.create(
-            {
-              pipetemperatures: pipeTemp,
-              recircOnOff: action,
-            })
-          .then ((result) => {
-            console.log("Looks like we sucessfully deleted the oldest recond in recic Hist")
-            return;
-          })
-          .catch ((err) => {
-            console.log("got an err in delete oldest record in recirc history")
-          })
-      .catch ((err) => {
-        console.log("Got a DB error in savePipeTemp");
-        console.log (err);
-      })
-    })
-*/
   }
-
-/*
-  exports.changeState = function (action){
-    console.log("***** I CAN'T IMAGINE THAT THIS IS USED *****")
-    if (action == "changeHome-Away"){
-      connection.query ("UPDATE recirculatorSettings SET pipeTempOn = 35  WHERE id=2")
-    }
-    else if (action == "changeHome-Away"){
-    }
-  };
 */
-//    ******  Under construction   ********
 
   exports.upDateRecircSettings = function (newSettings) {
     console.log("* * * in db CONTROLLER UPDATE RECIRC SETTINGS * * *");
@@ -520,26 +506,6 @@ connection.connect(function (err) {
       });
   };
 
-/*
-    db.furnaceSettings.findAll(
-        {
-          where: {state : HomeState }
-        }
-        )
-      .then (( result ) => {
-        console.log("Just retrieved the furnace setting form the db");
-        console.log(result);
-        console.log("in DB cntrl id of the retrived table is - " + result[0].id);
-        console.log("in DB cntrl middayMaxTemWeekDay - " + result[0].WeekDayMiddayMaxTemp);
-        console.log("in DB cntrl middayMinTemWeekDay - " + result[0].WeekDayMiddayMinTemp);
-        fn (result[0].dataValues);
-        //return (result);
-      })
-      .catch ((err) =>{
-        console.log("ERROR IN THE SAVE TEMPS " + err)
-      })
-  };
-*/
 
 // save new settings from the front end to the database, overwriting existing settings
 // or saving under a new name if given

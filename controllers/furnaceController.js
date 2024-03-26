@@ -1,6 +1,7 @@
 // version 2.0.2
 
-var version = "2.0.2";
+var version = "2.0.3";
+var schemaVersion = "2.0.3";
 
 
 var dbController = require ('./databasecontroller');
@@ -537,49 +538,54 @@ exports.changeHomeState = function (newHomeState, stateTimeOfDay){
 		console.log(furnaceSettings.WeekDayMiddayMaxTemp);
 		console.log(stateTimeOfDay);
 
-		switch (stateTimeOfDay){
-			case "weekDayMorning":
-				furnaceSettings.minHouseTemp = furnaceSettings.WeekDayMorningMinTemp;
-	    		furnaceSettings.maxHouseTemp = furnaceSettings.WeekDayMorningMaxTemp;
-	    		break;
-	    	case "weekDayDay":
-	    		console.log("in the switch week day day");
-				console.log(furnaceSettings);
-				furnaceSettings.minHouseTemp = furnaceSettings.WeekDayMiddayMinTemp;
-				furnaceSettings.maxHouseTemp = furnaceSettings.WeekDayMiddayMaxTemp;
-				break;
-			case "weekDayEvening":
-	    		console.log("in the switch week day day");
-				console.log(furnaceSettings.state);
-				furnaceSettings.minHouseTemp = furnaceSettings.WeekDayEveningMinTemp;
-				furnaceSettings.maxHouseTemp = furnaceSettings.WeekDayEveningMaxTemp;
-				break;
-			case "weekDayNight":
-				furnaceSettings.minHouseTemp = furnaceSettings.WeekDayNightMinTemp;
-				furnaceSettings.maxHouseTemp = furnaceSettings.WeekDayNightMaxTemp;
-				break;
-			case "WeekEndMorning":
-				furnaceSettings.minHouseTemp = furnaceSettings.WeekEndMorningMinTemp;
-				furnaceSettings.maxHouseTemp = furnaceSettings.WeekEndMorningMaxTemp;
-				break;
-			case "weekEndDay":
-				furnaceSettings.minHouseTemp = furnaceSettings.WeekEndMiddayMinTemp;
-				furnaceSettings.maxHouseTemp = furnaceSettings.WeekEndMiddayMaxTemp;
-				break;
-			case "weekEndEvening":
-				furnaceSettings.minHouseTemp = furnaceSettings.WeekEndEveningMinTemp;
-				furnaceSettings.maxHouseTemp = furnaceSettings.WeekEndEveningMaxTemp;
-				break;
-			case "weekEndNight":
-				furnaceSettings.minHouseTemp = furnaceSettings.WeekEndNightMinTemp;
-				furnaceSettings.maxHouseTemp = furnaceSettings.WeekEndNightMaxTemp;
-				break;
-			case "Away":
+		if (newHomeState == "Away"){
 				furnaceSettings.minHouseTemp = furnaceSettings.minHouseTemp;
 				furnaceSettings.maxHouseTemp = furnaceSettings.maxHouseTemp;
-				break;
-			default:
-				console.log("*** ERROR IN THE FORCE HOUSE TEMPS UPDATE");
+		} else {
+				switch (stateTimeOfDay){
+					case "weekDayMorning":
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekDayMorningMinTemp;
+			    		furnaceSettings.maxHouseTemp = furnaceSettings.WeekDayMorningMaxTemp;
+			    		break;
+			    	case "weekDayDay":
+			    		console.log("in the switch week day day");
+						console.log(furnaceSettings);
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekDayMiddayMinTemp;
+						furnaceSettings.maxHouseTemp = furnaceSettings.WeekDayMiddayMaxTemp;
+						break;
+					case "weekDayEvening":
+			    		console.log("in the switch week day day");
+						console.log(furnaceSettings.state);
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekDayEveningMinTemp;
+						furnaceSettings.maxHouseTemp = furnaceSettings.WeekDayEveningMaxTemp;
+						break;
+					case "weekDayNight":
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekDayNightMinTemp;
+						furnaceSettings.maxHouseTemp = furnaceSettings.WeekDayNightMaxTemp;
+						break;
+					case "WeekEndMorning":
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekEndMorningMinTemp;
+						furnaceSettings.maxHouseTemp = furnaceSettings.WeekEndMorningMaxTemp;
+						break;
+					case "weekEndDay":
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekEndMiddayMinTemp;
+						furnaceSettings.maxHouseTemp = furnaceSettings.WeekEndMiddayMaxTemp;
+						break;
+					case "weekEndEvening":
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekEndEveningMinTemp;
+						furnaceSettings.maxHouseTemp = furnaceSettings.WeekEndEveningMaxTemp;
+						break;
+					case "weekEndNight":
+						furnaceSettings.minHouseTemp = furnaceSettings.WeekEndNightMinTemp;
+						furnaceSettings.maxHouseTemp = furnaceSettings.WeekEndNightMaxTemp;
+						break;
+					case "Away":
+						console.log("*** ERROR IN THE FORCE HOUSE TEMPS UPDATE 1");
+						break;
+					default:
+						console.log("*** ERROR IN THE FORCE HOUSE TEMPS UPDATE 2");
+
+					}
 		};
 
 		console.log("just forced an update to the house temps, min house temp - " + furnaceSettings.minHouseTemp);
@@ -617,7 +623,7 @@ exports.runFurnForWater = function(howLong){
 	keepOldSensor = currentArduinoOffSensor;
 	comController.sendMessageToArdunio("whichSensor", "none");
 	console.log("Furnace CNTRL run for hot water for  - " + howLong);
-	countRunForWater = howLong * 3000;
+	countRunForWater = howLong * 60;
 	console.log("In start Run For Water");
 	dbController.setFurnaceChange("FurnOnForWater");
 	comController.sendMessageToArdunio("furnaceTurnOn", 69);
@@ -630,8 +636,8 @@ function checkForEnd(){
 	if (countRunForWater <= 0){
 		clearInterval(runForWaterInterval);
 		console.log("In End RFW Delay, KEEP OLD - " + keepOldSensor);
-		comController.sendMessageToArdunio("whichSensor", keepOldSensor);
 		currentArduinoOffSensor = keepOldSensor;
+		comController.sendMessageToArdunio("whichSensor", keepOldSensor);
 		console.log("ENDING Run For Water, count - " + countRunForWater);
 		secondTimeout = setTimeout(endRunForWater, 500);
 	} else {

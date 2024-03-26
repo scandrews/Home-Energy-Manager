@@ -43,6 +43,21 @@ app.get('/about', (req, res) => {
 
 app.get('/getVersions', (req, res) => {
 	console.log("Route Controller got the get versions");
+	var verArray = [
+		routeVersion,
+		dbaccess.getVersion(),
+		comControler.getVersion(),
+		recircController.getVersion(),
+		furnaceController.getVersion(),
+		mainServer.getVersion()
+		];
+	console.log(verArray);
+	res.send(verArray)
+});
+
+/*
+app.get('/getVersions', (req, res) => {
+	console.log("Route Controller got the get versions");
 	var dbVersion = dbaccess.getVersion();
 	var comVersion = comControler.getVersion();
 	var recircVersion = recircController.getVersion();
@@ -59,6 +74,7 @@ app.get('/getVersions', (req, res) => {
 	console.log(verArray);
 	res.send(verArray)
 });
+*/
 
 app.get('/currentTemps', (req, res) => {
 	console.log("in the get current temperatures route");
@@ -119,7 +135,9 @@ app.get('/pipeTemp', (req, res) => {
 	//Run Furnace For Hot Water 60
 app.post('/changeFurnState', (req,res) => {
 	console.log("++++++++++   Route CNTRL change Furnace State    ++++++++++");
-	comControler.changeState("changeHome-Away", req.body.message);
+	comControler.changeState("changeHome-Away", req.body.message, function (newState){
+		res.send(newState);
+	});
 });
 
 app.post('/sendMessage', (req, res) => {

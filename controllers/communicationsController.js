@@ -156,7 +156,7 @@ exports.changeFurnaceState = function (toState){
 	//			 -  furnace controller
 	//			 - furnace controller for run for hot water
 	//           - route controller from change mode drop down
-exports.changeState = function (whichState, toWhatState){
+exports.changeState = function (whichState, toWhatState, fn){
 	console.log("in com cntrlr change which state - " + whichState);
 	console.log("com controller to what state - " + toWhatState);
 	switch (whichState){
@@ -168,11 +168,13 @@ exports.changeState = function (whichState, toWhatState){
 					oldState = allStates.stateHomeAway;
 					allStates.stateHomeAway = "RunForWtr30";
 					furnaceController.runFurnForWater(30);
+					return (fn ("RunForWtr30"));
 					break;
 				case "Run Furnace For Hot Water 60":
 					oldState = allStates.stateHomeAway;
 					allStates.stateHomeAway = "RunForWtr60";
 					furnaceController.runFurnForWater(60);
+					return (fn ("RunForWtr60"));
 					break;
 				case "Home":
 					console.log("in case Home");

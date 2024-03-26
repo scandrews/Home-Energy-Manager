@@ -1,9 +1,10 @@
 // client side script file for the home controller
 $(document).ready(function() {
 
-var scriptsVersion = "2.0.1";
+var scriptsVersion = "2.0.3";
 var indexVersion = "2.0.1";
 var styleVersion = "2.0.1";
+
 
 var currentLocation = window.location.href;
 console.log("curent URL - " + currentLocation);
@@ -57,7 +58,7 @@ $(".loadAbout").on("click", function(event){
 	console.log("in the get version nums funct");
 //	$.get('getVersions', (newVersions) => {
 
-		$('#aboutModal').modal('show');
+	$('#aboutModal').modal('show');
 
 	$.ajax({
 		url: currentLocation + "getVersions",
@@ -67,25 +68,25 @@ $(".loadAbout").on("click", function(event){
 
 			console.log("back with version numbers");
 			console.log(newVersions);
-		//console.log(stuff[0].weekDayOn1 + stuff[0].pipeTempOn);
-		$("#routecontrolerVersion").attr("placeholder", newVersions[0]);
-		$("#recircVersion").attr("placeholder", newVersions[3]);
-		$("#dbControllerVersion").attr("placeholder", newVersions[1]);
-		$("#furnaceVersion").attr("placeholder", newVersions[4]);
-		$("#comVersion").attr("placeholder", newVersions[2]);
-		$("#serverVersion").attr("placeholder", newVersions[5]);
-		$("#indexVersion").attr("placeholder", indexVersion);
-		$("#scriptsVersion").attr("placeholder", scriptsVersion);
-		$("#styleVersion").attr("placeholder", styleVersion);
-		/*
-		$("#weekdayStartTime1").attr("placeholder", newVersions[0]);
+			//console.log(stuff[0].weekDayOn1 + stuff[0].pipeTempOn);
+			$("#routecontrolerVersion").attr("placeholder", newVersions[0]);
+			$("#recircVersion").attr("placeholder", newVersions[3]);
+			$("#dbControllerVersion").attr("placeholder", newVersions[1]);
+			$("#furnaceVersion").attr("placeholder", newVersions[4]);
+			$("#comVersion").attr("placeholder", newVersions[2]);
+			$("#serverVersion").attr("placeholder", newVersions[5]);
+			$("#indexVersion").attr("placeholder", indexVersion);
+			$("#scriptsVersion").attr("placeholder", scriptsVersion);
+			$("#styleVersion").attr("placeholder", styleVersion);
+			/*
+			$("#weekdayStartTime1").attr("placeholder", newVersions[0]);
 
-		$("#routecontrolerVersion").text(newVersions[0]);
-		$("#recircVersion").text(newVersions[1]);
-			$(".dbcontrollerVersion").text(newVersions[0]);
-			$(".serverVersion").text(newVersions[0]);
-			return(newVersions);
-		*/
+			$("#routecontrolerVersion").text(newVersions[0]);
+			$("#recircVersion").text(newVersions[1]);
+				$(".dbcontrollerVersion").text(newVersions[0]);
+				$(".serverVersion").text(newVersions[0]);
+				return(newVersions);
+			*/
 		}
 	})
 });
@@ -682,7 +683,7 @@ $(".upDateRecircSettings").on("click", function(event){
 	};
 	console.log(newSettings);
 
-//	var serverURL = "'http://" + serverIPAddress + ":2000/upDateRecircSettings'";
+	//	var serverURL = "'http://" + serverIPAddress + ":2000/upDateRecircSettings'";
 	var serverURL =	currentLocation + "upDateRecircSettings";
 	$.ajax({
 		url: serverURL,
@@ -787,7 +788,7 @@ $(".upDateFurnaceSettings").on("click", function(event){
 	console.log("new furnace settings -");
 	console.log(furnaceSettings);
 
-//	var serverURL = "'http://" + serverIPAddress + ":2000/upDateRecircSettings'";
+	//	var serverURL = "'http://" + serverIPAddress + ":2000/upDateRecircSettings'";
 	var serverURL =	currentLocation + "upDateFurnaceSettings";
 	$.ajax({
 		url: serverURL,
@@ -805,7 +806,7 @@ $(".saveFurnaceSettings").on("click", function(event){
 	event.preventDefault();
 	console.log("got the save Furnace Settings click");
 
-//	var serverURL = "'http://" + serverIPAddress + ":2000/upDateRecircSettings'";
+	//	var serverURL = "'http://" + serverIPAddress + ":2000/upDateRecircSettings'";
 	var serverURL =	currentLocation + "saveFurnaceSettings";
 	$.ajax({
 		url: serverURL,
@@ -906,11 +907,12 @@ $('#stateList li a').on('click', function(){
         data: {message: newState},
         success: function(returnState) {
         	console.log("Back from the server - " + returnState);
-        	if (returnState == "on"){
-        		$(".messageTurnPumpOn").text("Stop Recirculator");
+        	$(".mode").text(returnState);
+        	/*if (returnState == "on"){
 			} else if (returnState == "off"){
-				$(".messageTurnPumpOn").text("Run Recirculator");
+				$(".mode").text("Not Running");
 			}
+			*/
         	console.log("SUCCESS in the change start/stop Recirc state");
         }
     });

@@ -9,14 +9,14 @@
     "dialect": "mysql"
   },
   "test": {
-    "username": "root",
+    "user": "root",
     "password": "RutBud17",
     "database": "home_control_db",
     "host": "localhost",
     "dialect": "mysql"
   },
   "production": {
-    "user": "steve",
+    "user": "stevea",
     "password": "RutBud17",
     "database": "home_control_db",
     "host": "localhost",

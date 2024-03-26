@@ -3,35 +3,37 @@
 //This version adds furnace control
 
 #include <SPI.h>  //Serial communications
-#include <Ethernet.h>
-#include <EthernetUdp.h>
-#include <math.h>
 #include <OneWire.h> 
+#include <math.h>
 #include <DallasTemperature.h>
 
-  #define HOST_NAME "Home_Energy_Manager"
-  
+/*
+//#include <Ethernet.h>
+//#include <EthernetUdp.h>
+
+//#define HOST_NAME "Home_Energy_Manager"
+*/
   // config for UDP and Ethernet
   // config for the Aduino side
-  byte arduinoMac[] = { 0xA8, 0x61, 0x0A, 0xAE, 0x41, 0x66 };
-  unsigned int arduinoPort = 8888;      // port of Arduino
+  //byte arduinoMac[] = { 0xA8, 0x61, 0x0A, 0xAE, 0x41, 0x66 };
+  //unsigned int arduinoPort = 8888;      // port of Arduino
   // config for the server side
-  IPAddress receiverIP(192, 168, 1, 8); // IP of udp packets receiver - server
-  unsigned int receiverPort = 6000;      // port to listen on the server
+//  IPAddress receiverIP(192, 168, 1, 8); // IP of udp packets receiver - server
+//  unsigned int receiverPort = 6000;      // port to listen on the server
   // An EthernetUDP instance to let us send and receive packets over UDP
-  EthernetUDP Udp;
+//  EthernetUDP Udp;
   // buffers for receiving and sending data
-  char packetBuffer [17];  //buffer to hold incoming packet,
+//  char packetBuffer [17];  //buffer to hold incoming packet,
                            // 12 for IP numbers + 3 for the periods + 2 for my lead "what to do"
                            
   //define analog sensor pins
-  int sensorPin1 = A0; // 1 - Wood Stove
+/*  int sensorPin1 = A0; // 1 - Wood Stove
   int sensorPin2 = A1; // 2 - Bread Board
   int sensorPin3 = A2; // 3 - Bedroom
   int sensorPin4 = A3; // 4 - Pipe
   int sensorPin5 = A4; // 5 - Furnace
   int sensorPin6 = A5; // 6 - Bread Board
-                       // 7 - outdoor Sun
+*/                       // 7 - outdoor Sun
   // D1 - DON'T USE
   // D2 - 
   // D3 - Digital Temperature Sensor from resister on bread board
@@ -40,69 +42,71 @@
   // D6 - Recirc Pump
                        
 
-  float sensorInput;
-  float tempC4;
-  float houseTempC;
-  float furnaceTempF3;
-  float furnaceMax = 180;
+  //float sensorInput;
+  //float tempC4;
+  //float houseTempC;
+  //float furnaceTempF3;
+  //float furnaceMax = 180;
   //float furnaceMin = 95;
-  float voltage;
-  float pipeTempUpper = 110;
-  int   whatToDo;
-  float currentBedRmTemp;
-  float maxHouseTemp = 68;
-  float minHouseTemp = 63;
-  float houseTempF = 0;
+  //float voltage;
+  //float pipeTempUpper = 110;
+  //int   whatToDo;
+  //float currentBedRmTemp;
+  //float maxHouseTemp = 68;
+  //float minHouseTemp = 63;
+  //float houseTempF = 0;
   //float minFamilyRmTemp = 64;
   //float maxFamilyRmTemp = 68;
   
   int whichSensor = 2;   // default family room
   int redState = 0;
-  int recircMotorState = 0;
-  int furnaceState = 0;
+  //int recircMotorState = 0;
+  //int furnaceState = 0;
 
-  int furnaceOutput = 2; // D2 - Bread Board LED - Furnace output
-  int ONE_WIRE_BUS = 3;  // one wire set up for input D3
-  int ONE_WIRE_BUS2 = 7;  // one wire set up for input D3
+  //int furnaceOutput = 2; // D2 - Bread Board LED - Furnace output
+//  int ONE_WIRE_BUS = 3;  // one wire set up for input D3
+//  int ONE_WIRE_BUS2 = 7;  // one wire set up for input D3
                          // 4
   int LED4 = 5;          // D5 - Blinker
   int LED3 = 6;          // D6 - Recirc Pump motor output
 
+/*
   // Setup a oneWire instance to communicate with any OneWire devices  
   // (not just Maxim/Dallas temperature ICs) 
-  OneWire oneWire(ONE_WIRE_BUS); 
-  OneWire oneWire2(ONE_WIRE_BUS2); 
+//  OneWire oneWire(ONE_WIRE_BUS); 
+//  OneWire oneWire2(ONE_WIRE_BUS2); 
 
   // Pass our oneWire reference to Dallas Temperature. 
-  DallasTemperature sensors(&oneWire);
-  DallasTemperature sensors2(&oneWire2);
+//  DallasTemperature sensors(&oneWire);
+//  DallasTemperature sensors2(&oneWire2);
   //  float temp5 = 0;
   // variable to hold device addresses
   //DeviceAddress addCurSensor;
-  DeviceAddress outdoorSun =  {0x28, 0xEE, 0xE6, 0xB0, 0x06, 0x00, 0x00, 0x22};
-  DeviceAddress deskDigitalSensor =  {0x28, 0xFF, 0x45, 0x1A, 0xC1, 0x16, 0x05, 0xD1};
-  DeviceAddress outdoorShade =  {0x28, 0xBB, 0xF0, 0xEA, 0x0D, 0x00, 0x00, 0x05};
-  DeviceAddress waterTank =  {0x28, 0xFF, 0x55, 0x1E, 0xC0, 0x16, 0x05, 0x08
+//  DeviceAddress outdoorSun =  {0x28, 0xEE, 0xE6, 0xB0, 0x06, 0x00, 0x00, 0x22};
+//  DeviceAddress deskDigitalSensor =  {0x28, 0xFF, 0x45, 0x1A, 0xC1, 0x16, 0x05, 0xD1};
+//  DeviceAddress outdoorShade =  {0x28, 0xBB, 0xF0, 0xEA, 0x0D, 0x00, 0x00, 0x05};
+//  DeviceAddress waterTank =  {0x28, 0xFF, 0x55, 0x1E, 0xC0, 0x16, 0x05, 0x08
 
-};
-  
+//};
+*/
 
 // setup code
 void setup() {
    Serial.begin(9600); //Start the Serial Port at 9600 baud (default)
 
    Serial.println("Initialize Ethernet with DHCP:");
-   if (Ethernet.begin(arduinoMac) == 0) {
+/*   if (Ethernet.begin(arduinoMac) == 0) {
        Serial.println("Failed to configure Ethernet using DHCP");
        if (Ethernet.hardwareStatus() == EthernetNoHardware) {
           Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
        } else if (Ethernet.linkStatus() == LinkOFF) {
           Serial.println("Ethernet cable is not connected.");
        }
+*/
        // no point in carrying on, so do nothing forevermore:
-       while (true) { delay(1); }
-   }
-   Udp.begin(arduinoPort);
+//       while (true) { delay(1); }
+//   }
+//   Udp.begin(arduinoPort);
 
   //print your local IP address:
   //Serial.print("Arduino IP address: ");
@@ -111,56 +115,56 @@ void setup() {
   //Serial.println(arduinoPort);
 
 //   pinMode(LED1, OUTPUT); // Declare the LED as an output
-   pinMode(furnaceOutput, OUTPUT);
-   pinMode(LED3, OUTPUT); // Motor output digital output 6
+//   pinMode(furnaceOutput, OUTPUT);
+//   pinMode(LED3, OUTPUT); // Motor output digital output 6
    pinMode(LED4, OUTPUT);
 
 //  analogReference(EXTERNAL);
 //  analogReference(INTERNAL);
 
    // Start the Digital Sensor library
-   sensors.begin();
+//   sensors.begin();
 }
 
 
 void loop() {
   Serial.print("Arduino tinks the Current Server IP Address - ");
-  Serial.println(receiverIP);
+//  Serial.println(receiverIP);
 
   // This section checks if the recirc pump is running and turns it off
   // when temperature is reached
-  if (recircMotorState == 1){
+/*  if (recircMotorState == 1){
     if (((tempC4 * 9/5) + 32) >= pipeTempUpper){
           digitalWrite(LED3, LOW);
           Serial.println("just set recirc low");
           recircMotorState = 0;
     };
   };
-
+*/
   // this section checks the bedroom temp and turns the furnace off
   // when temperature is reached
   //Serial.print("Furnace State - ");
   //Serial.println(furnaceState);
-  if (furnaceState == 1 && whichSensor != 0){
+//  if (furnaceState == 1 && whichSensor != 0){
     //Serial.print("whichSensor - ");
     //Serial.print(whichSensor);
     //Serial.print(", current house Temp - ");
     //Serial.print(houseTempF);
     //Serial.print(", Max house Temp - ");
     //Serial.println(maxHouseTemp);
-    if (houseTempF > maxHouseTemp){
+//    if (houseTempF > maxHouseTemp){
        Serial.println("Turning off the furnace");
-       digitalWrite (furnaceOutput, LOW);
-       furnaceState = 0;
-    }
+//       digitalWrite (furnaceOutput, LOW);
+//       furnaceState = 0;
+//    }
   };
 
 
   // This section recieves UDP packets
   // if there's data available, read a packet
-  int packetSize = Udp.parsePacket();
-  if(packetSize > 0)
-  {
+  //int packetSize = Udp.parsePacket();
+  //if(packetSize > 0)
+  /*{
       //Serial.print("Arduino received packet of size ");
       //Serial.println(packetSize);
       //Serial.print("From ");
@@ -196,7 +200,7 @@ void loop() {
           Serial.println(newIPAddress);
       };
 */
-    switch (whatToDo){
+/*    switch (whatToDo){
       // whattodo comes from the server:
       case 1:
           //change the sensor to stop the furnace
@@ -223,7 +227,7 @@ void loop() {
           recircMotorState = 1;
           break;
       case 4:
-          digitalWrite(LED3, LOW);   // turn off the recirc motor
+//          digitalWrite(LED3, LOW);   // turn off the recirc motor
           // note this is not usually used because the arduino turns off the recirc
           // without direction from the server
           Serial.println("just set recirc low");
@@ -231,13 +235,13 @@ void loop() {
           break;
       case 5:
           Serial.println("got the update server IP Address packet");
-          newIPAddress[0] = atoi (strtok(NULL, " ."));
+/*          newIPAddress[0] = atoi (strtok(NULL, " ."));
           newIPAddress[1] = atoi (strtok(NULL, " ."));
           newIPAddress[2] = atoi (strtok(NULL, " ."));
           newIPAddress[3] = atoi (strtok(NULL, " ."));
           Serial.print("New IP Address - ");
-          Serial.println (newIPAddress);
-          receiverIP = newIPAddress;
+//          Serial.println (newIPAddress);
+//          receiverIP = newIPAddress;
           break;
       case 6:
           Serial.println("got a start furnace packet");
@@ -275,12 +279,13 @@ void loop() {
         Serial.println("Arduino hit the default");
         break;
     }
+    */
  // end got a packet
- };
+// };
 
 
 //  SEND FLAGS TO SERVER
-
+/*
     char houseTempTemp[8];
     char flags[100];
     dtostrf(maxHouseTemp,5,2,houseTempTemp);
@@ -295,7 +300,7 @@ void loop() {
     Udp.write(flags, 11);
     Udp.write(houseTempTemp, 5);
     Udp.endPacket();
-
+*/
 //  END SEND FLAGS
 
 /*
@@ -309,7 +314,7 @@ void loop() {
 
 //  READ TEMPERATURES
    // read analog values and convert to centagrate
-    sensorInput = analogRead(sensorPin1);    //read the analog sensor A0; - Wood Stove
+ /*   sensorInput = analogRead(sensorPin1);    //read the analog sensor A0; - Wood Stove
     voltage = sensorInput * 5.0;       //find percentage of input reading
     voltage /= 1024;                 //
     float tempC1 = (voltage - 0.5) * 100 ;               //Subtract the offset 
@@ -345,7 +350,7 @@ void loop() {
 
   // to issue a global temperature and Requests to all devices on the bus
     // Send the command to get temperature readings 
-    sensors.requestTemperatures();
+/* ***    sensors.requestTemperatures();
     sensors2.requestTemperatures();
 
     float tempC7 = sensors.getTempC(outdoorSun);
@@ -378,6 +383,7 @@ void loop() {
     Serial.print (" DS18 Data - ");
     Serial.println(tempC5);
 */
+/* ***
     char tBuffer1[8];
     char tBuffer2[8];
     char tBuffer3[8];
@@ -396,7 +402,7 @@ void loop() {
     dtostrf(tempC7,5,2,tBuffer7);
     dtostrf(tempC8,5,2,tBuffer8);
     dtostrf(tempC9,5,2,tBuffer9);
-
+*/
 /*  //Serial.print("Temperatures in Byte Array - ");
     //Serial.print(tBuffer1);
     //Serial.print(" temp2: ");
@@ -406,6 +412,7 @@ void loop() {
     //Serial.print(" temp4: ");
     //Serial.println(tBuffer4);
 */
+/*
     Udp.beginPacket(receiverIP, receiverPort); //start udp packet
     Udp.write("t", 1);  //identify packet as a temperture packet
     Udp.write(tBuffer1, 5); //write sensor data to udp packet
@@ -432,7 +439,7 @@ void loop() {
    //   }
    //};
   // This section checks which sensor to use for furnace and calculates the F into 
-  switch (whichSensor){
+/*  switch (whichSensor){
     case 0:
       break;
     case 1:
@@ -448,10 +455,11 @@ void loop() {
     default:
       Serial.println("ERROR in the set house Temp");
   };
-  houseTempF = (houseTempC * 9/5) + 32;     //get house temp in F for use
-  Serial.print("just set the house temp to - ");
-  Serial.println(houseTempF);
 
+//  houseTempF = (houseTempC * 9/5) + 32;     //get house temp in F for use
+//  Serial.print("just set the house temp to - ");
+//  Serial.println(houseTempF);
+*/
    
   // Blink led 4 (digital output 5)
   digitalWrite(LED4, HIGH);
