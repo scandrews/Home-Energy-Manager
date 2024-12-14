@@ -1,8 +1,8 @@
 // client side script file for the home controller
 $(document).ready(function() {
 
-var scriptsVersion = "2.0.3";
-var indexVersion = "2.0.1";
+var scriptsVersion = "2.0.4";
+var indexVersion = "2.0.2";
 var styleVersion = "2.0.1";
 
 
@@ -40,6 +40,22 @@ furnaceSettings = {}; // global to keep seeting
 var recircStatus = "off";
 
 // ------------------------------------------------
+
+$(".goingOut").on("click", function(){
+	console.log("got the going out click");
+	$.ajax({
+		url: currentLocation + "sendMessage",
+		type: Post,
+		data: {message: "goingOut"},
+		success: function(messageBack){
+			console.log("Back from setting going out - " + messageBack);
+			$(".goingOut").text("Got Home");
+			$(".outStatus").text("Out");
+		}
+	})
+});
+
+
 
 $('#aboutModal').modal({ show: false})
 
@@ -603,6 +619,7 @@ $(".showTemp").on("click", function(event){
 // manually start the furnace
 $(".messageStartFurnace").on("click", function(event){
 	console.log("got the furnace click");
+	// use the same "send message" as we did for recirc
     $.ajax({
     	url: currentLocation + "sendMessage",
         type: "POST",

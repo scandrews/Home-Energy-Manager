@@ -1,5 +1,5 @@
 // verson 2.0.1
-var routeVersion = "2.0.1";
+var routeVersion = "2.0.2";
 
 var express = require("express");
 var bodyParser = require ("body-parser");
@@ -102,7 +102,7 @@ app.get('/curTempHistory', (req, res) => {
 //	console.log(req.body)
 	dbaccess.getTempData(req, res);
 });
-
+ 
 app.get('/recircSettings', (req, res) => {
 	console.log("in route controller get recirculator settings duuu");
 //	res.send("What da FAAA");
@@ -142,14 +142,54 @@ app.post('/changeFurnState', (req,res) => {
 
 app.post('/sendMessage', (req, res) => {
 	console.log("*-*-*-*-*-*- in route controller send message - " + req.body.message + " *-*-*-*-*-*-*-*");
+	switch(req.body.message){
+		case "changeHome-Away":
+			// BiG NOTE: this functoin needs more arguments FIX THIS !!!
+			newState = comControler.changeState(req.body.message);
+			console.log("GOT THE RETURN CHANGE HOME/AWAY - " + newState.stateHomeAway + newState.statePump);
+			res.send(newState);
+			break;
+		case "ManualPumpChange":
+			recircController.manualPumpChange(req.body.message, function (newState){
+				//comControler.changeState()
+				//newState = comControler.getState();
+				console.log("GOT THE RETURN MANUAL PUMP CHANGE - " + newState);
+				res.send(newState);
+			});
+			break;
+		case "changeFurnace":
+			// manually chage the furnace
+			console.log("in the change furnace route");
+			newState = furnaceController.manualFurnaceChange('furnaceChange', '180', '90');
+			//newState = comControler.sendMessageToArdunio('furnaceChange', '180');
+			console.log("GOT THE RETURN CHANGE FURNACE - " + newState);
+			console.log(newState);
+			//newPState = comControler.changeState('stateFurnace', 'on');
+			console.log(newState.stateFurnace)
+			res.send(newState);
+			break;
+		case "goingOut":
+			console.log ("got the Going Out Message - " + req.body.message);
+			newState = comControler.changeState("changeHome-Away", "Away");
+			res.send("success");
+			break;
+		case "backHome":
+			console.log ("got the Back Home Message - " + req.body.message);
+			newState = comControler.changeState("changeHome-Away", "back");
+			res.send("success");
+			break;
+
+
+	}
+	/*
 	if (req.body.message == "changeHome-Away"){
+		// BiG NOTE: this functoin needs more arguments FIX THIS !!!
 		newState = comControler.changeState(req.body.message);
 		console.log("GOT THE RETURN CHANGE HOME/AWAY - " + newState.stateHomeAway + newState.statePump);
 		res.send(newState);
 
 	} else if (req.body.message == "ManualPumpChange") {
 		recircController.manualPumpChange(req.body.message, function (newState){
-
 				//comControler.changeState()
 				//newState = comControler.getState();
 				console.log("GOT THE RETURN MANUAL PUMP CHANGE - " + newState);
@@ -166,7 +206,12 @@ app.post('/sendMessage', (req, res) => {
 		//newPState = comControler.changeState('stateFurnace', 'on');
 		console.log(newState.stateFurnace)
 		res.send(newState);
+	} else if (req.body.message == "goingOut") {
+		console.log ("got the Going Out Message - " + req.body.message);
+		newState = comControler.changeState("changeHome-Away", "Away");
+		res.send("success");
 	};
+	*/
 });
 
 app.get('/getPumpStatus', (req, res) => {
@@ -192,7 +237,7 @@ app.post('/upDateRecircSettings', function (req, res) {
 		recircController.changedRecircSettings();
 	});
 });
-
+ 
 var getCurrentGeneralSettings = function (req, res){
 	var IPAddresses = comControler.getIPAddresses();
 	//var serverIPAddress = comControler.sendMessageToArdunio("getServerIPAddress", "x")

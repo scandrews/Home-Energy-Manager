@@ -3,7 +3,7 @@
 var comController = require ('./communicationsController');
 var dbController = require ('./databasecontroller');
 
-var version = "2.0.3";
+var version = "2.0.4";
 var schemaVersion = "2.0.3";
 
 //var recircOn = 04;
@@ -87,15 +87,15 @@ exports.manualPumpChange = function (newState){
 	if (pumpState == "on"){
 		console.log("Recirc Pump is on and manula request to turn off");
 		comController.sendMessageToArdunio("stopRecirc", "placeholder 1");
-		dbController.savePipeTemp("ManualPumpOff", recirculatorTemp);
+		//dbController.savePipeTemp("ManualPumpOff", recirculatorTemp);
 		dbController.setRecircChange("manRecircOff");
 		comController.changeState("stateRecircPump", "off");
 		pumpState = "off";
 	} else if (pumpState == "off"){
 		console.log("Recirc Pump is off and manual request to turn on");
 		comController.sendMessageToArdunio("runRecirc", "placeholder 2");
-		dbController.savePipeTemp("ManualPumpOn", recirculatorTemp);
-		//comController.changeState("stateRecircPump", "on");
+		//dbController.savePipeTemp("ManualPumpOn", recirculatorTemp);
+		comController.changeState("stateRecircPump", "on");
 		dbController.setRecircChange("manRecircOn");
 		pumpState = "on";
 	};
@@ -187,12 +187,12 @@ exports.checkRecirc = function (recircTemp, currentStates){
 	// pump is running so check if temp good
 	function checkIfTurnOff (){
 		console.log("in recirc controller check if turn off");
-		savePipeDataCount ++;
+		//savePipeDataCount ++;
 		// when pump is running save temp every savepipedatainterval time through
-		if (savePipeDataCount == savePipeDataInterval){
+		/*if (savePipeDataCount == savePipeDataInterval){
 			dbController.savePipeTemp("recircIsOn", recircTemp);
 			savePipeDataCount = 0;
-		};
+		};*/
 
 		// delete this - console.log(pumpState);
 		console.log(allStates.stateRecircPump);
@@ -202,7 +202,7 @@ exports.checkRecirc = function (recircTemp, currentStates){
 					// console.log("pump is on and temp is greater than target");
 					// pump is on, but reached temp so turn off
 					console.log("Detected a turn Recirc pump off");
-					dbController.savePipeTemp("turningRecircOff", recircTemp);
+					//dbController.savePipeTemp("turningRecircOff", recircTemp);
 					dbController.setRecircChange("recircOff", recircTemp);
 					// coment out the stop - depend on the Arduino to do
 					//comController.sendMessageToArdunio("stopRecirc");
@@ -227,13 +227,13 @@ exports.checkRecirc = function (recircTemp, currentStates){
 			pumpState = "on";
 			// turn pump on
 			comController.sendMessageToArdunio("runRecirc");
-			dbController.savePipeTemp("turnRecircOn", recircTemp);
+			//dbController.savePipeTemp("turnRecircOn", recircTemp);
 			dbController.setRecircChange("turnedRecircOn");
 
 			//comController.setRecircChange("turnRecircOn");
 			//comController.changeState("statePump", "on");
 		} else if (loopCount >= savePipeDataInterval){
-			dbController.savePipeTemp("recircIsOff", recircTemp);
+			//dbController.savePipeTemp("recircIsOff", recircTemp);
 			loopCount = 0;
 		};
 	};
@@ -252,7 +252,7 @@ exports.checkRecirc = function (recircTemp, currentStates){
 	if (pumpState == "on"){
 		checkIfTurnOff()
 		// Check if in home or away mode
-	} else if (allStates.stateHomeAway != "away"){
+	} else if (allStates.stateHomeAway != "Away"){
 
 			// pump in NOT running so check if weekend	
 			if(date_ob.getDay() == 6 || date_ob.getDay() == 0){

@@ -1,6 +1,6 @@
 // all data communications serial and ethernet will be in this file
 // version 2.0.0
-var version = "2.0.2";
+var version = "2.0.3";
 
 const data_access = require('./databasecontroller');
 const recircContrl = require('./recircController');
@@ -197,6 +197,7 @@ exports.changeState = function (whichState, toWhatState, fn){
 					break;
 				case "Away":
 					console.log("in case Away");
+					oldState = allStates.stateHomeAway;
 					furnaceController.changeHomeState("Away", allStates.stateTimeOfDay)
 					allStates.stateHomeAway = "Away";
 					break;
@@ -204,6 +205,7 @@ exports.changeState = function (whichState, toWhatState, fn){
 					console.log("in com cntrl change state - BACK");
 					console.log(oldState);
 					allStates.stateHomeAway = oldState;
+					furnaceController.changeHomeState(oldState, allStates.stateTimeOfDay)
 					break;
 				default:
 					console.log("ERROR in state default");

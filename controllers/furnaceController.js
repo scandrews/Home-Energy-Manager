@@ -34,6 +34,8 @@ var dayOfTheWeek = 0;
 	time: "",
 	day: 0
 };*/
+var localTimeOfDay = "";
+	// "weekEndMorning", "weekEndDay", "weekEndEvening", etc
 
 var getSettingsCount = 0;
 var getSettingsInterval = 100;
@@ -44,7 +46,6 @@ var currentArduinoOffSensor = "bedroom"; // default family room
 var keepOldSensor = "test";  // keep current sensor while on manual run
 	// 1 - bedroom
 	// 3 - desk
-var localTimeOfDay = "";
 
 var furnaceSettings = {
 	id: 0,
@@ -124,37 +125,34 @@ exports.checkFurnace = function (furnaceTemp, familyTemp, bedroomTemp, deskTemp,
 	currentTemperatures.outsideTemp = outsideTemp;
 	currentTemperatures.currentState = currentState;
 
+			// don't hit the db for the recirc settings every time through
+			// if NOT the first time through or if we've been through test count times, do
+			// normal processing otherwise get the recirc settings
+
+		/*
+			console.log("furnSetting id - " + furnaceSettings.id);
+			console.log("get settings count - " + getSettingsCount);
+			console.log("get settings interval - " + getSettingsInterval);
+			// id is 0 first tile through, or refresh every interval
+			if (furnaceSettings.id == 0 || getSettingsCount >= getSettingsInterval) {
+
+				//update furnace settings new subroutine
+				getNewFurnaceSettins(currentState.stateHomeAway, function (){
+					console.log("******* in check furnace, callback after get new furnace settings *******");
+					checkIfFurnaceAdjust(furnaceTemp, familyTemp, bedroomTemp, deskTemp, outsideTemp, currentState);
+					getSettingsCount = 0;
+				})
+			// end get furnace setting from the db
+			} else {
+				console.log("******* in check furnace, no need to get new furnace settings *******");
+			};
+		*/
+		//checkIfFurnaceAdjust(furnaceTemp, familyTemp, bedroomTemp, deskTemp, outsideTemp, currentState);
+		// end main entry
+		//};
 
 
-		// don't hit the db for the recirc settings every time through
-		// if NOT the first time through or if we've been through test count times, do
-		// normal processing otherwise get the recirc settings
-
-	/*
-		console.log("furnSetting id - " + furnaceSettings.id);
-		console.log("get settings count - " + getSettingsCount);
-		console.log("get settings interval - " + getSettingsInterval);
-		// id is 0 first tile through, or refresh every interval
-		if (furnaceSettings.id == 0 || getSettingsCount >= getSettingsInterval) {
-
-			//update furnace settings new subroutine
-			getNewFurnaceSettins(currentState.stateHomeAway, function (){
-				console.log("******* in check furnace, callback after get new furnace settings *******");
-				checkIfFurnaceAdjust(furnaceTemp, familyTemp, bedroomTemp, deskTemp, outsideTemp, currentState);
-				getSettingsCount = 0;
-			})
-		// end get furnace setting from the db
-		} else {
-			console.log("******* in check furnace, no need to get new furnace settings *******");
-		};
-	*/
-	//checkIfFurnaceAdjust(furnaceTemp, familyTemp, bedroomTemp, deskTemp, outsideTemp, currentState);
-	// end main entry
-//};
-
-
-
-//checkIfFurnaceAdjust = function(furnaceTemp, familyTemp, bedroomTemp, deskTemp, outsideTemp, currentState){
+		//checkIfFurnaceAdjust = function(furnaceTemp, familyTemp, bedroomTemp, deskTemp, outsideTemp, currentState){
 	console.log("* * just entered the check if furnace adjust * *");
 	//console.log("have the settings");
 	getSettingsCount++;
@@ -248,6 +246,7 @@ exports.checkFurnace = function (furnaceTemp, familyTemp, bedroomTemp, deskTemp,
 	console.log("if these don't match  -  " + statesHereInFurnCNTRL.stateTimeOfDay);
 	//console.log("or maybe this one - " + statesHereInFurnCNTRL.stateTimeOfDay);
 	console.log("if these don't match  -  " + localTimeOfDay);
+		// localTimeOfDay - "weekEndMorning", "weekEndDay", "weekEndEvening", etc
 	if (localTimeOfDay != statesHereInFurnCNTRL.stateTimeOfDay){
 		console.log("Just got a new Time of day state, new state - " + localTimeOfDay);
 		console.log("The old time of day sate was - " + statesHereInFurnCNTRL.stateTimeOfDay);
@@ -318,35 +317,6 @@ exports.checkFurnace = function (furnaceTemp, familyTemp, bedroomTemp, deskTemp,
 		comController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
 	// end change temps because we have a new time of day
 	};
-
-		/*		//comController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
-		} else if (comController.getState.stateFurnace == "weekEndMorning"){
-				// at 6 AM we'll up the temps
-				//	comController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
-		} else if (comController.getState.stateFurnace =="weekEndDay"){
-				// at 9 AM we'll set temps back down
-				//	comController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
-		} else  if (comController.getState.stateFurnace =="weekEndEvening"){
-				// at 4:30 PM we'll up the temps
-				//	comController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
-		} else if (comController.getState.stateFurnace =="weekEndNight"){
-				// at 11:30 PM we'll set the temps down for night
-		}
-				// Make temperature adjustments if required
-				// at 6 AM we'll up the temps
-		else if (comController.getState.stateFurnace == "weekDayMorning"){
-				//comController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
-		} else if (comController.getState.stateFurnace == "weekDayDay"){
-				// at 9 AM we'll set temps back down
-					//comController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
-		} else if (comController.getState.stateFurnace == "weekDayEvening"){
-				// at 4:30 PM we'll up the temps
-				//comController.sendMessageToArdunio("changeHouseMaxTemp", furnaceSettings.maxHouseTemp)
-		} else if (comController.getState.stateFurnace == "weekDayNight"){
-				// at 11:30 PM we'll set the temps down for night
-		};
-		*/
-
 
 
 	// Arduino sends flag (status) packet right before sending a temperature packet
@@ -467,14 +437,8 @@ getNewFurnaceSettins = function (newHome_AwayState, fn){
 exports.changeHomeState = function (newHomeState, stateTimeOfDay){
 	//furnaceSettings.state = newHomeState;
 	console.log("in furnace controller just got the new state from the com controller");
-	console.log("The New Stae is - " + newHomeState)
-	/*if (newHomeState != "Away"){
-		furnaceSettings.id = 0   // forces it to get new settings from the db
-		console.log("** in furnace controller just the new state to ** - " + furnaceSettings.state);
-	} else {
-		console.log("in furnace controller just set the new state to - " + furnaceSettings.state);
-	}
-	*/
+	//console.log("or maybe the route controller");
+	console.log("The New State is - " + newHomeState)
 
 	//getNewFurnaceSettins(currentState.stateHomeAway, function (){
 

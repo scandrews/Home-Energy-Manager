@@ -1,7 +1,7 @@
 //  Database controller - all interaction with the database are here
 
 var version = "2.0.2";
-var schemaFS = "2.0.2";
+var schemaFS = "2.0.3";
 
 //const server = require('.././server');
 const mysql = require('mysql2');
@@ -317,7 +317,7 @@ connection.connect(function (err) {
     localFurnAction = furnChangeText;
   };
 
-  exports.setRecircChange = function (recircChangeText){
+  exports.setRecircChange = function (recircChangeText, temp){
     console.log("db controller setting the recirc change to - " + recircChangeText);
     setRecircChngCounter ++;
     localRecircAction = recircChangeText;
